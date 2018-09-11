@@ -2,9 +2,7 @@
 */*
 !.gitignore
 !output.py
-!misc.py
-!string.py
 !connect.py
-!utils.py
+!misc.py
 !README.md
 
