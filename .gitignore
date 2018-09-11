@@ -3,5 +3,6 @@
 !.gitignore
 !string.py
 !connect.py
+!utils.py
 !README.md
 
