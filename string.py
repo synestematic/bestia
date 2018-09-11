@@ -150,16 +150,25 @@ if __name__ == "___main__":
 	#  urechile lui spectaculoase Ã®l fac s fie un personaj unic, cu totul deosebit, care poate deveni
 	# celebru Ã®n chip de unic elefant zburtor al lumii.'''
 
-	s = '''FaceÅ£i cunostinÅ£Äƒ cu Dumbo, puiul cel mititel ÅŸi dulce al Doamnei Jumbo, care Ã®i farmecÄƒ pe to
+	rumeno = '''FaceÅ£i cunostinÅ£Äƒ cu Dumbo, puiul cel mititel ÅŸi dulce al Doamnei Jumbo, care Ã®i farmecÄƒ pe to
 	Å£i cei care Ã®l vÄƒd... pÃ¢nÄƒ cÃ¢nd lumea descoperÄƒ cÄƒ are niÅŸte urechi mari ÅŸi clÄƒpÄƒuge.
 
 	Ajutat de cel mai bun prieten al lui, ÅŸoricelul Timothy, Dumbo Ã®ÅŸi dÄƒ seama Ã®n scurtÄƒ vreme cÄ
 	ƒ urechile lui spectaculoase Ã®l fac sÄƒ fie un personaj unic, cu totul deosebit, care poate deveni
 	celebru Ã®n chip de unic elefant zburÄƒtor al lumii.'''
 
-	print(s)
-	print(redecode_unicode_chars(s))
+	deutsch = ''' Nach rund zweimonatigen Dreharbeiten feiert der islamkritische Film der Pro-Bewegung, der von türki
+	schen Medien schon als â€œDeutscher Fitnaâ€ bezeichnet wird, im Rahmen einer Pressekonferenz in KÃ¶
+	ln am 31. MÃ¤rz seine Premiere. Der 13-minütige Film, der als Werbefilm für den diesjÃ¤hrigen Anti
+	-Islamisierungskongress am 9. Mai produziert wurde, zeigt nach dem Vorbild des niederlÃ¤ndischen Isl
+	amkritikers Geert Wilders Tabu-Themen wie die Unvereinbarkeit der islamischen Ideologie mit unserem
+	Grundgesetz. Aber auch die skandalÃ¶sen Vorkommnisse am 20. September in KÃ¶ln werden in dem Film no
+	ch einmal beleuchtet. Türkische Medien wie die auflagenstarke AKP-nahe Tageszeitung â€œZAMANâ€ (di
+	e auch in Deutschland kostenlos verteilt wird) oder haber7.com haben bereits vor der VerÃ¶ffentlichu
+	ng des islamkritischen deutschen Fitna-Films gewarnt.'''
+
+	print(rumeno)
+	print(redecode_unicode_chars(rumeno))
 	print()
 	# ƒ ord() returns 402 ... out of range
 	# Ÿ | size: 76 != 50 | utf_code_point: 376
-
