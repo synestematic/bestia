@@ -11,6 +11,36 @@ def debug(message):
 		print(message)
 		# input()
 
+def replace_special_chars(t):
+	special_chars = {
+		'Ã¡': 'á', 
+		'Ã ': 'à',
+		'Ã©': 'é',
+		'Ã‰': 'É',
+		'Ã­': 'í',
+		'Ã': 'Í',
+		'Ã³': 'ó',
+		'Ã“': 'Ó',
+		'Ãº': 'ú',
+		'Ã¼': 'ü',
+		'Ã±': 'ñ',
+		'Ã‘': 'Ñ',
+		'Â´': '\'', 
+		'´': '\'',
+		b'\xe2\x80\x8e'.decode() : '', # left-to-right-mark
+		b'\xe2\x80\x8b'.decode() : '',	# zero-width-space
+		'&amp' : '&',
+		# 'á': 'a', 
+		# 'é': 'e',
+		# 'í': 'i',
+		# 'ó': 'o',
+		# 'ú': 'u',
+		# 'ñ': 'n',
+	}
+	for o, i in special_chars.items():
+		t = t.replace(o, i)
+	return t
+
 def flatten_string(string):
 	old_char = ''
 	new_char = bytearray()
