@@ -2,5 +2,6 @@
 */*
 !.gitignore
 !string.py
+!connect.py
 !README.md
 
