@@ -6,3 +6,6 @@ def copy_to_clipboard(text):
 		return True
 	except pyperclip.PyperclipException:
 		return False
+
+def items_are_equal(iterable):
+   return iterable[1:] == iterable[:-1]

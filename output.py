@@ -1,15 +1,119 @@
 import sys, unidecode
+from time import sleep
+
 from unicodedata import normalize
-from termcolor import cprint
+from termcolor import cprint, colored
 
 CHAR_SIZE = sys.getsizeof('A')
-ENCODING = 'utf-16'
+ENCODING = 'utf-8'
 DEBUG = True
 
 def debug(message):
 	if DEBUG:
 		print(message)
-		# input()
+
+def clear_screen():
+	slow_print('\033[H\033[J')
+
+def abort(message):
+	slow_print(message, 'pause', color='red')
+	sys.exit()
+
+def slow_print(string='', speed='slow', color=None):
+	if color:
+		string = colored(string, color)
+	print(string)
+	factor = 0.7
+	if speed is 'slow':
+		s = 0.02
+	elif speed is 'slower':
+		s = 0.07
+	elif speed is 'slowest':
+		s = 0.12
+	elif speed is 'pause':
+		s = 0.9
+	sleep(factor * s)
+
+class FString():
+	def __init__(self, s, space=False, align='l', pad=' ', colors=[], xtras=[]):
+		self.pad = pad
+		self.input_string = str(s)
+		self.set_input_size() # original len of input_string without considering color bytes
+		self.output_size = int(space) if space else self.input_size	# desired len of output_string
+		self.align = align										# l, r, cl, cr
+		self.set_colors(colors) 								# grey, red, green, yellow, blue, magenta, cyan, white
+		self.xtras = xtras										# bold, dark, underline, blink, reverse, concealed
+
+	def set_input_size(self):
+		# calculates input string length without color bytes
+		ignore_these = [
+			b'\xe2\x80\x8e', # left-to-right-mark
+			b'\xe2\x80\x8b', # zero-width-space
+		]
+		color_start_byte = b'\x1b'
+		color_end_byte = b'm'
+		self.input_size = 0
+		add = True
+		for char in self.input_string:
+		# when encoding input_string into byte_string: byte_string will not necessarily have the same amount of bytes as characters in the input_string ( some characters will be made of several bytes ), therefore, the input_string should not be encoded but EACH INDIVIDUAL CHAR should
+		# for byte in self.input_string.encode():
+			byte = char.encode()
+			if byte == color_start_byte and add:
+				add = False
+				continue
+			elif byte == color_end_byte and not add:
+				add = True
+				continue
+			if add and byte not in ignore_these:
+				self.input_size += 1
+
+	def __str__(self):
+		self.set_ouput_string()
+		return self.output_string
+
+	def set_colors(self, colors):
+		if len(colors) > 1:
+			colors[1] = 'on_{}'.format(colors[1])
+		self.colors = colors
+
+	def set_pads(self):
+		delta_length = self.output_size - self.input_size
+		excess = delta_length % 2
+		exact_half = int((delta_length - excess) / 2)
+		self.small_pad = self.pad * exact_half
+		self.big_pad = self.pad * (exact_half + excess)
+
+	def set_ouput_string(self):
+		self.output_string = self.input_string
+		self.output_string = self.output_string.replace("\t", ' ') # can't afford to have tabs in output_string as they are never displayed the same
+		if self.input_size > self.output_size:
+			self.resize_output_string()
+		self.color_output_string()
+		if self.output_size > self.input_size:
+			self.align_output_string()
+
+	def resize_output_string(self):
+		delta_length = self.input_size - self.output_size
+		self.output_string = self.output_string[:0-delta_length]
+
+	def align_output_string(self):
+		self.set_pads()
+		if self.align == 'cl':
+			uno, due, tre = self.small_pad, self.output_string, self.big_pad
+		elif self.align == 'cr':
+			uno, due, tre = self.big_pad, self.output_string, self.small_pad
+		elif self.align == 'l':
+			uno, due, tre = self.output_string, self.small_pad, self.big_pad
+		elif self.align == 'r':
+			uno, due, tre = self.small_pad, self.big_pad, self.output_string
+		self.output_string = '{}{}{}'.format(uno, due, tre)
+
+	def color_output_string(self):
+		if len(self.colors) == 1:
+			self.output_string = colored(self.output_string, self.colors[0], attrs=self.xtras)
+		elif len(self.colors) == 2:
+			self.output_string = colored(self.output_string, self.colors[0], self.colors[1], attrs=self.xtras)
+
 
 def replace_special_chars(t):
 	special_chars = {
