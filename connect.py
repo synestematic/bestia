@@ -22,13 +22,12 @@ def http_get(url, attempt=1):
 			return False
 	except requests.exceptions.ConnectionError:
 		if attempt > max_attempts:
-			abort('Too many retries...')
+			abort('Exceeded maximum connection attempts...')
 		else:
-			slow_print('No connection. Retrying {}/{}'.format(attempt, max_attempts), color='red')
+			slow_print('No connection... retrying:[{}/{}]'.format(attempt, max_attempts), color='red')
 			sleep(5)
 			http_get(url, attempt=attempt + 1)
 
 if __name__ == '__main__':
 	pass
 	# implement referrers and cookies
-	
