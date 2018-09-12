@@ -4,8 +4,7 @@ from time import sleep
 
 from .output import slow_print, abort
 
-def http_get(url, attempt=1):
-	max_attempts = 3
+def http_get(url, retries=3):
 	try:
 		headers = {
 			# 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36',
@@ -21,12 +20,12 @@ def http_get(url, attempt=1):
 		else:
 			return False
 	except requests.exceptions.ConnectionError:
-		if attempt > max_attempts:
+		if retries < 1:
 			abort('Exceeded maximum connection attempts...')
 		else:
-			slow_print('No connection... retrying:[{}/{}]'.format(attempt, max_attempts), color='red')
+			slow_print('No connection... {} attempts left'.format(retries), color='red')
 			sleep(5)
-			http_get(url, attempt=attempt + 1)
+			http_get(url, retries=retries-1)
 
 if __name__ == '__main__':
 	pass
