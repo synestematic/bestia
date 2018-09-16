@@ -1,4 +1,4 @@
-import sys, unidecode
+import os, sys, unidecode
 from time import sleep
 
 from unicodedata import normalize
@@ -18,6 +18,19 @@ def clear_screen():
 def abort(message):
 	slow_print(message, 'pause', color='red')
 	sys.exit()
+
+def remove_path(path, deepness=-1):
+    try:
+        if deepness > -1:
+            return
+        else:
+            levels = []
+            while deepness <= -1:
+                levels.append(path.split('/')[deepness])
+                deepness += 1
+            return os.path.join(*levels)
+    except IndexError:
+        return remove_path(path, deepness=deepness+1)
 
 def slow_print(string='', speed='slow', color=None):
 	if color:
