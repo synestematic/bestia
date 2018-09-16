@@ -111,14 +111,16 @@ class FString():
 
 	def align_output_string(self):
 		self.set_pads()
-		if self.align == 'cl':
+		uno, due, tre = self.output_string, self.small_pad, self.big_pad
+		# ASSUME "l" to avoid nasty fail...
+		# but I should Raise an Exception if I pass invalid value "w"
+		if self.align == 'cl' or self.align == 'c':
 			uno, due, tre = self.small_pad, self.output_string, self.big_pad
 		elif self.align == 'cr':
 			uno, due, tre = self.big_pad, self.output_string, self.small_pad
-		elif self.align == 'l':
-			uno, due, tre = self.output_string, self.small_pad, self.big_pad
 		elif self.align == 'r':
 			uno, due, tre = self.small_pad, self.big_pad, self.output_string
+
 		self.output_string = '{}{}{}'.format(uno, due, tre)
 
 	def color_output_string(self):
