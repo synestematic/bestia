@@ -150,6 +150,7 @@ def replace_special_chars(t):
 		b'\xe2\x80\x8e'.decode() : '', # left-to-right-mark
 		b'\xe2\x80\x8b'.decode() : '',	# zero-width-space
 		'&amp' : '&',
+		'&;': '&',
 	}
 	for o, i in special_chars.items():
 		t = t.replace(o, i)
