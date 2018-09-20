@@ -132,8 +132,9 @@ class FString():
 
 def replace_special_chars(t):
 	special_chars = {
-		'Ã¡': 'á', 
+		'Ã¡': 'á',
 		'Ã ': 'à',
+		'Ã¤': 'ä',
 		'Ã©': 'é',
 		'Ã‰': 'É',
 		'Ã­': 'í',
@@ -151,6 +152,8 @@ def replace_special_chars(t):
 		b'\xe2\x80\x8b'.decode() : '',	# zero-width-space
 		'&amp' : '&',
 		'&;': '&',
+		'【': '[',
+		'】': ']',
 	}
 	for o, i in special_chars.items():
 		t = t.replace(o, i)
@@ -228,7 +231,17 @@ def redecode_unicode_chars(input_string):
 
 	return output_string
 
-if __name__ == "___main__":
+if __name__ == "__main__":
+
+	deutsch = 'Nach rund zweimonatigen Dreharbeiten feiert der islamkritische Film der Pro-Bewegung, der von türkischen Medien schon als â€œDeutscher bezeichnet wird, im Rahmen einer Pressekonferenz in Köln am 31. März seine Premiere. Der 13-minütige Film, der als Werbefilm für den diesjährigen Anti-Islamisierungskongress am 9. Mai produziert wurde, zeigt nach dem Vorbild des niederländischen Islamkritikers Geert Wilders Tabu-Themen wie die Unvereinbarkeit der islamischen Ideologie mit unserem Grundgesetz. Aber auch die skandalösen Vorkommnisse am 20. September in Köln werden in dem Film noch einmal beleuchtet. Türkische Medien wie die auflagenstarke AKP-nahe Tageszeitung (die auch in Deutschland kostenlos verteilt wird) oder haber7.com haben bereits vor der Veröffentlichung des islamkritischen deutschen Fitna-Films gewarnt.'
+
+	# print(replace_special_chars(deutsch))
+
+	# flatten_char('â')
+	# flatten_char('€')
+	# flatten_char('œ')
+	# flatten_char('ö')
+
 
 	# s = 'NewellÂ´s'
 	# print(s)
@@ -272,18 +285,8 @@ if __name__ == "___main__":
 	ƒ urechile lui spectaculoase Ã®l fac sÄƒ fie un personaj unic, cu totul deosebit, care poate deveni
 	celebru Ã®n chip de unic elefant zburÄƒtor al lumii.'''
 
-	deutsch = ''' Nach rund zweimonatigen Dreharbeiten feiert der islamkritische Film der Pro-Bewegung, der von türki
-	schen Medien schon als â€œDeutscher Fitnaâ€ bezeichnet wird, im Rahmen einer Pressekonferenz in KÃ¶
-	ln am 31. MÃ¤rz seine Premiere. Der 13-minütige Film, der als Werbefilm für den diesjÃ¤hrigen Anti
-	-Islamisierungskongress am 9. Mai produziert wurde, zeigt nach dem Vorbild des niederlÃ¤ndischen Isl
-	amkritikers Geert Wilders Tabu-Themen wie die Unvereinbarkeit der islamischen Ideologie mit unserem
-	Grundgesetz. Aber auch die skandalÃ¶sen Vorkommnisse am 20. September in KÃ¶ln werden in dem Film no
-	ch einmal beleuchtet. Türkische Medien wie die auflagenstarke AKP-nahe Tageszeitung â€œZAMANâ€ (di
-	e auch in Deutschland kostenlos verteilt wird) oder haber7.com haben bereits vor der VerÃ¶ffentlichu
-	ng des islamkritischen deutschen Fitna-Films gewarnt.'''
-
-	print(rumeno)
-	print(redecode_unicode_chars(rumeno))
-	print()
+	# print(rumeno)
+	# print(redecode_unicode_chars(rumeno))
+	# print()
 	# ƒ ord() returns 402 ... out of range
 	# Ÿ | size: 76 != 50 | utf_code_point: 376
