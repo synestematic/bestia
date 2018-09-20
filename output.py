@@ -140,21 +140,16 @@ def replace_special_chars(t):
 		'Ã': 'Í',
 		'Ã³': 'ó',
 		'Ã“': 'Ó',
+		'Ã¶': 'ö',
 		'Ãº': 'ú',
 		'Ã¼': 'ü',
 		'Ã±': 'ñ',
 		'Ã‘': 'Ñ',
-		'Â´': '\'', 
+		'Â´': '\'',
 		'´': '\'',
 		b'\xe2\x80\x8e'.decode() : '', # left-to-right-mark
 		b'\xe2\x80\x8b'.decode() : '',	# zero-width-space
 		'&amp' : '&',
-		# 'á': 'a', 
-		# 'é': 'e',
-		# 'í': 'i',
-		# 'ó': 'o',
-		# 'ú': 'u',
-		# 'ñ': 'n',
 	}
 	for o, i in special_chars.items():
 		t = t.replace(o, i)
