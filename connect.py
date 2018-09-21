@@ -15,13 +15,15 @@ def http_get(url, retries=3):
 		if r.status_code == 200:
 			html = r.text
 			if type(html) != str:
-				abort('I got {} instead of a string'.format(type(html)))
+				slow_print('http request returned {} insetad of <str>'.format(type(html)), color='red')
+				return
 			return html
 		else:
-			return False
+			return
 	except requests.exceptions.ConnectionError:
 		if retries < 1:
-			abort('Exceeded maximum connection attempts...')
+			slow_print('Unable to connect', color='red')
+			return
 		else:
 			slow_print('No connection... {} attempts left'.format(retries), color='red')
 			sleep(5)
