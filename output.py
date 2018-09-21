@@ -220,15 +220,7 @@ def redecode_unicode_chars(input_string):
 			new_char = bytearray()
 			# this assumes that I will be encoding chars in chunks of length 2... is that fair ????
 
-		# elif c not in suspects and detected:
-		# 	debug('back to normal: {}'.format(c))
-			# detected = False
-			# output_string += new_char.decode(ENCODING)
-			# new_char = bytearray()
-			# output_string += c
-
-		debug(output_string)
-
+		# debug(output_string)
 	return output_string
 
 if __name__ == "__main__":
@@ -241,6 +233,66 @@ if __name__ == "__main__":
 	# flatten_char('€')
 	# flatten_char('œ')
 	# flatten_char('ö')
+
+	def cp_string_to_char(cp_string):
+		output_char = bytearray()
+		for char in cp_string:
+			unicode_code_point = ord(char)
+			cprint('{}: {}'.format(char, unicode_code_point), 'green')
+			output_char.append(unicode_code_point)
+		cprint('{}: {}'.format(output_char, type(output_char)), 'blue')
+		output_char = output_char.decode()
+		return output_char
+
+
+	special_chars = {
+		# 'Ã©': 'é', # 195, 169, 233
+		# 'Ã‰': 'É', # 195, 8240, 201
+	}
+
+	# for yo in special_chars.keys():
+	# 	# print(redecode_unicode_chars(yo))
+	# 	print(cp_string_to_char(yo))
+
+	def reverse_stuff(input_char):
+		bs = input_char.encode()
+		for b in bs:
+			print(b)
+			print(hex(b))
+			print(chr(b))
+			print()
+
+	# yo = 'Ã'
+	# bla = yo.encode()
+	# print(bla)
+	# foo = ord(yo) 
+	# print(foo)
+
+	# yo = '‰'
+	# bla = yo.encode()
+	# print(bla)
+	# print(chr(8240))
+
+	yo = 'É'
+	# bla = yo.encode()
+	# print(bla)
+	# print(ord(yo))
+
+	reverse_stuff(yo)
+
+
+# U+0420, U+205AC - codepoint
+# 0420, c3a9, E2808B - codepoint as hex. (When hex is decodable as UTF8, such as c3a9 for U+E9, we add such a link)
+
+
+
+
+
+
+
+
+
+
 
 
 	# s = 'NewellÂ´s'
