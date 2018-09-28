@@ -19,18 +19,19 @@ def abort(message):
 	slow_print(message, 'pause', color='red')
 	sys.exit()
 
-def remove_path(path, deepness=-1):
-    try:
-        if deepness > -1:
-            return
-        else:
-            levels = []
-            while deepness <= -1:
-                levels.append(path.split('/')[deepness])
-                deepness += 1
-            return os.path.join(*levels)
-    except IndexError:
-        return remove_path(path, deepness=deepness+1)
+def remove_path(input_path, deepness=-1):
+	try:
+		if deepness > 0:
+			deepness = 0 - deepness
+		elif deepness == 0:
+			deepness = -1
+		levels = []
+		while deepness <= -1:
+			levels.append(input_path.split(os.sep)[deepness])
+			deepness += 1
+		return os.path.join(*levels)
+	except IndexError:
+		return remove_path(input_path, deepness=deepness+1)
 
 def slow_print(string='', speed='slow', color=None):
 	if color:
@@ -224,6 +225,24 @@ def redecode_unicode_chars(input_string):
 	return output_string
 
 if __name__ == "__main__":
+
+	bla = os.path.join('/', 'path', 'to', 'my', 'file')
+	print(remove_path(bla))
+	print(remove_path(bla, deepness=-2))
+	print(remove_path(bla, deepness=-3))
+	print(remove_path(bla, deepness=-4))
+	print(remove_path(bla, deepness=-5))
+
+	print('......................')
+
+	# bla = '/path/to/my/file/'
+	# print(remove_path(bla, deepness=-78))
+	# print(remove_path(bla))
+	# print(remove_path(bla, deepness=-2))
+	# print(remove_path(bla, deepness=0))
+
+
+	sys.exit()
 
 	deutsch = 'Nach rund zweimonatigen Dreharbeiten feiert der islamkritische Film der Pro-Bewegung, der von türkischen Medien schon als â€œDeutscher bezeichnet wird, im Rahmen einer Pressekonferenz in Köln am 31. März seine Premiere. Der 13-minütige Film, der als Werbefilm für den diesjährigen Anti-Islamisierungskongress am 9. Mai produziert wurde, zeigt nach dem Vorbild des niederländischen Islamkritikers Geert Wilders Tabu-Themen wie die Unvereinbarkeit der islamischen Ideologie mit unserem Grundgesetz. Aber auch die skandalösen Vorkommnisse am 20. September in Köln werden in dem Film noch einmal beleuchtet. Türkische Medien wie die auflagenstarke AKP-nahe Tageszeitung (die auch in Deutschland kostenlos verteilt wird) oder haber7.com haben bereits vor der Veröffentlichung des islamkritischen deutschen Fitna-Films gewarnt.'
 
