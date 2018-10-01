@@ -8,6 +8,17 @@ CHAR_SIZE = sys.getsizeof('A')
 ENCODING = 'utf-8'
 DEBUG = True
 
+def expand_seconds(seconds, verbose=False):
+    minutes, seconds = divmod(seconds, 60)
+    hours, minutes = divmod(minutes, 60)
+    if not verbose:
+        return hours, minutes, seconds
+    else:
+        seconds_msg = ' {} seconds'.format(round(seconds, 2))
+        minutes_msg = ' {} minutes'.format(int(minutes)) if minutes else ''
+        hours_msg = ' {} hours'.format(int(hours)) if hours else ''
+        return 'Done in{}{}{}'.format(hours_msg, minutes_msg, seconds_msg)
+
 def debug(message):
 	if DEBUG:
 		print(message)
@@ -32,6 +43,15 @@ def remove_path(input_path, deepness=-1):
 		return os.path.join(*levels)
 	except IndexError:
 		return remove_path(input_path, deepness=deepness+1)
+
+def flatten_path(b, d=1):
+	rest, last = os.path.split(b)
+	while last:
+	# if d <= 1:
+		cprint(rest, 'green')
+		cprint(last, 'red')
+		input()
+		flatten_path(rest, d=d-1)
 
 def slow_print(string='', speed='slow', color=None):
 	if color:
@@ -227,15 +247,18 @@ def redecode_unicode_chars(input_string):
 if __name__ == "__main__":
 
 	bla = os.path.join('/', 'path', 'to', 'my', 'file')
-	print(remove_path(bla))
-	print(remove_path(bla, deepness=-2))
-	print(remove_path(bla, deepness=-3))
-	print(remove_path(bla, deepness=-4))
-	print(remove_path(bla, deepness=-5))
-
-	print('......................')
+	# print(remove_path(bla))
+	# print(remove_path(bla, deepness=-2))
+	# print(remove_path(bla, deepness=-3))
+	# print(remove_path(bla, deepness=-4))
+	# print(remove_path(bla, deepness=-5))
+	# print('......................')
+	flatten_path(bla)
 
 	# bla = '/path/to/my/file/'
+
+	# flatten_path(bla)
+
 	# print(remove_path(bla, deepness=-78))
 	# print(remove_path(bla))
 	# print(remove_path(bla, deepness=-2))
