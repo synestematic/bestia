@@ -9,15 +9,15 @@ ENCODING = 'utf-8'
 DEBUG = True
 
 def expand_seconds(seconds, verbose=False):
-    minutes, seconds = divmod(seconds, 60)
-    hours, minutes = divmod(minutes, 60)
-    if not verbose:
-        return hours, minutes, seconds
-    else:
-        seconds_msg = ' {} seconds'.format(round(seconds, 2))
-        minutes_msg = ' {} minutes'.format(int(minutes)) if minutes else ''
-        hours_msg = ' {} hours'.format(int(hours)) if hours else ''
-        return 'Done in{}{}{}'.format(hours_msg, minutes_msg, seconds_msg)
+	minutes, seconds = divmod(seconds, 60)
+	hours, minutes = divmod(minutes, 60)
+	if verbose:
+		seconds_msg = ' {} seconds'.format(round(seconds, 2))
+		minutes_msg = ' {} minutes'.format(int(minutes)) if minutes else ''
+		hours_msg = ' {} hours'.format(int(hours)) if hours else ''
+		message = 'Done in{}{}{}'.format(hours_msg, minutes_msg, seconds_msg)
+		slow_print(message)
+	return hours, minutes, seconds
 
 def debug(message):
 	if DEBUG:
