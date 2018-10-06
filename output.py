@@ -150,6 +150,7 @@ class FString():
 		elif len(self.colors) == 2:
 			self.output_string = colored(self.output_string, self.colors[0], self.colors[1], attrs=self.xtras)
 
+
 def replace_special_chars(t):
 	special_chars = {
 		'Ã¡': 'á',
@@ -171,12 +172,15 @@ def replace_special_chars(t):
 		'Ã‘': 'Ñ',
 		'Â´': '\'',
 		'´': '\'',
+		'â€ž': '“',
+		'â€œ': '”',
 		b'\xe2\x80\x8e'.decode() : '', # left-to-right-mark
 		b'\xe2\x80\x8b'.decode() : '',	# zero-width-space
 		'&amp' : '&',
 		'&;': '&',
 		'【': '[',
 		'】': ']',
+		'â€“': '-',
 	}
 	for o, i in special_chars.items():
 		t = t.replace(o, i)
