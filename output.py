@@ -150,13 +150,13 @@ class FString():
 		elif len(self.colors) == 2:
 			self.output_string = colored(self.output_string, self.colors[0], self.colors[1], attrs=self.xtras)
 
-
 def replace_special_chars(t):
 	special_chars = {
 		'Ã¡': 'á',
 		'Ã ': 'à',
 		'Ã¤': 'ä',
 		'Ã©': 'é',
+		'Ã¨': 'è',
 		'Ã‰': 'É',
 		'Ã­': 'í',
 		'Ã': 'Í',
@@ -164,6 +164,7 @@ def replace_special_chars(t):
 		'Ã“': 'Ó',
 		'Ã¶': 'ö',
 		'Ãº': 'ú',
+		'Ã¹': 'ù',
 		'Ã¼': 'ü',
 		'Ã±': 'ñ',
 		'Ã‘': 'Ñ',
@@ -266,6 +267,20 @@ if __name__ == "__main__":
 
 
 	sys.exit()
+
+	dumbo = '''
+	Trama:
+	Il film Ã¨ basato sul romanzo del 1923 Dumbo, la vita di un capriolo (orig. Dumbo, ein Leben im Wald
+	e) dell'austriaco Felix Salten. Nel libro i protagonisti sono Dumbo, il giovane cerbiatto principe d
+	ella foresta, i suoi genitori (il Grande Principe della foresta e la sua compagna senza nome) e i su
+	oi amici Tamburino (un leprotto), Fiore (una puzzola), e Faline (una cerbiatta) sua amica d'infanzia
+	e futura compagna.
+
+	Handlung:
+	Endlich bringt der Storch Mrs. Jumbo, einem Zirkuselefanten, ihren lange erwarteten Sohn. Sie nennt
+	ihn Jumbo jr., aufgrund seiner auÃŸergewöhnlich groÃŸen Ohren wird er aber von den anderen Elefante
+	n als â€žDumboâ€œ (vom englischen â€ždumbâ€œ: dumm) verspottet. Als Dumbo von einigen Kindern geärg
+	ert wird, dreht Mrs. Jumbo durch und wird deshalb in einen Käfig gesperrt.'''
 
 	deutsch = 'Nach rund zweimonatigen Dreharbeiten feiert der islamkritische Film der Pro-Bewegung, der von türkischen Medien schon als â€œDeutscher bezeichnet wird, im Rahmen einer Pressekonferenz in Köln am 31. März seine Premiere. Der 13-minütige Film, der als Werbefilm für den diesjährigen Anti-Islamisierungskongress am 9. Mai produziert wurde, zeigt nach dem Vorbild des niederländischen Islamkritikers Geert Wilders Tabu-Themen wie die Unvereinbarkeit der islamischen Ideologie mit unserem Grundgesetz. Aber auch die skandalösen Vorkommnisse am 20. September in Köln werden in dem Film noch einmal beleuchtet. Türkische Medien wie die auflagenstarke AKP-nahe Tageszeitung (die auch in Deutschland kostenlos verteilt wird) oder haber7.com haben bereits vor der Veröffentlichung des islamkritischen deutschen Fitna-Films gewarnt.'
 
