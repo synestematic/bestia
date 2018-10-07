@@ -2,7 +2,7 @@ import sys
 import requests
 from time import sleep
 
-from .output import slow_print, abort
+from .output import echo, abort
 
 def http_get(url, retries=3):
 	try:
@@ -15,17 +15,17 @@ def http_get(url, retries=3):
 		if r.status_code == 200:
 			html = r.text
 			if type(html) != str:
-				slow_print('http request returned {} insetad of <str>'.format(type(html)), color='red')
+				echo('http request returned {} insetad of <str>'.format(type(html)), 'red')
 				return
 			return html
 		else:
 			return
 	except requests.exceptions.ConnectionError:
 		if retries < 1:
-			slow_print('Unable to connect', color='red')
+			echo('Unable to connect', 'red')
 			return
 		else:
-			slow_print('No connection... {} attempts left'.format(retries), color='red')
+			echo('No connection... {} attempts left'.format(retries), 'red')
 			sleep(5)
 			http_get(url, retries=retries-1)
 
