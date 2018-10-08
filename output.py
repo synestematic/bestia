@@ -1,6 +1,7 @@
 import os, sys, unidecode
 from time import sleep
 
+from pprint import pprint
 from unicodedata import normalize
 from termcolor import cprint, colored
 
@@ -16,7 +17,7 @@ def expand_seconds(seconds, verbose=False):
 		minutes_msg = ' {} minutes'.format(int(minutes)) if minutes else ''
 		hours_msg = ' {} hours'.format(int(hours)) if hours else ''
 		message = 'Done in{}{}{}'.format(hours_msg, minutes_msg, seconds_msg)
-		slow_print(message)
+		echo(message)
 	return hours, minutes, seconds
 
 def debug(message):
@@ -24,10 +25,10 @@ def debug(message):
 		print(message)
 
 def clear_screen():
-	slow_print('\033[H\033[J')
+	echo('\033[H\033[J')
 
-def abort(message):
-	slow_print(message, 'pause', color='red')
+def abort(message, pause=2):
+	echo(message, pause, 'red')
 	sys.exit()
 
 def remove_path(input_path, deepness=-1):
@@ -53,6 +54,7 @@ def flatten_path(b, d=1):
 		input()
 		flatten_path(rest, d=d-1)
 
+
 def slow_print(string='', speed='slow', color=None):
 	if color:
 		string = colored(string, color)
@@ -67,6 +69,50 @@ def slow_print(string='', speed='slow', color=None):
 	elif speed is 'pause':
 		s = 0.9
 	sleep(factor * s)
+
+
+class echo():
+
+	time_factor = 0.7
+
+	def __init__(s, input='', *args):
+		s.output = input
+		s.input_args = args
+
+		s.set_pause()
+		s.set_colors()
+		s()
+		
+	def __call__(s):
+		if type(s.output) == dict:
+			input('im a dict')
+			pprint(colored(s.output, 'red'))
+		else:
+			print(s.output)
+		sleep(s.time_factor * s.pause)
+
+	def set_colors(s):
+		s.fg_color = None
+		s.bg_color = None
+
+		available_colors = ( 'red', 'green', 'yellow', 'blue', 'grey', 'white', 'cyan', 'magenta' )
+		s.input_colors = [arg for arg in s.input_args if arg in available_colors]
+
+		if len(s.input_colors) < 1:
+			return
+		elif len(s.input_colors) == 1:
+			s.fg_color = s.input_colors[0]
+			s.output = colored(s.output, s.fg_color)
+		elif len(s.input_colors) > 1:
+			s.fg_color = s.input_colors[0]
+			s.bg_color = s.input_colors[1]
+			s.output = colored(s.output, s.fg_color, 'on_' + s.bg_color)
+
+	def set_pause(s):
+		s.pause = 0.0
+		for arg in s.input_args:
+			if type(arg) is int or type(arg) is float:
+				s.pause = arg
 
 class FString():
 	def __init__(self, s, space=False, align='l', pad=' ', colors=[], xtras=[]):
@@ -174,6 +220,7 @@ def replace_special_chars(t):
 		'´': '\'',
 		'â€ž': '“',
 		'â€œ': '”',
+		'â€¦': '…',
 		b'\xe2\x80\x8e'.decode() : '', # left-to-right-mark
 		b'\xe2\x80\x8b'.decode() : '',	# zero-width-space
 		'&amp' : '&',
@@ -251,6 +298,28 @@ def redecode_unicode_chars(input_string):
 	return output_string
 
 if __name__ == "__main__":
+
+
+	d = {
+		'a': 1,
+		'a2': {
+			'b5': 29,
+			'b2': 25,
+			'bp': 2,
+		},
+		'a3': 1,
+		'a4': 1,
+		'a5': 1,
+		'a6': 1,
+		'a7': 1,
+	}
+
+	echo(d)
+	# print(d)
+	# pprint(d)
+
+
+	sys.exit()
 
 	bla = os.path.join('/', 'path', 'to', 'my', 'file')
 	# print(remove_path(bla))
