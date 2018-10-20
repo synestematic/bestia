@@ -1,8 +1,4 @@
-*
-*/*
 !.gitignore
-!output.py
-!connect.py
-!misc.py
 !README.md
-
+!carolina/output.py
+.DS_Store

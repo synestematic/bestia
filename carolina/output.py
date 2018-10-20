@@ -198,16 +198,32 @@ class FString():
 
 
 def replace_special_chars(t):
+	'''
+	https://www.i18nqa.com/debug/utf8-debug.html
+	some of the chars here im not sure are correct,
+	according to dumbo dublat romana translation
+	'''
 	special_chars = {
+		# 'Äƒ': 'Ã',
+		# 'Äƒ': 'ă',
+
+		'Ã¢': 'â',
 		'Ã¡': 'á',
 		'Ã ': 'à',
 		'Ã¤': 'ä',
+		'Å£': 'ã',
+
+		# 'ÅŸ': 'ß',
+
 		'ÃŸ': 'ß',
 		'Ã©': 'é',
 		'Ã¨': 'è',
 		'Ã‰': 'É',
 		'Ã­': 'í',
 		'Ã': 'Í',
+
+		# 'Ã®': 'î',
+
 		'Ã³': 'ó',
 		'Ã“': 'Ó',
 		'Ã¶': 'ö',
@@ -314,56 +330,23 @@ if __name__ == "__main__":
 		'a7': 1,
 	}
 
-	echo(d)
-	# print(d)
-	# pprint(d)
 
+	# Dumbo DVDRip [dublat romana]
+	# zburător
+	# cunoştinţă
+	# descoperă
+	rumeno = '''Faceãi cunostinãÄƒ cu Dumbo, puiul cel mititel ÅŸi dulce al Doamnei Jumbo, care Ã®i farmecÄƒ pe to
+ãi cei care Ã®l vÄƒd... pânÄƒ când lumea descoperÄƒ cÄƒ are niÅŸte urechi mari ÅŸi clÄƒpÄƒuge.
 
-	sys.exit()
+Ajutat de cel mai bun prieten al lui, ÅŸoricelul Timothy, Dumbo Ã®ÅŸi dÄƒ seama Ã®n scurtÄƒ vreme cÄ
+ƒ urechile lui spectaculoase Ã®l fac sÄƒ fie un personaj unic, cu totul deosebit, care poate deveni
+celebru Ã®n chip de unic elefant zburÄƒtor al lumii.'''
 
-	bla = os.path.join('/', 'path', 'to', 'my', 'file')
-	# print(remove_path(bla))
-	# print(remove_path(bla, deepness=-2))
-	# print(remove_path(bla, deepness=-3))
-	# print(remove_path(bla, deepness=-4))
-	# print(remove_path(bla, deepness=-5))
-	# print('......................')
-	flatten_path(bla)
-
-	# bla = '/path/to/my/file/'
-
-	# flatten_path(bla)
-
-	# print(remove_path(bla, deepness=-78))
-	# print(remove_path(bla))
-	# print(remove_path(bla, deepness=-2))
-	# print(remove_path(bla, deepness=0))
-
+	print(replace_special_chars(rumeno))
+	# ƒ ord() returns 402 ... out of range
+	# Ÿ | size: 76 != 50 | utf_code_point: 376
 
 	sys.exit()
-
-	dumbo = '''
-	Trama:
-	Il film Ã¨ basato sul romanzo del 1923 Dumbo, la vita di un capriolo (orig. Dumbo, ein Leben im Wald
-	e) dell'austriaco Felix Salten. Nel libro i protagonisti sono Dumbo, il giovane cerbiatto principe d
-	ella foresta, i suoi genitori (il Grande Principe della foresta e la sua compagna senza nome) e i su
-	oi amici Tamburino (un leprotto), Fiore (una puzzola), e Faline (una cerbiatta) sua amica d'infanzia
-	e futura compagna.
-
-	Handlung:
-	Endlich bringt der Storch Mrs. Jumbo, einem Zirkuselefanten, ihren lange erwarteten Sohn. Sie nennt
-	ihn Jumbo jr., aufgrund seiner auÃŸergewöhnlich groÃŸen Ohren wird er aber von den anderen Elefante
-	n als â€žDumboâ€œ (vom englischen â€ždumbâ€œ: dumm) verspottet. Als Dumbo von einigen Kindern geärg
-	ert wird, dreht Mrs. Jumbo durch und wird deshalb in einen Käfig gesperrt.'''
-
-	deutsch = 'Nach rund zweimonatigen Dreharbeiten feiert der islamkritische Film der Pro-Bewegung, der von türkischen Medien schon als â€œDeutscher bezeichnet wird, im Rahmen einer Pressekonferenz in Köln am 31. März seine Premiere. Der 13-minütige Film, der als Werbefilm für den diesjährigen Anti-Islamisierungskongress am 9. Mai produziert wurde, zeigt nach dem Vorbild des niederländischen Islamkritikers Geert Wilders Tabu-Themen wie die Unvereinbarkeit der islamischen Ideologie mit unserem Grundgesetz. Aber auch die skandalösen Vorkommnisse am 20. September in Köln werden in dem Film noch einmal beleuchtet. Türkische Medien wie die auflagenstarke AKP-nahe Tageszeitung (die auch in Deutschland kostenlos verteilt wird) oder haber7.com haben bereits vor der Veröffentlichung des islamkritischen deutschen Fitna-Films gewarnt.'
-
-	# print(replace_special_chars(deutsch))
-
-	# flatten_char('â')
-	# flatten_char('€')
-	# flatten_char('œ')
-	# flatten_char('ö')
 
 	def cp_string_to_char(cp_string):
 		output_char = bytearray()
@@ -453,23 +436,3 @@ if __name__ == "__main__":
 
 	# how to separate ú from © ??
 	# Å£Äƒ	are these 1 or 2 chars ? surely not 1 ... ?
-
-	# s = '''FaceÅ£i cunostinÅ£ cu Dumbo, puiul cel mititel i dulce al Doamnei Jumbo, care Ã®i farmec pe to
-	# Å£i cei care Ã®l vd... pÃ¢ cÃ¢nd lumea descoper c are nite urechi mari i clpuge.
-
-	# Ajutat de cel mai bun prieten al lui, oricelul Timothy, Dumbo Ã®i d seama Ã®n scurt vreme c
-	#  urechile lui spectaculoase Ã®l fac s fie un personaj unic, cu totul deosebit, care poate deveni
-	# celebru Ã®n chip de unic elefant zburtor al lumii.'''
-
-	rumeno = '''FaceÅ£i cunostinÅ£Äƒ cu Dumbo, puiul cel mititel ÅŸi dulce al Doamnei Jumbo, care Ã®i farmecÄƒ pe to
-	Å£i cei care Ã®l vÄƒd... pÃ¢nÄƒ cÃ¢nd lumea descoperÄƒ cÄƒ are niÅŸte urechi mari ÅŸi clÄƒpÄƒuge.
-
-	Ajutat de cel mai bun prieten al lui, ÅŸoricelul Timothy, Dumbo Ã®ÅŸi dÄƒ seama Ã®n scurtÄƒ vreme cÄ
-	ƒ urechile lui spectaculoase Ã®l fac sÄƒ fie un personaj unic, cu totul deosebit, care poate deveni
-	celebru Ã®n chip de unic elefant zburÄƒtor al lumii.'''
-
-	# print(rumeno)
-	# print(redecode_unicode_chars(rumeno))
-	# print()
-	# ƒ ord() returns 402 ... out of range
-	# Ÿ | size: 76 != 50 | utf_code_point: 376
