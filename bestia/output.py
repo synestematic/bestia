@@ -12,15 +12,17 @@ DEBUG = True
 def expand_seconds(seconds, string=False):
 	minutes, seconds = divmod(seconds, 60)
 	hours, minutes = divmod(minutes, 60)
+	days, hours = divmod(hours, 24)
 	if string:
 		seconds_msg = ' {} seconds'.format(round(seconds, 2))
 		minutes_msg = ' {} minutes'.format(int(minutes)) if minutes else ''
 		hours_msg = ' {} hours'.format(int(hours)) if hours else ''
-		string = '{}{}{}'.format(hours_msg, minutes_msg, seconds_msg)
+		days_msg = ' {} days'.format(int(days)) if days else ''
+		string = '{}{}{}{}'.format(days_msg, hours_msg, minutes_msg, seconds_msg)
 		string = string.strip()
 		return string
 	else:
-		return hours, minutes, seconds
+		return days, hours, minutes, seconds
 
 def debug(message):
 	if DEBUG:
