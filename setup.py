@@ -1,17 +1,3 @@
-# https://packaging.python.org/tutorials/packaging-projects/
-
-#######################################
-# to build your distro run:
-#    python3 setup.py sdist bdist_wheel
-#
-# dist/
-#   bestia-0.0.1-py3-none-any.whl
-#   bestia-0.0.1.tar.gz
-
-#######################################
-# to install your distro run:
-#    pip3 install bestia-0.0.1-py3-none-any.whl
-
 import setuptools
 
 with open("README.md", "r") as fh:
@@ -26,6 +12,7 @@ setuptools.setup(
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/synestematic/bestia",
+    license="MIT",
     packages=setuptools.find_packages(),
     classifiers=[
         "Programming Language :: Python :: 3",
