@@ -2,7 +2,7 @@ import sys
 import requests
 from time import sleep
 
-from .output import echo, abort
+from bestia.output import echo, abort
 
 def http_get(url, retries=3, verbose=False):
 	try:
