@@ -13,16 +13,20 @@ def expand_seconds(seconds, string=False):
 	minutes, seconds = divmod(seconds, 60)
 	hours, minutes = divmod(minutes, 60)
 	days, hours = divmod(hours, 24)
+	weeks, days = divmod(days, 7)
+		# how do you wanna handle months and years
 	if string:
 		seconds_msg = ' {} seconds'.format(round(seconds, 2))
 		minutes_msg = ' {} minutes'.format(int(minutes)) if minutes else ''
 		hours_msg = ' {} hours'.format(int(hours)) if hours else ''
 		days_msg = ' {} days'.format(int(days)) if days else ''
-		string = '{}{}{}{}'.format(days_msg, hours_msg, minutes_msg, seconds_msg)
+		weeks_msg = ' {} weeks'.format(int(weeks)) if weeks else ''
+		string = '{}{}{}{}{}'.format(weeks_msg, days_msg, hours_msg, minutes_msg, seconds_msg)
 		string = string.strip()
 		return string
 	else:
-		return days, hours, minutes, seconds
+		# return a dict instead
+		return weeks, days, hours, minutes, seconds
 
 def debug(message):
 	if DEBUG:
