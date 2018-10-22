@@ -233,6 +233,7 @@ def replace_special_chars(t):
 	return t
 
 ##############################################################
+# change replace_special_chars into redecode_unicode_chars
 
 def flatten_string(string):
 	old_char = ''
