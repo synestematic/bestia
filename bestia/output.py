@@ -3,7 +3,7 @@ from time import sleep
 
 from pprint import pprint
 from unicodedata import normalize
-from termcolor import cprint, colored
+from termcolor import colored
 
 CHAR_SIZE = sys.getsizeof('A')
 ENCODING = 'utf-8'
@@ -256,7 +256,7 @@ def flatten_char(c):
 	else:
 		color = 'green'
 		symbol = '=='
-	cprint('{} | size: {} {} {} | utf_code_point: {}'.format(c, size, symbol, CHAR_SIZE, ord(c)), color)
+	echo('{} | size: {} {} {} | utf_code_point: {}'.format(c, size, symbol, CHAR_SIZE, ord(c)), color)
 
 
 def redecode_unicode_chars(input_string):
@@ -338,9 +338,9 @@ celebru Ã®n chip de unic elefant zburÄƒtor al lumii.'''
 		output_char = bytearray()
 		for char in cp_string:
 			unicode_code_point = ord(char)
-			cprint('{}: {}'.format(char, unicode_code_point), 'green')
+			echo('{}: {}'.format(char, unicode_code_point), 'green')
 			output_char.append(unicode_code_point)
-		cprint('{}: {}'.format(output_char, type(output_char)), 'blue')
+		echo('{}: {}'.format(output_char, type(output_char)), 'blue')
 		output_char = output_char.decode()
 		return output_char
 
