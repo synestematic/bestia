@@ -145,24 +145,22 @@ def abort(message, pause=2):
 	sys.exit()
 
 
-def expand_seconds(seconds, string=False):
-	minutes, seconds = divmod(seconds, 60)
-	hours, minutes = divmod(minutes, 60)
-	days, hours = divmod(hours, 24)
-	weeks, days = divmod(days, 7)
-		# how do you wanna handle months and years
-	if string:
-		seconds_msg = ' {} seconds'.format(round(seconds, 2))
-		minutes_msg = ' {} minutes'.format(int(minutes)) if minutes else ''
-		hours_msg = ' {} hours'.format(int(hours)) if hours else ''
-		days_msg = ' {} days'.format(int(days)) if days else ''
-		weeks_msg = ' {} weeks'.format(int(weeks)) if weeks else ''
-		string = '{}{}{}{}{}'.format(weeks_msg, days_msg, hours_msg, minutes_msg, seconds_msg)
-		string = string.strip()
-		return string
+def expand_seconds(input_seconds, output_string=False):
+	expanded_time = {}
+	expanded_time['minutes'], expanded_time['seconds'] = divmod(input_seconds, 60)
+	expanded_time['hours'], expanded_time['minutes'] = divmod(expanded_time['minutes'], 60)
+	expanded_time['days'], expanded_time['hours'] = divmod(expanded_time['hours'], 24)
+	expanded_time['weeks'], expanded_time['days'] = divmod(expanded_time['days'], 7)
+
+	if output_string:
+		seconds = ' {} seconds'.format(round(expanded_time['seconds'], 2))
+		minutes = ' {} minutes'.format(int(expanded_time['minutes'])) if expanded_time['minutes'] else ''
+		hours = ' {} hours'.format(int(expanded_time['hours'])) if expanded_time['hours'] else ''
+		days = ' {} days'.format(int(expanded_time['days'])) if expanded_time['days'] else ''
+		weeks = ' {} weeks'.format(int(expanded_time['weeks'])) if expanded_time['weeks'] else ''
+		return '{}{}{}{}{}'.format(weeks, days, hours, minutes, seconds).strip()
 	else:
-		# return a dict instead
-		return weeks, days, hours, minutes, seconds
+		return expanded_time
 
 
 def remove_path(input_path, deepness=-1):
@@ -301,6 +299,14 @@ def redecode_unicode_chars(input_string):
 
 
 if __name__ == "__main__":
+
+	d = expand_seconds(7*24*3600+2)
+	print(d)
+	exit()
+
+
+
+
 
 	d = {
 		'a': 1,
