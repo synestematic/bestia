@@ -5,10 +5,10 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="bestia",
-    version="0.0.1",
+    version="0.1.0",
     author="Federico Rizzo",
     author_email="yo@gmail.com",
-    description="Tools for interacting with web services",
+    description="A collection of tools for building dynamic Command-Line applications",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/synestematic/bestia",
