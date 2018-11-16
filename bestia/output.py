@@ -1,12 +1,32 @@
-import os, sys, unidecode
+from sys import getsizeof
+from sys import exit
+
+from os.path import join as PATH_JOIN
+from os import sep as PATH_SEPARATOR
+from os import popen
 from time import sleep
 
 from pprint import pprint
 from unicodedata import normalize
 from termcolor import colored
 
-CHAR_SIZE = sys.getsizeof('A')
+CHAR_SIZE = getsizeof('A')
 ENCODING = 'utf-8'
+
+
+def tty_size():
+	rows, columns = popen('stty size', 'r').read().split()
+	size = (int(rows), int(columns))
+	return size
+
+
+def tty_rows():
+	return tty_size()[0]
+
+
+def tty_columns():
+	return tty_size()[1]
+
 
 class echo():
 
@@ -141,7 +161,7 @@ def clear_screen():
 
 def abort(message, pause=2):
 	echo(message, pause, 'red')
-	sys.exit()
+	exit()
 
 
 def expand_seconds(input_seconds, output_string=False):
@@ -170,9 +190,9 @@ def remove_path(input_path, deepness=-1):
 			deepness = -1
 		levels = []
 		while deepness <= -1:
-			levels.append(input_path.split(os.sep)[deepness])
+			levels.append(input_path.split(PATH_SEPARATOR)[deepness])
 			deepness += 1
-		return os.path.join(*levels)
+		return PATH_JOIN(*levels)
 	except IndexError:
 		return remove_path(input_path, deepness=deepness+1)
 
