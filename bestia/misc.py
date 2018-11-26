@@ -1,6 +1,7 @@
+from os import system
+from subprocess import check_output, CalledProcessError
 import pyperclip
 import magic
-from os import system
 
 def copy_to_clipboard(text):
 	try:
@@ -23,3 +24,12 @@ def file_type(file):
 
 def say(string):
 	return system('say {}'.format(string))
+
+
+def command_output(*args):
+	''' returns command output as bytes, decode() as needed '''
+	try:
+		return check_output(args)
+	except CalledProcessError as x:
+		return None
+
