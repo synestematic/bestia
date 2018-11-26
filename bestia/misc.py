@@ -22,8 +22,14 @@ def file_type(file):
         return 'Unknown file type'
 
 
-def say(string):
-	return system('say {}'.format(string))
+def say(text):
+	say_binary = command_output('which', 'say')
+	if not say_binary:
+		return
+	else:
+		say_binary = say_binary.decode().strip()
+		say_command = '{} {}'.format(say_binary, text)
+		return system(say_command)
 
 
 def command_output(*args):
