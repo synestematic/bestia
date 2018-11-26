@@ -1,5 +1,6 @@
 import pyperclip
 import magic
+from os import system
 
 def copy_to_clipboard(text):
 	try:
@@ -19,3 +20,6 @@ def file_type(file):
     except:
         return 'Unknown file type'
 
+
+def say(string):
+	return system('say {}'.format(string))
