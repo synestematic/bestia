@@ -2,7 +2,7 @@
 # https://packaging.python.org/tutorials/packaging-projects/
 
 PACKAGE=bestia
-PACKAGE_VERSION=0.1.0 # set according to setup.py 
+PACKAGE_VERSION=`cat setup.py | awk -F"\"|\'" '/version/{print $2}'`
 PIP_VERSION=pip3
 PURGE_DIRS=(dist build "$PACKAGE".egg-info)
 
@@ -20,4 +20,3 @@ twine upload dist/*
 for dir in "${PURGE_DIRS[@]}"; do
     [ -d "$dir" ] && rm -rf "$dir" && echo "deleted $dir directory"
 done
-
