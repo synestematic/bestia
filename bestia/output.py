@@ -28,6 +28,20 @@ def tty_columns():
 	return tty_size()[1]
 
 
+class Row():
+	def __init__(self, *input_strings, width=None):
+		self.output_string = ''
+		for string in input_strings:
+			self.output_string = self.output_string + '{}'.format(string)
+		self.width = width if width else tty_columns()
+
+	def echo(self, *args, **kwargs):
+		echo(self.output_string, *args, **kwargs)
+
+	def __str__(self):
+		return self.output_string
+
+
 class echo():
 
 	time_factor = 1
