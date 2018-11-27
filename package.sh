@@ -14,7 +14,7 @@ python3 setup.py sdist bdist_wheel || exit
 cd dist && "$PIP_VERSION" install "$PACKAGE"-"$PACKAGE_VERSION"-py3-none-any.whl && cd ..
 
 # upload to PyPI
-twine upload dist/*
+[ "$1" == '--upload' ] && twine upload dist/*
 
 # clean up
 for dir in "${PURGE_DIRS[@]}"; do
