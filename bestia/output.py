@@ -123,6 +123,9 @@ class FString():
 		self.set_ouput_string()
 		return self.output_string
 
+	def echo(self, *args, **kwargs):
+		return echo(self, *args, **kwargs)
+
 	def set_colors(self, colors):
 		if len(colors) > 1:
 			colors[1] = 'on_{}'.format(colors[1])
