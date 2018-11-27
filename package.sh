@@ -10,11 +10,11 @@ PIP_VERSION=pip3
 PURGE_DIRS=(dist build "$PACKAGE".egg-info)
 
 # build
-echo_magenta "Building $PACKAGE $PACKAGE_VERSION"
-python3 setup.py sdist bdist_wheel && echo_green "Build OK" || exit
+echo_magenta "Building $PACKAGE $PACKAGE_VERSION..."
+python3 setup.py sdist bdist_wheel &>/dev/null && echo_green "Success" || exit
 
 # install
-"$PIP_VERSION" show "$PACKAGE" &>/dev/null && (echo_magenta "Uninstalling old $PACKAGE version"; "$PIP_VERSION" uninstall "$PACKAGE" -y )
+"$PIP_VERSION" show "$PACKAGE" &>/dev/null && (echo_magenta "Uninstalling old version"; "$PIP_VERSION" uninstall "$PACKAGE" -y )
 echo_magenta "Installing $PACKAGE $PACKAGE_VERSION"
 cd dist && "$PIP_VERSION" install "$PACKAGE"-"$PACKAGE_VERSION"-py3-none-any.whl && cd ..
 

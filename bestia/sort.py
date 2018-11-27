@@ -1,4 +1,4 @@
-from random import randrange
+from random import randrange, choice
 
 
 def items_are_equal(iterable):
