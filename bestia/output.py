@@ -1,6 +1,4 @@
-from sys import getsizeof
-from sys import exit
-
+from sys import getsizeof, exit
 from os.path import join as PATH_JOIN
 from os import sep as PATH_SEPARATOR
 from os import popen
@@ -9,6 +7,8 @@ from time import sleep
 from pprint import pprint
 from unicodedata import normalize
 from termcolor import colored
+
+from bestia.sort import indexes_from_string, random_unique_items_from_list, string_to_list, list_to_string
 
 CHAR_SIZE = getsizeof('A')
 ENCODING = 'utf-8'
@@ -265,3 +265,16 @@ def replace_special_chars(t):
 	for o, i in special_chars.items():
 		t = t.replace(o, i)
 	return t
+
+
+def obfuscate_random_chars(input_string, amount=None, obfuscator='_'):
+	amount = len(input_string) - 4 if not amount or amount >= len(input_string) else amount
+
+	string_as_list = string_to_list(input_string)
+	string_indexes = indexes_from_string(input_string)
+
+	for random_index in random_unique_items_from_list(string_indexes, amount):
+		string_as_list[random_index] = obfuscator
+
+	return list_to_string(string_as_list)
+
