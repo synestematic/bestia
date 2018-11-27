@@ -11,10 +11,6 @@ def copy_to_clipboard(text):
 		return False
 
 
-def items_are_equal(iterable):
-   return iterable[1:] == iterable[:-1]
-
-
 def file_type(file):
     try:
         return magic.from_file(file)
