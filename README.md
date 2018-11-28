@@ -1,3 +1,20 @@
 # bestia
 ***
-I've been writing code for web scraping command-line applications for some time now. Over the years I've found myself reaching out for the same functions over and over again, so I've put them together in this library. Enjoy!
+Bestia is a library of functions and classes designed to help you build dynamic command-line applications on Linux / Darwin systems.
+
+## modules
+
+* connect
+* iter
+* misc
+* output
+
+## functions
+
+### connect
+
+### iter
+
+### misc
+
+### output

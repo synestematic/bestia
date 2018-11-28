@@ -8,7 +8,7 @@ from pprint import pprint
 from unicodedata import normalize
 from termcolor import colored
 
-from bestia.sort import indexes_from_string, random_unique_items_from_list, string_to_list, list_to_string
+from bestia.iter import indexes_from_string, random_unique_items_from_list, string_to_list, list_to_string
 
 CHAR_SIZE = getsizeof('A')
 ENCODING = 'utf-8'
