@@ -1,9 +1,10 @@
 # bestia
 ***
-Bestia is a library of functions and classes designed to help you build dynamic command-line applications on Linux / Darwin systems.
+
+## project description
+bestia is a library of functions and classes designed to help you build dynamic command-line applications on Linux / Darwin systems.
 
 ## available functions
-
 ### connect
 * http_get
 
