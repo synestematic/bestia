@@ -19,6 +19,14 @@ def random_unique_items_from_list(lst, amount):
 	return items
 
 
+def pop_random_item(lst):
+	try:
+		random_index = randrange(len(lst))
+		return lst.pop(random_index)
+	except ValueError:
+		return
+
+
 def string_to_list(string):
 	return [ c for c in str(string) ]
 
@@ -28,11 +36,3 @@ def list_to_string(lst):
 	for c in lst:
 		string = string + c
 	return string
-
-
-def pop_random_item(lst):
-	try:
-		random_index = randrange(len(lst))
-		return lst.pop(random_index)
-	except ValueError:
-		return
