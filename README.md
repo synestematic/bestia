@@ -1,14 +1,14 @@
 # bestia
 ***
 
-## project description
 bestia is a library of functions and classes designed to help you build dynamic command-line applications on Linux / Darwin systems.
 
-## available functions
-### connect
+***
+## available functions / classes
+### connect.py
 * http_get
 
-### iter
+### iter.py
 * items_are_equal
 * indexes_from_string
 * random_unique_items_from_list
@@ -16,13 +16,13 @@ bestia is a library of functions and classes designed to help you build dynamic 
 * string_to_list
 * list_to_string
 
-### misc
+### misc.py
 * copy_to_clipboard
 * file_type
 * say
 * command_output
 
-### output
+### output.py
 * tty_size
 * tty_rows
 * tty_columns
@@ -35,3 +35,12 @@ bestia is a library of functions and classes designed to help you build dynamic 
 * remove_path
 * replace_special_chars
 * obfuscate_random_chars
+
+***
+## dependencies
+Installing bestia on your system will also install the following pip libraries:
+
+* pyperclip
+* python-magic
+* requests
+* termcolor
