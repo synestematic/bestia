@@ -5,8 +5,9 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="bestia",
-    version="0.8.2",
+    version="0.8.5",
     author="Federico Rizzo",
+    author_email="",
     description="A collection of tools for building dynamic Command-Line applications",
     long_description=long_description,
     long_description_content_type="text/markdown",
@@ -22,5 +23,11 @@ setuptools.setup(
         "Topic :: Software Development :: Libraries :: Python Modules",
         "Topic :: Text Processing :: General",
         "Topic :: Utilities"
-    ],
+        ],
+    install_requires=[
+        'pyperclip',
+        'python-magic',
+        'requests',
+        'termcolor',
+        ],
 )

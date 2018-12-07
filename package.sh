@@ -11,7 +11,7 @@ PURGE_DIRS=(dist build "$PACKAGE".egg-info)
 
 # build
 echo_magenta "Building $PACKAGE $PACKAGE_VERSION..."
-python3 setup.py sdist bdist_wheel &>/dev/null && echo_green "Success" || exit
+python3 setup.py sdist bdist_wheel && echo_green "Success" || exit
 
 # install
 "$PIP_VERSION" show "$PACKAGE" &>/dev/null && (echo_magenta "Uninstalling old version"; "$PIP_VERSION" uninstall "$PACKAGE" -y )
