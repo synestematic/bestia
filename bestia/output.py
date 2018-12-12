@@ -8,7 +8,7 @@ from pprint import pprint
 from unicodedata import normalize
 from termcolor import colored
 
-from bestia.iter import indexes_from_string, random_unique_items_from_list, string_to_list, list_to_string
+from bestia.iterate import indexes_from_string, random_unique_items_from_list, string_to_list, list_to_string
 
 CHAR_SIZE = getsizeof('A')
 ENCODING = 'utf-8'
@@ -174,11 +174,6 @@ class FString():
 
 def clear_screen():
 	echo('\033[H\033[J')
-
-
-def abort(message, pause=2):
-	echo(message, pause, 'red')
-	exit()
 
 
 def expand_seconds(input_seconds, output_string=False):

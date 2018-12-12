@@ -1,7 +1,10 @@
 from os import system
+from sys import exit as sysexit
 from subprocess import check_output, CalledProcessError
 import pyperclip
 import magic
+
+from bestia.output import echo
 
 def copy_to_clipboard(text):
 	try:
@@ -35,3 +38,7 @@ def command_output(*args):
 	except CalledProcessError as x:
 		return None
 
+
+def abort(message, pause=1.5):
+	echo(message, pause, 'red')
+	sysexit()
