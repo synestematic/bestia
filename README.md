@@ -6,7 +6,7 @@ bestia is a library of functions and classes designed to help you build dynamic 
 ### connect.py
 * http_get
 
-### iter.py
+### iterate.py
 * items_are_equal
 * indexes_from_string
 * random_unique_items_from_list
@@ -19,6 +19,7 @@ bestia is a library of functions and classes designed to help you build dynamic 
 * file_type
 * say
 * command_output
+* abort
 
 ### output.py
 * tty_size
@@ -28,7 +29,6 @@ bestia is a library of functions and classes designed to help you build dynamic 
 * echo
 * FString
 * clear_screen
-* abort
 * expand_seconds
 * remove_path
 * replace_special_chars
