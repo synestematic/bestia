@@ -6,7 +6,6 @@ echo_magenta() { echo -e "\033[01;35m$1\033[00m"; }
 
 PACKAGE=bestia
 PACKAGE_VERSION=`cat setup.py | awk -F"\"|\'" '/version/{print $2}'`
-PIP_VERSION=pip3
 PURGE_DIRS=(dist build "$PACKAGE".egg-info)
 
 # build
@@ -14,9 +13,9 @@ echo_magenta "Building $PACKAGE $PACKAGE_VERSION..."
 python3 setup.py sdist bdist_wheel && echo_green "Success" || exit
 
 # install
-"$PIP_VERSION" show "$PACKAGE" &>/dev/null && (echo_magenta "Uninstalling old version"; "$PIP_VERSION" uninstall "$PACKAGE" -y )
+pip3 show "$PACKAGE" &>/dev/null && (echo_magenta "Uninstalling old version"; pip3 uninstall "$PACKAGE" -y )
 echo_magenta "Installing $PACKAGE $PACKAGE_VERSION"
-cd dist && "$PIP_VERSION" install "$PACKAGE"-"$PACKAGE_VERSION"-py3-none-any.whl && cd ..
+cd dist && pip3 install "$PACKAGE"-"$PACKAGE_VERSION"-py3-none-any.whl && cd ..
 
 # upload to PyPI
 [ "$1" == '--upload' ] && (echo_magenta "Uploading to PyPI "; twine upload dist/*)
