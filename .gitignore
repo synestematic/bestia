@@ -3,4 +3,5 @@
 bestia.egg-info/*
 build/*
 dist/*
+bestia/dev.py
 
