@@ -7,7 +7,6 @@ upload: build install publish clean
 
 get_version: setup.py
 	@$(eval VERSION := $(shell cat setup.py | grep version | cut -d'=' -f 2 | cut -d',' -f 1))
-	@echo ${VERSION}
 
 build: get_version setup.py ${PACKAGE}
 	@echo "Building ${PACKAGE} ${VERSION}..."
