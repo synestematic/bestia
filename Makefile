@@ -1,19 +1,22 @@
 PACKAGE = bestia
-PACKAGE_VERSION = 0.8.6
 PURGE_DIRS = dist build ${PACKAGE}.egg-info
 
 default: build install clean
 
 upload: build install publish clean
 
-build: setup.py ${PACKAGE}
-	@echo "Building ${PACKAGE} ${PACKAGE_VERSION}..."
+get_version: setup.py
+	@$(eval VERSION := $(shell cat setup.py | grep version | cut -d'=' -f 2 | cut -d',' -f 1))
+	@echo ${VERSION}
+
+build: get_version setup.py ${PACKAGE}
+	@echo "Building ${PACKAGE} ${VERSION}..."
 	@python3 setup.py sdist bdist_wheel && echo "Success" || exit
 
-install: ${PURGE_DIRS}
+install: get_version ${PURGE_DIRS}
 	@pip3 show "${PACKAGE}" &>/dev/null && (echo "Uninstalling old version"; pip3 uninstall "${PACKAGE}" -y )
-	@echo "Installing ${PACKAGE} ${PACKAGE_VERSION}"
-	@cd dist && pip3 install "${PACKAGE}"-"${PACKAGE_VERSION}"-py3-none-any.whl && cd ..
+	@echo "Installing ${PACKAGE} ${VERSION}"
+	@cd dist && pip3 install "${PACKAGE}"-"${VERSION}"-py3-none-any.whl && cd ..
 
 publish: dist
 	@echo "Uploading to PyPI "
