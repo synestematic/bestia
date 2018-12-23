@@ -32,6 +32,8 @@ class Row():
     def __init__(self, *input_strings, width=None):
         self.output_string = ''
         for string in input_strings:
+            if type(string) != FString:
+                string = FString(string)
             self.output_string = self.output_string + '{}'.format(string)
         self.width = width if width else tty_columns()
 
