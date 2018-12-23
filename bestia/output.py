@@ -35,7 +35,10 @@ class Row():
             if type(string) != FString:
                 string = FString(string)
             self.output_string = self.output_string + '{}'.format(string)
-        self.width = width if width else tty_columns()
+        self.fixed_width = width
+
+    def width(self):
+        return self.fixed_width if self.fixed_width else tty_columns()
 
     def echo(self, *args, **kwargs):
         echo(self.output_string, *args, **kwargs)
