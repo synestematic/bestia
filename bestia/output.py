@@ -128,6 +128,9 @@ class FString():
         self.set_ouput_string()
         return self.output_string
 
+    def __len__(self):
+        return self.output_size
+
     def echo(self, *args, **kwargs):
         return echo(self, *args, **kwargs)
 
