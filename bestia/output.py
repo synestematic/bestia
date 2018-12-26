@@ -60,12 +60,12 @@ class echo():
         s()
         
     def __call__(s):
+        sleep(s.time_factor * s.pause)
         if type(s.output) == dict:
             input('im a dict')
             pprint(colored(s.output, 'red'))
         else:
             print(s.output)
-        sleep(s.time_factor * s.pause)
 
     def set_colors(s):
         s.fg_color = None
@@ -93,7 +93,7 @@ class echo():
 
 class FString():
     def __init__(self, s, space=False, align='l', pad=' ', colors=[], xtras=[]):
-        self.pad = pad
+        self.pad = str(pad)[0]
         self.input_string = str(s)
         self.set_input_size() # original len of input_string without considering color bytes
         self.output_size = int(space) if space else self.input_size	# desired len of output_string
