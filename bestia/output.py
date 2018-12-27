@@ -99,7 +99,7 @@ class echo():
 class FString():
     def __init__(self, input_string, space=False, align='l', pad=' ', colors=[], xtras=[]):
         self.input_string = ''
-        self.set_input_string(input_string)
+        self.append(input_string)
         self.pad = str(pad)[0]
 
         self.output_size = int(space) if space else self.input_size	# desired len of output_string
@@ -107,12 +107,12 @@ class FString():
         self.set_colors(colors) 								# grey, red, green, yellow, blue, magenta, cyan, white
         self.xtras = xtras										# bold, dark, underline, blink, reverse, concealed
 
-    def set_input_string(self, s):
-        self.input_string = str(s)
-        self.set_input_size() # original len of input_string without considering color bytes
+    def append(self, string):
+        self.input_string = self.input_string + '{}'.format(string)
+        self.set_input_size()
 
     def set_input_size(self):
-        # calculates input string length without color bytes
+        # calculate input_string length without color bytes
         ignore_these = [
             b'\xe2\x80\x8e', # left-to-right-mark
             b'\xe2\x80\x8b', # zero-width-space
