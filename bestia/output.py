@@ -43,6 +43,11 @@ class Row():
     def echo(self, *args, **kwargs):
         echo(self.output_string, *args, **kwargs)
 
+    def append(self, string):
+        if type(string) != FString:
+            string = FString(string)
+        self.output_string = self.output_string + '{}'.format(string)
+
     def __str__(self):
         return self.output_string
 
@@ -92,14 +97,19 @@ class echo():
 
 
 class FString():
-    def __init__(self, s, space=False, align='l', pad=' ', colors=[], xtras=[]):
+    def __init__(self, input_string, space=False, align='l', pad=' ', colors=[], xtras=[]):
+        self.input_string = ''
+        self.set_input_string(input_string)
         self.pad = str(pad)[0]
-        self.input_string = str(s)
-        self.set_input_size() # original len of input_string without considering color bytes
+
         self.output_size = int(space) if space else self.input_size	# desired len of output_string
         self.align = align										# l, r, cl, cr
         self.set_colors(colors) 								# grey, red, green, yellow, blue, magenta, cyan, white
         self.xtras = xtras										# bold, dark, underline, blink, reverse, concealed
+
+    def set_input_string(self, s):
+        self.input_string = str(s)
+        self.set_input_size() # original len of input_string without considering color bytes
 
     def set_input_size(self):
         # calculates input string length without color bytes
