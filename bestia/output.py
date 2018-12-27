@@ -131,6 +131,10 @@ class FString():
     def __len__(self):
         return self.output_size
 
+    def __add__(self, other):
+        self.set_ouput_string()
+        return self.output_string + '{}'.format(other)
+
     def echo(self, *args, **kwargs):
         return echo(self, *args, **kwargs)
 
