@@ -97,15 +97,15 @@ class echo():
 
 
 class FString():
-    def __init__(self, input_string, space=False, align='l', pad=' ', colors=[], xtras=[]):
+    def __init__(self, input_string, size=False, align='l', pad=' ', colors=[], fx=[]):
         self.input_string = ''
         self.append(input_string)
         self.pad = str(pad)[0]
 
-        self.output_size = int(space) if space else self.input_size	# desired len of output_string
+        self.output_size = int(size) if size else self.input_size	# desired len of output_string
         self.align = align										# l, r, cl, cr
         self.set_colors(colors) 								# grey, red, green, yellow, blue, magenta, cyan, white
-        self.xtras = xtras										# bold, dark, underline, blink, reverse, concealed
+        self.fx = fx										# bold, dark, underline, blink, reverse, concealed
 
     def append(self, string):
         self.input_string = self.input_string + '{}'.format(string)
@@ -178,9 +178,9 @@ class FString():
         uno, due, tre = self.output_string, self.small_pad, self.big_pad
         # ASSUME "l" to avoid nasty fail...
         # but I should Raise an Exception if I pass invalid value "w"
-        if self.align == 'cl' or self.align == 'c':
+        if self.align == 'cl' or self.align == 'lc' or self.align == 'c':
             uno, due, tre = self.small_pad, self.output_string, self.big_pad
-        elif self.align == 'cr':
+        elif self.align == 'cr' or self.align == 'rc':
             uno, due, tre = self.big_pad, self.output_string, self.small_pad
         elif self.align == 'r':
             uno, due, tre = self.small_pad, self.big_pad, self.output_string
@@ -189,9 +189,9 @@ class FString():
 
     def color_output_string(self):
         if len(self.colors) == 1:
-            self.output_string = colored(self.output_string, self.colors[0], attrs=self.xtras)
+            self.output_string = colored(self.output_string, self.colors[0], attrs=self.fx)
         elif len(self.colors) == 2:
-            self.output_string = colored(self.output_string, self.colors[0], self.colors[1], attrs=self.xtras)
+            self.output_string = colored(self.output_string, self.colors[0], self.colors[1], attrs=self.fx)
 
 
 def clear_screen():
@@ -242,7 +242,7 @@ def replace_special_chars(t):
         # 'Äƒ': 'ă',
 
         'Ã¢': 'â',
-        'Ã¡': 'á',
+        'Ã¡': 'á', 'ã¡': 'á',
         'Ã ': 'à',
         'Ã¤': 'ä',
         'Å£': 'ã',
@@ -250,9 +250,9 @@ def replace_special_chars(t):
         # 'ÅŸ': 'ß',
 
         'ÃŸ': 'ß',
-        'Ã©': 'é',
+        'Ã©': 'é', 'ã©': 'é',
         'Ã¨': 'è',
-        'Ã' : 'É', # 'Ã‰': 'É',
+        'Ã' : 'É', 'Ã‰': 'É',
         'Ã­': 'í',
         'Ã': 'Í',
 
