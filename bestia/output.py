@@ -89,9 +89,9 @@ class echo():
 
         self.set_pause()
         self.set_colors()
-        s()
+        self()
         
-    def __call__(s):
+    def __call__(self):
         sleep(self.time_factor * self.pause)
         if type(self.output) == dict:
             input('im a dict')
@@ -99,7 +99,7 @@ class echo():
         else:
             print(self.output)
 
-    def set_colors(s):
+    def set_colors(self):
         self.fg_color = None
         self.bg_color = None
 
@@ -114,7 +114,7 @@ class echo():
             self.bg_color = self.input_colors[1]
             self.output = colored(self.output, self.fg_color, 'on_' + self.bg_color)
 
-    def set_pause(s):
+    def set_pause(self):
         self.pause = 0.0
         for arg in self.input_args:
             if type(arg) is int or type(arg) is float:
