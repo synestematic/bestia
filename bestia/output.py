@@ -13,16 +13,13 @@ from bestia.iterate import indexes_from_string, random_unique_items_from_list, s
 CHAR_SIZE = getsizeof('A')
 ENCODING = 'utf-8'
 
-
 def tty_size():
     rows, columns = popen('stty size', 'r').read().split()
     size = (int(rows), int(columns))
     return size
 
-
 def tty_rows():
     return tty_size()[0]
-
 
 def tty_columns():
     return tty_size()[1]
@@ -30,12 +27,43 @@ def tty_columns():
 
 class Row():
     def __init__(self, *input_strings, width=None):
-        self.output_string = ''
-        for string in input_strings:
-            if type(string) != FString:
-                string = FString(string)
-            self.output_string = self.output_string + '{}'.format(string)
+
         self.fixed_width = width
+        self.output_string = ''
+        self.input_strings = list(input_strings)
+
+        # convert all to fstrings
+        for i, string in enumerate(self.input_strings):
+            if type(string) != FString:
+                self.input_strings[i] = FString(string)
+
+        # calculate TOTAL size left for adaptive strings 
+        total_leftover_size = self.width()
+        for fstring in self.input_strings:
+            if fstring._explicit_size:
+                # what if my static strings take away more size than i have instantiated?
+                total_leftover_size -= fstring.output_size
+
+        # count adaptive strings
+        adaptive_strings_count = len([s for s in self.input_strings if not s._explicit_size])
+                
+        # calculate INDIVIDUAL size for each adaptive string + any leftover spaces
+        if adaptive_strings_count:
+            adaptive_strings_size, leftover_spaces = divmod(total_leftover_size, adaptive_strings_count)
+
+        # echo("ROW TOTAL WIDTH: {}".format(self.width()))
+        # echo("WIDTH[{}] left for {} adaptive strings = {} + {}".format(total_leftover_size, adaptive_strings_count, adaptive_strings_size, leftover_spaces), 'blue')
+
+        # resize adaptive strings
+        for i, fstring in enumerate(self.input_strings):
+            if not fstring._explicit_size:
+                self.input_strings[i].resize(size=adaptive_strings_size)
+        # WHAT ABOUT leftovers_spaces???
+
+        # build output_string
+        for string in self.input_strings:
+            self.output_string = self.output_string + '{}'.format(string)
+        
 
     def width(self):
         return self.fixed_width if self.fixed_width else tty_columns()
@@ -50,7 +78,6 @@ class Row():
 
     def __str__(self):
         return self.output_string
-
 
 class echo():
 
@@ -76,7 +103,7 @@ class echo():
         s.fg_color = None
         s.bg_color = None
 
-        available_colors = ( 'red', 'green', 'yellow', 'blue', 'grey', 'white', 'cyan', 'magenta' )
+        available_colors = ('red', 'green', 'yellow', 'blue', 'grey', 'white', 'cyan', 'magenta')
         s.input_colors = [arg for arg in s.input_args if arg in available_colors]
 
         if len(s.input_colors) < 1:
@@ -98,14 +125,22 @@ class echo():
 
 class FString():
     def __init__(self, input_string, size=False, align='l', pad=' ', colors=[], fx=[]):
-        self.input_string = ''
-        self.append(input_string)
-        self.pad = str(pad)[0]
 
-        self.output_size = int(size) if size else self.input_size	# desired len of output_string
-        self.align = align										# l, r, cl, cr
-        self.set_colors(colors) 								# grey, red, green, yellow, blue, magenta, cyan, white
-        self.fx = fx										# bold, dark, underline, blink, reverse, concealed
+        self._explicit_size = True if size else False
+
+        self.input_string = ''
+
+        self.append(input_string)
+        self.resize(size)
+
+        self.pad = str(pad)[0]      # improve this shit
+
+        self.align = align			# l, r, cl, cr
+        self.set_colors(colors) 	# grey, red, green, yellow, blue, magenta, cyan, white
+        self.fx = fx				# bold, dark, underline, blink, reverse, concealed
+
+    def resize(self, size=None):
+        self.output_size = int(size) if size else self.input_size # desired len of output_string
 
     def append(self, string):
         self.input_string = self.input_string + '{}'.format(string)
@@ -285,6 +320,7 @@ def replace_special_chars(t):
 
 
 def obfuscate_random_chars(input_string, amount=None, obfuscator='_'):
+    ''' spaces should not be part of the decision '''
     amount = len(input_string) - 4 if not amount or amount >= len(input_string) else amount
 
     string_as_list = string_to_list(input_string)
@@ -294,4 +330,28 @@ def obfuscate_random_chars(input_string, amount=None, obfuscator='_'):
         string_as_list[random_index] = obfuscator
 
     return list_to_string(string_as_list)
+
+if __name__ == "__main__":
+
+    COLS = None
+
+    row = Row(
+        FString('ID', size=3, colors=['cyan'], align='l'),
+        FString('TREASURE', colors=['yellow'], pad='-'),
+        FString('SIZE', size=7, align='r', pad='.'),
+        # 'asd',
+        FString('SDRS', size=5, colors=['green'], align='r', pad='*'),
+        FString('LCHS', size=5, colors=['red'], align='r', pad='*'),
+        FString('CATEGORIES', size=None, align='r', pad='+'),
+        width=COLS
+    )
+
+    # echo('='*COLS, 'blue')
+    row.echo()
+    # echo('='*COLS, 'blue')
+
+    # f = FString('f', size=3, pad='*', align='r', colors=['red', 'green'], fx=['blink'])
+    # f.echo()
+    # f.resize(4)
+    # f.echo()
 
