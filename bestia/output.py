@@ -83,44 +83,44 @@ class echo():
 
     time_factor = 1
 
-    def __init__(s, input='', *args):
-        s.output = input
-        s.input_args = args
+    def __init__(self, input='', *args):
+        self.output = input
+        self.input_args = args
 
-        s.set_pause()
-        s.set_colors()
+        self.set_pause()
+        self.set_colors()
         s()
         
     def __call__(s):
-        sleep(s.time_factor * s.pause)
-        if type(s.output) == dict:
+        sleep(self.time_factor * self.pause)
+        if type(self.output) == dict:
             input('im a dict')
-            pprint(colored(s.output, 'red'))
+            pprint(colored(self.output, 'red'))
         else:
-            print(s.output)
+            print(self.output)
 
     def set_colors(s):
-        s.fg_color = None
-        s.bg_color = None
+        self.fg_color = None
+        self.bg_color = None
 
         available_colors = ('red', 'green', 'yellow', 'blue', 'grey', 'white', 'cyan', 'magenta')
-        s.input_colors = [arg for arg in s.input_args if arg in available_colors]
+        self.input_colors = [arg for arg in self.input_args if arg in available_colors]
 
-        if len(s.input_colors) < 1:
+        if len(self.input_colors) < 1:
             return
-        elif len(s.input_colors) == 1:
-            s.fg_color = s.input_colors[0]
-            s.output = colored(s.output, s.fg_color)
-        elif len(s.input_colors) > 1:
-            s.fg_color = s.input_colors[0]
-            s.bg_color = s.input_colors[1]
-            s.output = colored(s.output, s.fg_color, 'on_' + s.bg_color)
+        elif len(self.input_colors) == 1:
+            self.fg_color = self.input_colors[0]
+            self.output = colored(self.output, self.fg_color)
+        elif len(self.input_colors) > 1:
+            self.fg_color = self.input_colors[0]
+            self.bg_color = self.input_colors[1]
+            self.output = colored(self.output, self.fg_color, 'on_' + self.bg_color)
 
     def set_pause(s):
-        s.pause = 0.0
-        for arg in s.input_args:
+        self.pause = 0.0
+        for arg in self.input_args:
             if type(arg) is int or type(arg) is float:
-                s.pause = arg
+                self.pause = arg
 
 
 class FString():
