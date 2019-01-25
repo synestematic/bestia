@@ -106,9 +106,7 @@ class echo():
         available_colors = ('red', 'green', 'yellow', 'blue', 'grey', 'white', 'cyan', 'magenta')
         self.input_colors = [arg for arg in self.input_args if arg in available_colors]
 
-        if len(self.input_colors) < 1:
-            return
-        elif len(self.input_colors) == 1:
+        if len(self.input_colors) == 1:
             self.fg_color = self.input_colors[0]
             self.output = colored(self.output, self.fg_color)
         elif len(self.input_colors) > 1:
@@ -124,7 +122,7 @@ class echo():
 
 
 class FString():
-    def __init__(self, input_string, size=False, align='l', pad=' ', colors=[], fx=[]):
+    def __init__(self, input_string, size=False, align='l', pad=None, colors=[], fx=[]):
 
         self._explicit_size = True if size else False
 
@@ -133,7 +131,7 @@ class FString():
         self.append(input_string)
         self.resize(size)
 
-        self.pad = str(pad)[0]      # improve this shit
+        self.pad = str(pad)[0] if pad else ' '      # improve this shit
 
         self.align = align			# l, r, cl, cr
         self.set_colors(colors) 	# grey, red, green, yellow, blue, magenta, cyan, white
