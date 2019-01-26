@@ -64,7 +64,6 @@ class Row():
         for string in self.input_strings:
             self.output_string = self.output_string + '{}'.format(string)
         
-
     def width(self):
         return self.fixed_width if self.fixed_width else tty_columns()
 
