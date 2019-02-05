@@ -31,5 +31,16 @@ def list_to_string(lst):
         string = string + c
     return string
 
+def looped_list_item(i, vector):
+    ''' returns vector[i] but loops thru vector if i > len(vector)
+        ...works also for large negative i's
+        recursion is NOT a good approach for very large i's
+    '''
+    count = len(vector)
+    if abs(i) < count:
+        return vector[i]
+    _, remainder = divmod(i, count)
+    return vector[remainder]
+
 if __name__ == '__main__':
     pass
