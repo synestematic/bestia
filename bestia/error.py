@@ -1,6 +1,9 @@
-class CUrlMissing(Exception):
+class FileBinMissing(Exception):
     pass
 
-class CUrlFailed(Exception):
+class CurlBinMissing(Exception):
+    pass
+
+class CurlFailed(Exception):
     pass
 
