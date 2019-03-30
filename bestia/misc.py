@@ -15,6 +15,7 @@ def copy_to_clipboard(text):
 
 
 def file_type(file):
+    ''' returns output of file command '''
     try:
         return magic.from_file(file)
     except:
@@ -22,23 +23,25 @@ def file_type(file):
 
 
 def say(text):
-    say_binary = command_output('which', 'say')
+    ''' mainly intended for use in DARWIN systems '''
+    say_binary = command_output('which', 'say').decode().strip()
     if not say_binary:
-        return
-    else:
-        say_binary = say_binary.decode().strip()
-        say_command = '{} \'{}\''.format(say_binary, text)
-        return system(say_command)
+        return False
+    say_binary = say_binary.decode().strip()
+    say_command = '{} \'{}\''.format(say_binary, text)
+    return system(say_command)
 
 
 def command_output(*args):
-    ''' returns command output as bytes, decode() as needed '''
+    ''' returns command output as bytes, decode() if needed '''
     try:
-        return check_output(args)
-    except CalledProcessError as x:
-        return None
+        output = check_output(args)
+    except CalledProcessError:
+        output = b''
+    finally:
+        return output
 
 
 def abort(message, pause=1.5):
     echo(message, pause, 'red')
-    sysexit()
+    sysexit(-1)

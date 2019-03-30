@@ -1,10 +1,12 @@
 from os import system, remove, path
-from subprocess import check_output, CalledProcessError
 from uuid import uuid4
 
+from bestia.misc import command_output
 from bestia.output import echo, ENCODING
 from bestia.iterate import random_unique_items_from_list
 from bestia.error import *
+
+_CURL_PATH = command_output('which', 'curl').decode().strip()
 
 _WEB_BROWSERS = (
     'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36', # chrome
@@ -17,19 +19,6 @@ _WEB_BROWSERS = (
 
 def __random_browser():
     return random_unique_items_from_list(_WEB_BROWSERS, amount=1)[0]
-
-def command_output(*args):
-    output = ''
-    try:
-        output = check_output(args)
-        if output:
-            output = output.decode().strip()
-    except CalledProcessError:
-        pass
-    finally:
-        return output
-
-_CURL_PATH = command_output('which', 'curl')
 
 def http_get(url, browser='', credentials=(), follow_redirects=True, silent=True, store=None, raw=False):
     ''' if store:
@@ -90,9 +79,9 @@ if __name__ == '__main__':
     # /anaconda3/bin/curl "https://proxbea.com/s/?q=Php&page=0&orderby=99" --user-agent "Mozilla/5.0 (compatible, MSIE 11, Windows NT 6.3; Trident/7.0; rv:11.0) like Gecko" --output /tmp/9e75e7be737c4821bec37a1e71348aec --location --silent
 
     pb = 'https://www.google.com'
-    pb = 'https://thepiratebay-proxylist.org/'
+    # pb = 'https://thepiratebay-proxylist.org/'
 
-    pb = 'https://proxbea.com/s/?q=Php&page=0&orderby=99'
+    # pb = 'https://proxbea.com/s/?q=Php&page=0&orderby=99'
     # r = http_get_old(pb)
     # echo(r, 'green')
 
