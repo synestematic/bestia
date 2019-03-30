@@ -40,5 +40,4 @@ Installing bestia on your system will also install the following pip libraries:
 
 * pyperclip
 * python-magic
-* requests
 * termcolor

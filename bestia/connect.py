@@ -1,7 +1,5 @@
 from os import system, remove, path
 from subprocess import check_output, CalledProcessError
-import requests
-from time import sleep
 from uuid import uuid4
 
 from bestia.output import echo, ENCODING
@@ -33,37 +31,6 @@ def command_output(*args):
 
 _CURL_PATH = command_output('which', 'curl')
 
-def http_get_old(url, retries=3, verbose=False, browser='Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.106 Safari/537.36'):
-    try:
-        headers = {
-            'User-Agent': browser,
-            # 'Referer': referer,
-            # 'Cookie': '__cfduid=dc007f70cc6e84fe5cf05b13786ac361536178218; _ga=GA1.2.1741958857.1512378240; _gid=GA1.2.1955541911.1536178240; ppu_main_b1f57639c83dbef948eefa8b64183e1e=1; ppu_sub_b1f57639c83dbef9488abc6b64183e1e=1; _gat=1'
-        }
-        r = requests.get(url, headers=headers)
-        if r.status_code == 200:
-            html = r.text
-            # echo(html, 'red')
-            # input()
-            if type(html) != str:
-                if verbose:
-                    echo('http request returned {} insetad of <str>'.format(type(html)), 'red')
-                return False
-            return html
-        else:
-            return False
-    except requests.exceptions.ConnectionError:
-        if retries < 1:
-            if verbose:
-                echo('Unable to connect', 'red')
-            return False
-        else:
-            if verbose:
-                echo('No connection, {} attempts left...'.format(retries), 'red')
-            sleep(5)
-            http_get(url, retries=retries-1, verbose=verbose, browser=browser)
-
-
 def http_get(url, browser='', credentials=(), follow_redirects=True, silent=True, store=None, raw=False):
     ''' if store:
             return True/False
@@ -72,6 +39,9 @@ def http_get(url, browser='', credentials=(), follow_redirects=True, silent=True
     '''
     if not _CURL_PATH:
         raise CUrlMissing('cUrl required, please install')
+
+    if '\'' in url or '\"' in url:
+        input('THIS URL SUCKS: {}'.format(url))
 
     # HOW DO I PROPERLY ENCODE THIS?
     # DO NOT USE EXTERNAL LIBRARY FOR IT
@@ -117,7 +87,7 @@ def http_get(url, browser='', credentials=(), follow_redirects=True, silent=True
 
 if __name__ == '__main__':
 
-# /anaconda3/bin/curl "https://proxbea.com/s/?q=Php&page=0&orderby=99" --user-agent "Mozilla/5.0 (compatible, MSIE 11, Windows NT 6.3; Trident/7.0; rv:11.0) like Gecko" --output /tmp/9e75e7be737c4821bec37a1e71348aec --location --silent
+    # /anaconda3/bin/curl "https://proxbea.com/s/?q=Php&page=0&orderby=99" --user-agent "Mozilla/5.0 (compatible, MSIE 11, Windows NT 6.3; Trident/7.0; rv:11.0) like Gecko" --output /tmp/9e75e7be737c4821bec37a1e71348aec --location --silent
 
     pb = 'https://www.google.com'
     pb = 'https://thepiratebay-proxylist.org/'
