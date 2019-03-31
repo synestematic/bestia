@@ -49,6 +49,6 @@ def file_type(file):
         if not _FILE_BIN:
             raise FileBinMissing('file command NOT found, please install')
         return magic.from_file(file)
-    except as x:
+    except Exception as x:
         return str(x)
 
