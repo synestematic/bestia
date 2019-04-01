@@ -20,29 +20,33 @@ _WEB_BROWSERS = (
 def __random_browser():
     return random_unique_items_from_list(_WEB_BROWSERS, amount=1)[0]
 
+def __quoted(s):
+    return '"{}"'.format(s)
+
 def http_get(url, browser='', credentials=(), follow_redirects=True, silent=True, store=None, raw=False):
-    ''' if store:
+    ''' performs HTTP GET requests using CURL command
+    
+        if store:
             return True/False
         else:
-            return data/False
+            return response_data/False
     '''
     if not _CURL_BIN:
         raise CurlBinMissing('curl command NOT found, please install')
 
+    request_data = None
+    if '?' in url:
+        url, request_data = url.split('?')
+
     if '\'' in url or '\"' in url:
         input('THIS URL SUCKS: {}'.format(url))
 
-    # HOW DO I PROPERLY ENCODE THIS?
-    # DO NOT USE EXTERNAL LIBRARY FOR IT
-    # https://www.systutorials.com/241492/how-to-encode-spaces-in-curl-get-request-url-on-linux/
-    # WHAT IF URL HAS " in IT?
-    url = '"{}"'.format(url)
     out_file = path.join('/', 'tmp', uuid4().hex) if not store else store
     browser = __random_browser() if not browser else browser
 
     curl_command = [
-        _CURL_BIN, url,
-        '--user-agent', '"{}"'.format(browser),
+        _CURL_BIN, '-G', __quoted(url),
+        '--user-agent', __quoted(browser),
         '--output', out_file,
     ]
 
@@ -56,8 +60,21 @@ def http_get(url, browser='', credentials=(), follow_redirects=True, silent=True
     if silent:
         curl_command.append('--silent')
 
+    if request_data:
+
+        if '&' in request_data:
+            params = request_data.split('&')
+            for param in params:
+                curl_command.append('--data-urlencode')
+                curl_command.append(__quoted(param))
+
+        else:
+            curl_command.append('--data-urlencode')
+            curl_command.append(__quoted(request_data))
+
+
     curl_command = ' '.join(curl_command)
-    # input(curl_command)
+    input(echo(curl_command, 'cyan'))
     rc = system(curl_command)
     if rc != 0: # system when NOT want to store cmd output to var
         raise CurlFailed('curl returned: {}'.format(rc))
@@ -66,35 +83,24 @@ def http_get(url, browser='', credentials=(), follow_redirects=True, silent=True
         # stored to file, no need to return data
         return True
 
-    data = bytearray()
+    response_data = bytearray()
     with open(out_file, 'rb') as stream:
         for b in stream.read():
-            data.append(b)
+            response_data.append(b)
+
     remove(out_file)
-    return data if raw else data.decode(ENCODING).strip()
+    return response_data if raw else response_data.decode(ENCODING).strip()
 
 
 if __name__ == '__main__':
 
-    # /anaconda3/bin/curl "https://proxbea.com/s/?q=Php&page=0&orderby=99" --user-agent "Mozilla/5.0 (compatible, MSIE 11, Windows NT 6.3; Trident/7.0; rv:11.0) like Gecko" --output /tmp/9e75e7be737c4821bec37a1e71348aec --location --silent
 
-    pb = 'https://www.google.com'
-    # pb = 'https://thepiratebay-proxylist.org/'
-
-    # pb = 'https://proxbea.com/s/?q=Php&page=0&orderby=99'
-    # r = http_get_old(pb)
-    # echo(r, 'green')
+    pb = 'http://localhost?a=4 4&user=bla'
+    pb = 'http://localhost?a=4 678'
+    pb = 'http://localhost'
+    pb = 'http://localhost/sam/target.php?do=login&da=123'
 
     r = http_get(pb)
     echo(r, 'blue')
-
-
-    # r = http_get_old('http://localhost/sam/target.php?do=login')
-
-    # r = http_get_old('http://releases.ubuntu.com/18.04.1.0/ubuntu-18.04.1.0-live-server-amd64.iso?_ga=2.37110947.2086347288.1548630714-895763213.1548630714')
-
-    # r = http_get_old('https://dl2018.sammobile.com/premium/NV1aQy8rLD1WLDc8QDcoQUdYLzwuMEcqNyVUKDU8JFoOARlJUyA5RSRbVkc1UlNGQF9aQFlJThwXGwBNSVlbRUVbUEBa/A530FXXU3BRK3_A530FOGC3BRK1_FTM.zip')
-
-    # echo(r, 'red')
 
 
