@@ -52,11 +52,5 @@ def file_type(file):
     return std_out[ignore_first_chars:].strip()
 
 
-
-
-
-
-
 if __name__ == '__main__':
-    print(file_type('/Users/Shared/sulfur_testing/oobe.py'))
-    print(file_type('Jenkinsfile'))
+    pass
