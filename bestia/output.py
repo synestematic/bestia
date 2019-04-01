@@ -14,16 +14,18 @@ CHAR_SIZE = getsizeof('A')
 ENCODING = 'utf-8'
 
 def tty_size():
-    rows, columns = popen('stty size', 'r').read().split()
-    size = (int(rows), int(columns))
-    return size
+    ''' dinamically returns size of current terminal  '''
+    proc = popen('stty size', 'r')
+    rows, columns = proc.read().split()
+    return (int(rows), int(columns))
 
 def tty_rows():
+    ''' dinamically returns rows of current terminal '''
     return tty_size()[0]
 
 def tty_columns():
+    ''' dinamically returns columns of current terminal '''
     return tty_size()[1]
-
 
 class Row():
     def __init__(self, *input_strings, width=None):

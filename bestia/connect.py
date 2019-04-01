@@ -74,7 +74,7 @@ def http_get(url, browser='', credentials=(), follow_redirects=True, silent=True
 
 
     curl_command = ' '.join(curl_command)
-    input(echo(curl_command, 'cyan'))
+    # input(echo(curl_command, 'cyan'))
     rc = system(curl_command)
     if rc != 0: # system when NOT want to store cmd output to var
         raise CurlFailed('curl returned: {}'.format(rc))
@@ -85,8 +85,9 @@ def http_get(url, browser='', credentials=(), follow_redirects=True, silent=True
 
     response_data = bytearray()
     with open(out_file, 'rb') as stream:
-        for b in stream.read():
-            response_data.append(b)
+        response_data = stream.read()
+        # for b in stream.read():
+        #     response_data.append(b)
 
     remove(out_file)
     return response_data if raw else response_data.decode(ENCODING).strip()
