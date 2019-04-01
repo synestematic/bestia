@@ -1,3 +1,9 @@
+class SttyBinMissing(Exception):
+    pass
+
+class SayBinMissing(Exception):
+    pass
+
 class FileBinMissing(Exception):
     pass
 
@@ -6,4 +12,3 @@ class CurlBinMissing(Exception):
 
 class CurlFailed(Exception):
     pass
-

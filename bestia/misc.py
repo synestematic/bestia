@@ -1,12 +1,9 @@
 from os import system
-from sys import exit as sysexit
 from subprocess import check_output, CalledProcessError
 import pyperclip
 import magic
 
-from bestia.output import echo
 from bestia.error import *
-
 
 def command_output(*args):
     ''' returns command output as bytes, decode() if needed '''
@@ -18,12 +15,8 @@ def command_output(*args):
         return output
 
 
-def abort(message, pause=1.5):
-    echo(message, pause, 'red')
-    sysexit(-1)
-
-
 def copy_to_clipboard(text):
+    ''' tries to copy text to clipboard '''
     try:
         pyperclip.copy(text)
         return True
@@ -31,13 +24,15 @@ def copy_to_clipboard(text):
         return False
 
 
+_SAY_BIN = command_output('which', 'say').decode().strip()
+
 def say(text):
-    ''' mainly intended for use in DARWIN systems '''
-    say_binary = command_output('which', 'say').decode().strip()
-    if not say_binary:
-        return False
-    say_binary = say_binary.decode().strip()
-    say_command = '{} \'{}\''.format(say_binary, text)
+    ''' says text using accessibility voice-over feature
+        mainly intended for use in DARWIN systems
+    '''
+    if not _SAY_BIN:
+        raise SayBinMissing('say bin NOT found')
+    say_command = '{} \'{}\''.format(_SAY_BIN, text)
     return system(say_command)
 
 
@@ -47,7 +42,7 @@ def file_type(file):
     ''' returns output of file command '''
     try:
         if not _FILE_BIN:
-            raise FileBinMissing('file command NOT found, please install')
+            raise FileBinMissing('file bin NOT found')
         return magic.from_file(file)
     except Exception as x:
         return str(x)

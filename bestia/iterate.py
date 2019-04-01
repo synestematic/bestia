@@ -51,6 +51,3 @@ def looped_list_item(i, vector):
 if __name__ == '__main__':
     pass
 
-    l = '1234567890'
-    print(indexes_from_string(l))
-

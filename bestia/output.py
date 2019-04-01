@@ -1,4 +1,4 @@
-from sys import getsizeof, exit
+from sys import getsizeof
 from os.path import join as PATH_JOIN
 from os import sep as PATH_SEPARATOR
 from os import popen
@@ -9,13 +9,20 @@ from unicodedata import normalize
 from termcolor import colored
 
 from bestia.iterate import indexes_from_string, random_unique_items_from_list, string_to_list, list_to_string
+from bestia.misc import command_output
+from bestia.error import *
 
 CHAR_SIZE = getsizeof('A')
 ENCODING = 'utf-8'
 
+_STTY_BIN = command_output('which', 'stty').decode().strip()
+
 def tty_size():
     ''' dinamically returns size of current terminal  '''
-    proc = popen('stty size', 'r')
+    if not _STTY_BIN:
+        raise SttyBinMissing('stty bin NOT found')
+
+    proc = popen('{} size'.format(_STTY_BIN), 'r')
     rows, columns = proc.read().split()
     return (int(rows), int(columns))
 

@@ -32,7 +32,7 @@ def http_get(url, browser='', credentials=(), follow_redirects=True, silent=True
             return response_data/False
     '''
     if not _CURL_BIN:
-        raise CurlBinMissing('curl command NOT found, please install')
+        raise CurlBinMissing('curl bin NOT found')
 
     request_data = None
     if '?' in url:
