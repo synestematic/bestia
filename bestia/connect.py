@@ -2,7 +2,7 @@ from os import system, remove, path
 from uuid import uuid4
 
 from bestia.misc import command_output
-from bestia.output import echo, ENCODING
+from bestia.output import echo, dquoted, ENCODING
 from bestia.iterate import random_unique_items_from_list
 from bestia.error import *
 
@@ -16,11 +16,10 @@ _WEB_BROWSERS = {
 }
 
 def __random_browser():
+    ''' returns random browser for basic anti-crawler prevention '''
     allowed_browsers = [v for k, v in _WEB_BROWSERS.items() if k != 'IE11'] # IE11 gets banned on several sites...
     return random_unique_items_from_list(allowed_browsers, amount=1)[0]
 
-def __quoted(s):
-    return '"{}"'.format(s)
 
 _CURL_BIN = command_output('which', 'curl').decode().strip()
 
@@ -44,8 +43,8 @@ def http_get(url, browser='', credentials=(), follow_redirects=True, silent=True
     browser = __random_browser() if not browser else browser
 
     curl_command = [
-        _CURL_BIN, '-G', __quoted(url),
-        '--user-agent', __quoted(browser),
+        _CURL_BIN, '-G', dquoted(url),
+        '--user-agent', dquoted(browser),
         '--output', out_file,
     ]
 
@@ -64,10 +63,10 @@ def http_get(url, browser='', credentials=(), follow_redirects=True, silent=True
             params = request_data.split('&')
             for param in params:
                 curl_command.append('--data-urlencode')
-                curl_command.append(__quoted(param))
+                curl_command.append(dquoted(param))
         else:
             curl_command.append('--data-urlencode')
-            curl_command.append(__quoted(request_data))
+            curl_command.append(dquoted(request_data))
 
 
     curl_command = ' '.join(curl_command)
@@ -76,7 +75,6 @@ def http_get(url, browser='', credentials=(), follow_redirects=True, silent=True
     if rc != 0: # system when NOT want to store cmd output to var
         raise CurlFailed('curl returned: {}'.format(rc))
 
-    response_data = bytearray()
     with open(out_file, 'rb') as stream:
         response_data = stream.read()
 

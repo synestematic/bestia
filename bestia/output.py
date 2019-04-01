@@ -15,6 +15,9 @@ from bestia.error import *
 CHAR_SIZE = getsizeof('A')
 ENCODING = 'utf-8'
 
+def dquoted(s):
+    return '"{}"'.format(s)
+
 _STTY_BIN = command_output('which', 'stty').decode().strip()
 
 def tty_size():
