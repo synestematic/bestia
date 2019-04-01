@@ -39,5 +39,4 @@ bestia is a library of functions and classes designed to help you build dynamic 
 Installing bestia on your system will also install the following pip libraries:
 
 * pyperclip
-* python-magic
 * termcolor

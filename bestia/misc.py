@@ -1,7 +1,6 @@
-from os import system
+from os import system, popen
 from subprocess import check_output, CalledProcessError
 import pyperclip
-import magic
 
 from bestia.error import *
 
@@ -40,10 +39,24 @@ _FILE_BIN = command_output('which', 'file').decode().strip()
 
 def file_type(file):
     ''' returns output of file command '''
-    try:
-        if not _FILE_BIN:
-            raise FileBinMissing('file bin NOT found')
-        return magic.from_file(file)
-    except Exception as x:
-        return str(x)
+    if not _FILE_BIN:
+        raise FileBinMissing('file bin NOT found')
 
+    proc = popen('{} {}'.format(_FILE_BIN, file), 'r')
+
+    std_out = proc.read()
+    if proc.close() is not None: # return None on success
+        return False
+
+    ignore_first_chars = len(file) + 2
+    return std_out[ignore_first_chars:].strip()
+
+
+
+
+
+
+
+if __name__ == '__main__':
+    print(file_type('/Users/Shared/sulfur_testing/oobe.py'))
+    print(file_type('Jenkinsfile'))

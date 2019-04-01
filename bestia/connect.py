@@ -24,12 +24,10 @@ def __quoted(s):
     return '"{}"'.format(s)
 
 def http_get(url, browser='', credentials=(), follow_redirects=True, silent=True, store=None, raw=False):
-    ''' performs HTTP GET requests using CURL command
-    
-        if store:
-            return True/False
-        else:
-            return response_data/False
+    ''' performs HTTP GET requests using local CURL command
+        HTTP response data is always stored into a file which can be kept or discarded since
+        this function returns the contents anyway.
+        can return data as raw bytes or as utf-8 encoded string
     '''
     if not _CURL_BIN:
         raise CurlBinMissing('curl bin NOT found')
@@ -61,13 +59,11 @@ def http_get(url, browser='', credentials=(), follow_redirects=True, silent=True
         curl_command.append('--silent')
 
     if request_data:
-
         if '&' in request_data:
             params = request_data.split('&')
             for param in params:
                 curl_command.append('--data-urlencode')
                 curl_command.append(__quoted(param))
-
         else:
             curl_command.append('--data-urlencode')
             curl_command.append(__quoted(request_data))
@@ -79,17 +75,13 @@ def http_get(url, browser='', credentials=(), follow_redirects=True, silent=True
     if rc != 0: # system when NOT want to store cmd output to var
         raise CurlFailed('curl returned: {}'.format(rc))
 
-    if store:
-        # stored to file, no need to return data
-        return True
-
     response_data = bytearray()
     with open(out_file, 'rb') as stream:
         response_data = stream.read()
-        # for b in stream.read():
-        #     response_data.append(b)
 
-    remove(out_file)
+    if not store:
+        remove(out_file)
+
     return response_data if raw else response_data.decode(ENCODING).strip()
 
 
