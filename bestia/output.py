@@ -4,8 +4,6 @@ from os import sep as PATH_SEPARATOR
 from os import popen
 from time import sleep
 
-from pprint import pprint
-from unicodedata import normalize
 from termcolor import colored
 
 from bestia.iterate import indexes_from_string, random_unique_items_from_list, string_to_list, list_to_string
@@ -104,11 +102,7 @@ class echo():
         
     def __call__(self):
         sleep(self.time_factor * self.pause)
-        if type(self.output) == dict:
-            input('im a dict')
-            pprint(colored(self.output, 'red'))
-        else:
-            print(self.output)
+        print(self.output)
 
     def set_colors(self):
         self.fg_color = None
