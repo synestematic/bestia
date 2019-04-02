@@ -239,10 +239,16 @@ class FString():
 
 
 def clear_screen():
-    echo('\033[H\033[J')
+    ''' clears terminal '''
+    print('\033[H\033[J')
 
 
 def expand_seconds(input_seconds, output_string=False):
+    ''' expands input_seconds into a dict with as less keys as needed: 
+            seconds, minutes, hours, days, weeks
+
+        can also return in string format
+    '''
     expanded_time = {}
     expanded_time['minutes'], expanded_time['seconds'] = divmod(input_seconds, 60)
     expanded_time['hours'], expanded_time['minutes'] = divmod(expanded_time['minutes'], 60)
@@ -261,6 +267,9 @@ def expand_seconds(input_seconds, output_string=False):
 
 
 def remove_path(input_path, deepness=-1):
+    ''' removes directories from file path
+        supports various levels of dir removal
+    '''
     try:
         if deepness > 0:
             deepness = 0 - deepness
@@ -329,7 +338,7 @@ def replace_special_chars(t):
 
 
 def obfuscate_random_chars(input_string, amount=None, obfuscator='_'):
-    ''' spaces should not be part of the decision '''
+    ''' returns input string with amount of random chars obfuscated '''
     amount = len(input_string) - 4 if not amount or amount >= len(input_string) else amount
 
     string_as_list = string_to_list(input_string)
@@ -341,26 +350,9 @@ def obfuscate_random_chars(input_string, amount=None, obfuscator='_'):
     return list_to_string(string_as_list)
 
 if __name__ == "__main__":
-
-    COLS = None
-
-    row = Row(
-        FString('ID', size=3, colors=['cyan'], align='l'),
-        FString('TREASURE', colors=['yellow'], pad='-'),
-        FString('SIZE', size=7, align='r', pad='.'),
-        # 'asd',
-        FString('SDRS', size=5, colors=['green'], align='r', pad='*'),
-        FString('LCHS', size=5, colors=['red'], align='r', pad='*'),
-        FString('CATEGORIES', size=None, align='r', pad='+'),
-        width=COLS
-    )
-
-    # echo('='*COLS, 'blue')
-    row.echo()
-    # echo('='*COLS, 'blue')
-
-    # f = FString('f', size=3, pad='*', align='r', colors=['red', 'green'], fx=['blink'])
-    # f.echo()
-    # f.resize(4)
-    # f.echo()
+    s = '1234567890'
+    o = obfuscate_random_chars(s, obfuscator='*')
+    print(o)
+    # print(expand_seconds(1234567890))
+    # print(expand_seconds(1890, output_string=1))
 
