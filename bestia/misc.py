@@ -15,7 +15,7 @@ def command_output(*args):
 
 
 def copy_to_clipboard(text):
-    ''' tries to copy text to clipboard '''
+    ''' copies text to clipboard '''
     try:
         pyperclip.copy(text)
         return True
@@ -27,7 +27,7 @@ _SAY_BIN = command_output('which', 'say').decode().strip()
 
 def say(text):
     ''' says text using accessibility voice-over feature
-        mainly intended for use in DARWIN systems
+        mainly intended for use with DARWIN systems
     '''
     if not _SAY_BIN:
         raise SayBinMissing('say bin NOT found')
@@ -37,20 +37,18 @@ def say(text):
 
 _FILE_BIN = command_output('which', 'file').decode().strip()
 
-def file_type(file):
-    ''' returns output of file command '''
+def file_type(resource):
+    ''' returns file_type of input resource
+        requires installation of "file" binary
+    '''
     if not _FILE_BIN:
         raise FileBinMissing('file bin NOT found')
 
-    proc = popen('{} {}'.format(_FILE_BIN, file), 'r')
+    proc = popen('{} {}'.format(_FILE_BIN, resource), 'r')
 
     std_out = proc.read()
     if proc.close() is not None: # return None on success
         return False
 
-    ignore_first_chars = len(file) + 2
+    ignore_first_chars = len(resource) + 2
     return std_out[ignore_first_chars:].strip()
-
-
-if __name__ == '__main__':
-    pass

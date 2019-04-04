@@ -47,7 +47,3 @@ def looped_list_item(i, vector):
         return vector[i]
     _, remainder = divmod(i, count)
     return vector[remainder]
-
-if __name__ == '__main__':
-    pass
-

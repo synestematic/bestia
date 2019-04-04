@@ -342,11 +342,3 @@ def obfuscate_random_chars(input_string, amount=None, obfuscator='_'):
         string_as_list[random_index] = obfuscator
 
     return list_to_string(string_as_list)
-
-if __name__ == "__main__":
-    s = '1234567890'
-    o = obfuscate_random_chars(s, obfuscator='*')
-    print(o)
-    # print(expand_seconds(1234567890))
-    # print(expand_seconds(1890, output_string=1))
-

@@ -83,16 +83,3 @@ def http_get(url, browser='', credentials=(), follow_redirects=True, silent=True
 
     return response_data if raw else response_data.decode(ENCODING).strip()
 
-
-if __name__ == '__main__':
-
-
-    pb = 'http://localhost?a=4 4&user=bla'
-    pb = 'http://localhost?a=4 678'
-    pb = 'http://localhost'
-    pb = 'http://localhost/sam/target.php?do=login&da=123'
-
-    r = http_get(pb)
-    echo(r, 'blue')
-
-
