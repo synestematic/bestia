@@ -3,7 +3,7 @@ from uuid import uuid4
 
 from bestia.misc import command_output
 from bestia.output import echo, dquoted, ENCODING
-from bestia.iterate import random_unique_items_from_list
+from bestia.iterate import unique_random_items
 from bestia.error import *
 
 _WEB_BROWSERS = {
@@ -18,7 +18,7 @@ _WEB_BROWSERS = {
 def __random_browser():
     ''' returns random browser for basic anti-crawler prevention '''
     allowed_browsers = [v for k, v in _WEB_BROWSERS.items() if k != 'IE11'] # IE11 gets banned on several sites...
-    return random_unique_items_from_list(allowed_browsers, amount=1)[0]
+    return unique_random_items(allowed_browsers, amount=1)[0]
 
 
 _CURL_BIN = command_output('which', 'curl').decode().strip()

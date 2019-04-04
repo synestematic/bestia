@@ -8,27 +8,25 @@ bestia is a library of functions and classes designed to help you build dynamic 
 
 ### iterate.py
 * items_are_equal
-* indexes_from_string
-* random_unique_items_from_list
-* pop_random_item
 * string_to_list
-* list_to_string
+* iterable_to_string
+* unique_random_items
+* pop_random_item
 
 ### misc.py
+* command_output
 * copy_to_clipboard
 * file_type
 * say
-* command_output
-* abort
 
 ### output.py
 * tty_size
 * tty_rows
 * tty_columns
+* clear_screen
 * Row
 * echo
 * FString
-* clear_screen
 * expand_seconds
 * remove_path
 * replace_special_chars
@@ -36,7 +34,14 @@ bestia is a library of functions and classes designed to help you build dynamic 
 
 ***
 ## dependencies
-Installing bestia on your system will also install the following pip libraries:
+Installing bestia will install the following pip packages on your system:
 
 * pyperclip
 * termcolor
+
+The following binaries are also required:
+
+* file
+* curl
+* stty
+* say

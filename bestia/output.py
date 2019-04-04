@@ -6,17 +6,38 @@ from time import sleep
 
 from termcolor import colored
 
-from bestia.iterate import indexes_from_string, random_unique_items_from_list, string_to_list, list_to_string
+from bestia.iterate import string_to_list, iterable_to_string, unique_random_items
 from bestia.misc import command_output
 from bestia.error import *
 
 CHAR_SIZE = getsizeof('A')
 ENCODING = 'utf-8'
 
+
 def dquoted(s):
     return '"{}"'.format(s)
 
+
+def clear_screen():
+    ''' clears terminal '''
+    print('\033[H\033[J')
+
+
+def obfuscate_random_chars(input_string, amount=None, obfuscator='_'):
+    ''' returns input string with amount of random chars obfuscated '''
+    amount = len(input_string) - 4 if not amount or amount >= len(input_string) else amount
+
+    string_indexes = [i for i in range(len(str(input_string)))]
+
+    string_as_list = string_to_list(input_string)
+    for random_index in unique_random_items(string_indexes, amount):
+        string_as_list[random_index] = obfuscator
+
+    return iterable_to_string(string_as_list)
+
+
 _STTY_BIN = command_output('which', 'stty').decode().strip()
+
 
 def tty_size():
     ''' dinamically returns size of current terminal  '''
@@ -27,13 +48,16 @@ def tty_size():
     rows, columns = proc.read().split()
     return (int(rows), int(columns))
 
+
 def tty_rows():
     ''' dinamically returns rows of current terminal '''
     return tty_size()[0]
 
+
 def tty_columns():
     ''' dinamically returns columns of current terminal '''
     return tty_size()[1]
+
 
 class Row():
     def __init__(self, *input_strings, width=None):
@@ -61,9 +85,6 @@ class Row():
         if adaptive_strings_count:
             adaptive_strings_size, leftover_spaces = divmod(total_leftover_size, adaptive_strings_count)
 
-        # echo("ROW TOTAL WIDTH: {}".format(self.width()))
-        # echo("WIDTH[{}] left for {} adaptive strings = {} + {}".format(total_leftover_size, adaptive_strings_count, adaptive_strings_size, leftover_spaces), 'blue')
-
         # resize adaptive strings
         for i, fstring in enumerate(self.input_strings):
             if not fstring._explicit_size:
@@ -87,6 +108,7 @@ class Row():
 
     def __str__(self):
         return self.output_string
+
 
 class echo():
 
@@ -232,16 +254,11 @@ class FString():
             self.output_string = colored(self.output_string, self.colors[0], self.colors[1], attrs=self.fx)
 
 
-def clear_screen():
-    ''' clears terminal '''
-    print('\033[H\033[J')
-
-
 def expand_seconds(input_seconds, output_string=False):
     ''' expands input_seconds into a dict with as less keys as needed: 
             seconds, minutes, hours, days, weeks
 
-        can also return in string format
+        can also return string
     '''
     expanded_time = {}
     expanded_time['minutes'], expanded_time['seconds'] = divmod(input_seconds, 60)
@@ -279,32 +296,26 @@ def remove_path(input_path, deepness=-1):
 
 
 def replace_special_chars(t):
-    '''
-    https://www.i18nqa.com/debug/utf8-debug.html
-    some of the chars here im not sure are correct,
-    check dumbo dublat romana translation
+    ''' https://www.i18nqa.com/debug/utf8-debug.html
+        some of the chars here im not sure are correct,
+        check dumbo dublat romana translation
     '''
     special_chars = {
         # 'Äƒ': 'Ã',
         # 'Äƒ': 'ă',
-
         'Ã¢': 'â',
         'Ã¡': 'á', 'ã¡': 'á',
         'Ã ': 'à',
         'Ã¤': 'ä',
         'Å£': 'ã',
-
         # 'ÅŸ': 'ß',
-
         'ÃŸ': 'ß',
         'Ã©': 'é', 'ã©': 'é',
         'Ã¨': 'è',
         'Ã' : 'É', 'Ã‰': 'É',
         'Ã­': 'í',
         'Ã': 'Í',
-
         # 'Ã®': 'î',
-
         'Ã³': 'ó',
         'Ã“': 'Ó',
         'Ã¶': 'ö',
@@ -326,19 +337,7 @@ def replace_special_chars(t):
         '】': ']',
         'â€“': '-',
     }
+
     for o, i in special_chars.items():
         t = t.replace(o, i)
     return t
-
-
-def obfuscate_random_chars(input_string, amount=None, obfuscator='_'):
-    ''' returns input string with amount of random chars obfuscated '''
-    amount = len(input_string) - 4 if not amount or amount >= len(input_string) else amount
-
-    string_as_list = string_to_list(input_string)
-    string_indexes = indexes_from_string(input_string)
-
-    for random_index in random_unique_items_from_list(string_indexes, amount):
-        string_as_list[random_index] = obfuscator
-
-    return list_to_string(string_as_list)
