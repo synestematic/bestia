@@ -48,7 +48,10 @@ def file_type(resource):
 
     std_out = proc.read()
     if proc.close() is not None: # return None on success
-        return False
+        return None
+
+    if '(No such file or directory)' in std_out:
+        return None
 
     ignore_first_chars = len(resource) + 2
     return std_out[ignore_first_chars:].strip()
