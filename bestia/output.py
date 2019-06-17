@@ -1,4 +1,4 @@
-from sys import getsizeof
+from sys import getsizeof, stdout
 from os.path import join as PATH_JOIN
 from os import sep as PATH_SEPARATOR
 from os import popen
@@ -124,7 +124,8 @@ class echo():
         
     def __call__(self):
         sleep(self.time_factor * self.pause)
-        print(self.output)
+        retro_put_string(self.output)
+        # print(self.output)
 
     def set_colors(self):
         self.fg_color = None
@@ -341,3 +342,15 @@ def replace_special_chars(t):
     for o, i in special_chars.items():
         t = t.replace(o, i)
     return t
+
+
+def retro_put_char(char, lag=0):
+    sleep(lag)
+    stdout.write(char)
+    stdout.flush()
+
+
+def retro_put_string(string):
+    for c in [char for char in str(string)]:
+        retro_put_char(c, lag=0.0005)
+    retro_put_char('\n', lag=0.0005)
