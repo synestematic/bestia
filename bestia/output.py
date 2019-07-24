@@ -60,11 +60,14 @@ def tty_columns():
 
 
 class Row():
+
     def __init__(self, *input_strings, width=None):
 
         self.fixed_width = width
         self.output_string = ''
         self.input_strings = list(input_strings)
+
+        # input(self.width())
 
         # convert all to fstrings
         for i, string in enumerate(self.input_strings):
@@ -72,29 +75,60 @@ class Row():
                 self.input_strings[i] = FString(string)
 
         # calculate TOTAL size left for adaptive strings 
-        total_leftover_size = self.width()
+        leftover_size = self.width()
         for fstring in self.input_strings:
             if fstring._explicit_size:
-                # what if my static strings take away more size than i have instantiated?
-                total_leftover_size -= fstring.output_size
+                # what if static_size strings remove more size than instantiated?
+                leftover_size -= fstring.output_size
 
-        # count adaptive strings
-        adaptive_strings_count = len([s for s in self.input_strings if not s._explicit_size])
-                
+        # input(leftover_size)
+
+        # gather adaptive strings
+        adaptive_fstrings_count = len(
+            [ fs for fs in self.adaptive_fstrings() ]
+        )
+
         # calculate INDIVIDUAL size for each adaptive string + any leftover spaces
-        if adaptive_strings_count:
-            adaptive_strings_size, leftover_spaces = divmod(total_leftover_size, adaptive_strings_count)
+        if adaptive_fstrings_count:
+            adaptive_fstrings_size, leftover_spaces = divmod(leftover_size, adaptive_fstrings_count)
+
+        # input(adaptive_fstrings_count)
+        # input(adaptive_fstrings_size)
+        # input(leftover_spaces)
 
         # resize adaptive strings
-        for i, fstring in enumerate(self.input_strings):
-            if not fstring._explicit_size:
-                self.input_strings[i].resize(size=adaptive_strings_size)
-        # WHAT ABOUT leftovers_spaces???
+        for i, _ in enumerate(self.input_strings):
+            if not self.input_strings[i]._explicit_size:
+                self.input_strings[i].resize(
+                    adaptive_fstrings_size
+                )
+
+        # deal leftover_spaces to adaptive_strings 1 by 1
+        while leftover_spaces:
+
+            for i, _ in enumerate(self.input_strings):
+
+                if self.input_strings[i]._explicit_size:
+                    continue
+
+                self.input_strings[i].resize(
+                    self.input_strings[i].output_size +1
+                )
+                # self.input_strings[i].echo()
+                # input(self.input_strings[i].output_size)
+                leftover_spaces -= 1
+                if not leftover_spaces:
+                    break
 
         # build output_string
-        for string in self.input_strings:
-            self.output_string = self.output_string + '{}'.format(string)
-        
+        for fs in self.input_strings:
+            self.output_string = self.output_string + '{}'.format(fs)
+
+    def adaptive_fstrings(self):
+        for fs in self.input_strings:
+            if not fs._explicit_size:
+                yield fs
+
     def width(self):
         return self.fixed_width if self.fixed_width else tty_columns()
 
