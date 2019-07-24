@@ -146,8 +146,6 @@ class Row():
 
 class echo():
 
-    time_factor = 1
-
     modes = (
         # first item is default
         'modern',
@@ -163,13 +161,11 @@ class echo():
             if kwargs['mode'] in self.modes:
                 self.__mode = kwargs['mode']
 
-        self.set_pause()
         self.set_colors()
         self()
         
     def __call__(self):
         if self.mode == 'modern':
-            sleep(self.time_factor * self.pause)
             print(self.output)
         elif self.mode == 'retro':
             retro_put_string(self.output)
@@ -193,11 +189,6 @@ class echo():
             self.bg_color = self.input_colors[1]
             self.output = colored(self.output, self.fg_color, 'on_' + self.bg_color)
 
-    def set_pause(self):
-        self.pause = 0.0
-        for arg in self.input_args:
-            if type(arg) is int or type(arg) is float:
-                self.pause = arg
 
 
 class FString():
