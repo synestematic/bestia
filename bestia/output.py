@@ -148,18 +148,35 @@ class echo():
 
     time_factor = 1
 
-    def __init__(self, input='', *args):
-        self.output = input
+    modes = (
+        # first item is default
+        'modern',
+        'retro',
+    )
+
+    def __init__(self, input_string='', *args, **kwargs):
+        self.output = input_string
         self.input_args = args
+
+        self.__mode = self.modes[0]
+        if 'mode' in kwargs.keys():
+            if kwargs['mode'] in self.modes:
+                self.__mode = kwargs['mode']
 
         self.set_pause()
         self.set_colors()
         self()
         
     def __call__(self):
-        sleep(self.time_factor * self.pause)
-        retro_put_string(self.output)
-        # print(self.output)
+        if self.mode == 'modern':
+            sleep(self.time_factor * self.pause)
+            print(self.output)
+        elif self.mode == 'retro':
+            retro_put_string(self.output)
+
+    @property
+    def mode(self):
+        return self.__mode
 
     def set_colors(self):
         self.fg_color = None
