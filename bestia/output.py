@@ -13,15 +13,19 @@ from bestia.error import *
 CHAR_SIZE = getsizeof('A')
 ENCODING = 'utf-8'
 RETRO_LAG = 0.0005
+RETRO_LAG = 0.5
 COLORS = {
+    'grey': '\033[30m', # actually black...
     'red' : '\033[31m',
     'green' : '\033[32m',
     'yellow' : '\033[33m',
     'blue' : '\033[34m',
     'magenta' : '\033[35m',
     'cyan' : '\033[36m',
+    'white': '\033[37m',
     'reset': '\033[00m',
 }
+
 
 def dquoted(s):
     return '"{}"'.format(s)
@@ -163,6 +167,7 @@ class echo():
         # first item is default
         'modern',
         'retro',
+        'raw'
     )
 
     def __init__(self, input_string='', *args, **kwargs):
@@ -179,7 +184,10 @@ class echo():
         
     def __call__(self):
         if self.mode == 'modern':
-            print(self.output)
+            screen_str(
+                self.output, lag=0
+            )
+            print()
         elif self.mode == 'retro':
             screen_str(
                 self.output, lag=RETRO_LAG
@@ -193,18 +201,8 @@ class echo():
         self.fg_color = None
         self.bg_color = None
 
-        available_colors = (
-            'red',
-            'green',
-            'yellow',
-            'blue',
-            'grey',
-            'white',
-            'cyan',
-            'magenta'
-        )
         self.input_colors = [
-            arg for arg in self.input_args if arg in available_colors
+            arg for arg in self.input_args if arg in COLORS.keys()
         ]
 
         if len(self.input_colors) == 1:
