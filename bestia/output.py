@@ -12,7 +12,16 @@ from bestia.error import *
 
 CHAR_SIZE = getsizeof('A')
 ENCODING = 'utf-8'
-
+RETRO_LAG = 0.0005
+COLORS = {
+    'red' : '\033[31m',
+    'green' : '\033[32m',
+    'yellow' : '\033[33m',
+    'blue' : '\033[34m',
+    'magenta' : '\033[35m',
+    'cyan' : '\033[36m',
+    'reset': '\033[00m',
+}
 
 def dquoted(s):
     return '"{}"'.format(s)
@@ -172,7 +181,7 @@ class echo():
         if self.mode == 'modern':
             print(self.output)
         elif self.mode == 'retro':
-            retro_put_string(self.output)
+            screen_str(self.output)
 
     @property
     def mode(self):
@@ -402,39 +411,21 @@ def replace_special_chars(t):
     return t
 
 
-def retro_put_char(char, lag=0):
-    # randomize slightly
+def screen_chr(char, lag=0):
     sleep(lag)
     stdout.write(char)
     stdout.flush()
 
 
-def retro_put_string(string):
-    for c in [char for char in str(string)]:
-        retro_put_char(c, lag=0.0005)
-    retro_put_char('\n', lag=0.0005)
+def screen_str(string='\n', color=None, lag=0):
 
+    if color in COLORS.keys():
+        screen_str(COLORS[color])
 
-def screen(string='\n', color=None):
-    if not DEBUG:
-        return
+    for c in str(string):
+    # randomize slightly
+        screen_chr(c, lag)
 
-    __colors = {
-        'red' : '\033[31m',
-        'green' : '\033[32m',
-        'yellow' : '\033[33m',
-        'blue' : '\033[34m',
-        'magenta' : '\033[35m',
-        'cyan' : '\033[36m',
-        'reset': '\033[00m',
-    }
+    if color in COLORS.keys():
+        screen_str(COLORS['reset'])
 
-    if color in __colors.keys():
-        screen(__colors[color])
-
-    for char in str(string):
-        stdout.write(char)
-        stdout.flush()
-
-    if color in __colors.keys():
-        screen(__colors['reset'])
