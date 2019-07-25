@@ -12,8 +12,7 @@ from bestia.error import *
 
 CHAR_SIZE = getsizeof('A')
 ENCODING = 'utf-8'
-RETRO_LAG = 0.0005
-RETRO_LAG = 0.5
+RETRO_LAG = 0.0008 #  0.0005
 COLORS = {
     'grey': '\033[30m', # actually black...
     'red' : '\033[31m',
@@ -183,15 +182,13 @@ class echo():
         self()
         
     def __call__(self):
-        if self.mode == 'modern':
-            screen_str(
-                self.output, lag=0
-            )
-            print()
-        elif self.mode == 'retro':
-            screen_str(
-                self.output, lag=RETRO_LAG
-            )
+        screen_str(
+            self.output,
+            lag = RETRO_LAG if self.mode == 'retro' else 0,
+            # randomize slightly
+        )
+        if self.mode != 'raw':
+            screen_str()
 
     @property
     def mode(self):
@@ -411,7 +408,7 @@ def replace_special_chars(t):
     return t
 
 
-def screen_chr(char, lag=0):
+def screen_chr(char=' ', lag=0):
     sleep(lag)
     stdout.write(char)
     stdout.flush()
@@ -423,7 +420,6 @@ def screen_str(string='\n', color=None, lag=0):
         screen_str(COLORS[color])
 
     for c in str(string):
-    # randomize slightly
         screen_chr(c, lag)
 
     if color in COLORS.keys():
