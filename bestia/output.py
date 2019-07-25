@@ -181,7 +181,9 @@ class echo():
         if self.mode == 'modern':
             print(self.output)
         elif self.mode == 'retro':
-            screen_str(self.output)
+            screen_str(
+                self.output, lag=RETRO_LAG
+            )
 
     @property
     def mode(self):
