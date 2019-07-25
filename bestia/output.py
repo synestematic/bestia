@@ -13,17 +13,17 @@ from bestia.error import *
 
 CHAR_SIZE = getsizeof('A')
 ENCODING = 'utf-8'
-RETRO_LAG = 0.0001 #  0.0005
+RETRO_LAG = 0.00003 #  0.0005
 COLORS = {
-    'grey': '\033[30m', # actually black...
-    'red' : '\033[31m',
-    'green' : '\033[32m',
-    'yellow' : '\033[33m',
-    'blue' : '\033[34m',
-    'magenta' : '\033[35m',
-    'cyan' : '\033[36m',
-    'white': '\033[37m',
-    'reset': '\033[00m',
+    'grey':     '\033[30m', # actually black...
+    'red':      '\033[31m',
+    'green':    '\033[32m',
+    'yellow':   '\033[33m',
+    'blue':     '\033[34m',
+    'magenta':  '\033[35m',
+    'cyan':     '\033[36m',
+    'white':    '\033[37m',
+    'reset':    '\033[00m',
 }
 
 def dquoted(s):
@@ -177,7 +177,7 @@ class echo(object):
         if fg in COLORS.keys():
             self.__fg_color = fg
 
-        self.__mode = 'modern'
+        self.__mode = self.modes[0]
         if mode in self.modes:
             self.__mode = mode
 
@@ -322,10 +322,16 @@ class FString(object):
         self.output_string = '{}{}{}'.format(uno, due, tre)
 
     def color_output_string(self):
-        if len(self.colors) == 1:
-            self.output_string = colored(self.output_string, self.colors[0], attrs=self.fx)
-        elif len(self.colors) == 2:
-            self.output_string = colored(self.output_string, self.colors[0], self.colors[1], attrs=self.fx)
+        if len(self.colors) == 1 and self.colors[0] in COLORS.keys() :
+            # self.output_string = colored(self.output_string, self.colors[0], attrs=self.fx)
+            self.output_string = '{}{}{}'.format(
+                COLORS[self.colors[0]],
+                self.output_string,
+                COLORS['reset'],
+            )
+
+        # elif len(self.colors) == 2:
+        #     self.output_string = colored(self.output_string, self.colors[0], self.colors[1], attrs=self.fx)
 
 
 def expand_seconds(input_seconds, output_string=False):
