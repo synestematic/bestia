@@ -32,8 +32,8 @@ def dquoted(s):
 
 
 def clear_screen():
-    ''' clears terminal '''
-    print('\033[H\033[J')
+    stdout.write('\033[H\033[J')
+    stdout.flush()
 
 
 def obfuscate_random_chars(input_string, amount=None, obfuscator='_'):
