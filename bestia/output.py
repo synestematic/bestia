@@ -3,6 +3,7 @@ from os.path import join as PATH_JOIN
 from os import sep as PATH_SEPARATOR
 from os import popen
 from time import sleep
+from random import randint
 
 from termcolor import colored
 
@@ -12,7 +13,7 @@ from bestia.error import *
 
 CHAR_SIZE = getsizeof('A')
 ENCODING = 'utf-8'
-RETRO_LAG = 0.0008 #  0.0005
+RETRO_LAG = 0.0001 #  0.0005
 COLORS = {
     'grey': '\033[30m', # actually black...
     'red' : '\033[31m',
@@ -24,7 +25,6 @@ COLORS = {
     'white': '\033[37m',
     'reset': '\033[00m',
 }
-
 
 def dquoted(s):
     return '"{}"'.format(s)
@@ -75,7 +75,7 @@ def tty_columns():
     return tty_size()[1]
 
 
-class Row():
+class Row(object):
 
     def __init__(self, *input_strings, width=None):
 
@@ -160,59 +160,68 @@ class Row():
         return self.output_string
 
 
-class echo():
+class echo(object):
 
     modes = (
         # first item is default
         'modern',
         'retro',
-        'raw'
+        'raw',
     )
 
-    def __init__(self, input_string='', *args, **kwargs):
+    def __init__(self, input_string='', fg='', mode='modern'):
+
         self.output = input_string
-        self.input_args = args
 
-        self.__mode = self.modes[0]
-        if 'mode' in kwargs.keys():
-            if kwargs['mode'] in self.modes:
-                self.__mode = kwargs['mode']
+        self.__fg_color = ''
+        if fg in COLORS.keys():
+            self.__fg_color = fg
 
-        self.set_colors()
+        self.__mode = 'modern'
+        if mode in self.modes:
+            self.__mode = mode
+
         self()
         
     def __call__(self):
         screen_str(
             self.output,
-            lag = RETRO_LAG if self.mode == 'retro' else 0,
-            # randomize slightly
+            lag = RETRO_LAG if self.__mode == 'retro' else 0,
+            random_lag = 100 if self.__mode == 'retro' else 1,
+            color = self.__fg_color
         )
-        if self.mode != 'raw':
+        if self.__mode != 'raw':
             screen_str()
 
-    @property
-    def mode(self):
-        return self.__mode
 
-    def set_colors(self):
-        self.fg_color = None
-        self.bg_color = None
-
-        self.input_colors = [
-            arg for arg in self.input_args if arg in COLORS.keys()
-        ]
-
-        if len(self.input_colors) == 1:
-            self.fg_color = self.input_colors[0]
-            self.output = colored(self.output, self.fg_color)
-        elif len(self.input_colors) > 1:
-            self.fg_color = self.input_colors[0]
-            self.bg_color = self.input_colors[1]
-            self.output = colored(self.output, self.fg_color, 'on_' + self.bg_color)
+def screen_chr(char=' ', lag=0, random_lag=1):
+    random_multiplier = randint(1, random_lag)
+    sleep(lag *random_multiplier)
+    stdout.write(char)
+    stdout.flush()
 
 
+def screen_str(string='\n', color=None, lag=0, random_lag=1):
 
-class FString():
+    try:
+        exception = None
+        if color in COLORS.keys():
+            screen_str(COLORS[color])
+
+        for c in str(string):
+            screen_chr(c, lag, random_lag)
+
+    except Exception as x:
+        exception = x
+
+    finally:
+        if color in COLORS.keys():
+            screen_str(COLORS['reset'])
+        if exception:
+            raise exception
+
+
+class FString(object):
     def __init__(self, input_string, size=False, align='l', pad=None, colors=[], fx=[]):
 
         self._explicit_size = True if size else False
@@ -406,22 +415,3 @@ def replace_special_chars(t):
     for o, i in special_chars.items():
         t = t.replace(o, i)
     return t
-
-
-def screen_chr(char=' ', lag=0):
-    sleep(lag)
-    stdout.write(char)
-    stdout.flush()
-
-
-def screen_str(string='\n', color=None, lag=0):
-
-    if color in COLORS.keys():
-        screen_str(COLORS[color])
-
-    for c in str(string):
-        screen_chr(c, lag)
-
-    if color in COLORS.keys():
-        screen_str(COLORS['reset'])
-
