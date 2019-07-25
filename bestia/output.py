@@ -27,7 +27,11 @@ def obfuscate_random_chars(input_string, amount=None, obfuscator='_'):
     ''' returns input string with amount of random chars obfuscated '''
     amount = len(input_string) - 4 if not amount or amount >= len(input_string) else amount
 
-    string_indexes = [i for i in range(len(str(input_string)))]
+    string_indexes = [
+        i for i in range(
+            len(str(input_string))
+        )
+    ]
 
     string_as_list = string_to_list(input_string)
     for random_index in unique_random_items(string_indexes, amount):
@@ -178,8 +182,19 @@ class echo():
         self.fg_color = None
         self.bg_color = None
 
-        available_colors = ('red', 'green', 'yellow', 'blue', 'grey', 'white', 'cyan', 'magenta')
-        self.input_colors = [arg for arg in self.input_args if arg in available_colors]
+        available_colors = (
+            'red',
+            'green',
+            'yellow',
+            'blue',
+            'grey',
+            'white',
+            'cyan',
+            'magenta'
+        )
+        self.input_colors = [
+            arg for arg in self.input_args if arg in available_colors
+        ]
 
         if len(self.input_colors) == 1:
             self.fg_color = self.input_colors[0]
@@ -253,6 +268,7 @@ class FString():
 
     def set_colors(self, colors):
         if len(colors) > 1:
+            colors[1] = colors[1].replace('on_', '')
             colors[1] = 'on_{}'.format(colors[1])
         self.colors = colors
 
@@ -316,8 +332,8 @@ def expand_seconds(input_seconds, output_string=False):
         days = ' {} days'.format(int(expanded_time['days'])) if expanded_time['days'] else ''
         weeks = ' {} weeks'.format(int(expanded_time['weeks'])) if expanded_time['weeks'] else ''
         return '{}{}{}{}{}'.format(weeks, days, hours, minutes, seconds).strip()
-    else:
-        return expanded_time
+
+    return expanded_time
 
 
 def remove_path(input_path, deepness=-1):
@@ -387,6 +403,7 @@ def replace_special_chars(t):
 
 
 def retro_put_char(char, lag=0):
+    # randomize slightly
     sleep(lag)
     stdout.write(char)
     stdout.flush()
@@ -396,3 +413,28 @@ def retro_put_string(string):
     for c in [char for char in str(string)]:
         retro_put_char(c, lag=0.0005)
     retro_put_char('\n', lag=0.0005)
+
+
+def screen(string='\n', color=None):
+    if not DEBUG:
+        return
+
+    __colors = {
+        'red' : '\033[31m',
+        'green' : '\033[32m',
+        'yellow' : '\033[33m',
+        'blue' : '\033[34m',
+        'magenta' : '\033[35m',
+        'cyan' : '\033[36m',
+        'reset': '\033[00m',
+    }
+
+    if color in __colors.keys():
+        screen(__colors[color])
+
+    for char in str(string):
+        stdout.write(char)
+        stdout.flush()
+
+    if color in __colors.keys():
+        screen(__colors['reset'])
