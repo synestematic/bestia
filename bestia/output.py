@@ -240,8 +240,32 @@ class FString(object):
     def resize(self, size=None):
         self.output_size = int(size) if size else self.input_size # desired len of output_string
 
+    def filter_utf_chars(self, string):
+        '''
+            filters out chars that can cause misalignments
+            because made of more than a byte... makes sense?
+        '''
+
+        string = replace_special_chars(string)
+        # if '青春版' not in string:
+        #     return string
+
+        new_string = bytearray()
+        # input('[{}] = {}'.format(string, len(string)))
+        for c in string:
+            byte = c.encode(ENCODING)
+            if len(byte) == 1:
+                new_string.append(ord(byte))
+            # input('{} : {} : {}'.format(c, len(byte), byte))
+        # input(new_string.decode(ENCODING))
+        return new_string.decode(ENCODING)
+
     def append(self, string):
-        self.input_string = self.input_string + '{}'.format(string)
+
+        self.input_string = self.input_string + '{}'.format(
+            self.filter_utf_chars(string)
+        )
+
         self.set_input_size()
 
     def set_input_size(self):
@@ -256,8 +280,8 @@ class FString(object):
         add = True
         for char in self.input_string:
         # when encoding input_string into byte_string: byte_string will not necessarily have the same amount of bytes as characters in the input_string ( some characters will be made of several bytes ), therefore, the input_string should not be encoded but EACH INDIVIDUAL CHAR should
-        # for byte in self.input_string.encode():
-            byte = char.encode()
+        # for byte in self.input_string.encode(ENCODING):
+            byte = char.encode(ENCODING)
             if byte == color_start_byte and add:
                 add = False
                 continue
@@ -309,6 +333,9 @@ class FString(object):
 
     def align_output_string(self):
         self.set_pads()
+
+        # cl, cr seem switched...
+
         uno, due, tre = self.output_string, self.small_pad, self.big_pad
         # ASSUME "l" to avoid nasty fail...
         # but I should Raise an Exception if I pass invalid value "w"
@@ -319,6 +346,7 @@ class FString(object):
         elif self.align == 'r':
             uno, due, tre = self.small_pad, self.big_pad, self.output_string
 
+        
         self.output_string = '{}{}{}'.format(uno, due, tre)
 
     def color_output_string(self):
