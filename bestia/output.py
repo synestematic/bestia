@@ -245,25 +245,18 @@ class FString(object):
             filters out chars that can cause misalignments
             because made of more than a byte... makes sense?
         '''
-
-        string = replace_special_chars(string)
-        # if '青春版' not in string:
-        #     return string
-
-        new_string = bytearray()
-        # input('[{}] = {}'.format(string, len(string)))
-        for c in string:
-            byte = c.encode(ENCODING)
-            if len(byte) == 1:
-                new_string.append(ord(byte))
-            # input('{} : {} : {}'.format(c, len(byte), byte))
-        # input(new_string.decode(ENCODING))
-        return new_string.decode(ENCODING)
+        return bytearray(
+            ord(c.encode(ENCODING)) for c in replace_special_chars(
+                string
+            ) if len(c.encode(ENCODING)) == 1
+        ).decode(ENCODING)
 
     def append(self, string):
 
-        self.input_string = self.input_string + '{}'.format(
-            self.filter_utf_chars(string)
+        self.input_string = '{}{}'.format(
+            self.input_string,
+            self.filter_utf_chars(string),
+            # string
         )
 
         self.set_input_size()
@@ -346,7 +339,6 @@ class FString(object):
         elif self.align == 'r':
             uno, due, tre = self.small_pad, self.big_pad, self.output_string
 
-        
         self.output_string = '{}{}{}'.format(uno, due, tre)
 
     def color_output_string(self):
@@ -444,8 +436,9 @@ def replace_special_chars(t):
         '【': '[',
         '】': ']',
         'â€“': '-',
+        '⑥': '6',
     }
 
     for o, i in special_chars.items():
-        t = t.replace(o, i)
+        t = str(t).replace(o, i)
     return t
