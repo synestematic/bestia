@@ -1,3 +1,6 @@
+class UndefinedAnsiSequence(Exception):
+    pass
+
 class SttyBinMissing(Exception):
     pass
 

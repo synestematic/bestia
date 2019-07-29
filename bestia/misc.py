@@ -23,7 +23,7 @@ def copy_to_clipboard(text):
         return False
 
 
-_SAY_BIN = command_output('which', 'say').decode().strip()
+_SAY_BIN = command_output('which', 'say').decode('UTF-8').strip()
 
 def say(text):
     ''' says text using accessibility voice-over feature
@@ -35,7 +35,7 @@ def say(text):
     return system(say_command)
 
 
-_FILE_BIN = command_output('which', 'file').decode().strip()
+_FILE_BIN = command_output('which', 'file').decode('UTF-8').strip()
 
 def file_type(resource):
     ''' returns file_type of input resource

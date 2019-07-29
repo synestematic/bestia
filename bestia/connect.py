@@ -21,7 +21,7 @@ def __random_browser():
     return unique_random_items(allowed_browsers, amount=1)[0]
 
 
-_CURL_BIN = command_output('which', 'curl').decode().strip()
+_CURL_BIN = command_output('which', 'curl').decode(ENCODING).strip()
 
 def http_get(url, browser='', credentials=(), follow_redirects=True, silent=True, store=None, raw=False):
     ''' performs HTTP GET requests using local CURL command

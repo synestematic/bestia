@@ -5,8 +5,6 @@ from os import popen
 from time import sleep
 from random import randint
 
-from termcolor import colored
-
 from bestia.iterate import string_to_list, iterable_to_string, unique_random_items
 from bestia.misc import command_output
 from bestia.error import *
@@ -14,24 +12,49 @@ from bestia.error import *
 CHAR_SIZE = getsizeof('A')
 ENCODING = 'utf-8'
 RETRO_LAG = 0.00003 #  0.0005
-COLORS = {
-    'grey':     '\033[30m', # actually black...
-    'red':      '\033[31m',
-    'green':    '\033[32m',
-    'yellow':   '\033[33m',
-    'blue':     '\033[34m',
-    'magenta':  '\033[35m',
-    'cyan':     '\033[36m',
-    'white':    '\033[37m',
-    'reset':    '\033[00m',
+
+ANSI_SGR_CODES = { # Select Graphic Rendition subset
+
+    'reset': 0,
+    'bold': 1,
+    'faint': 2,
+    'underline': 4,
+    'blink': 5,
+
+    'black': 30,    # NOT gray...
+    'red': 31,
+    'green': 32,
+    'yellow': 33,
+    'blue': 34,
+    'magenta': 35,
+    'cyan': 36,
+    'white': 37,
+
+    # works NOT
+    'frame': 51,
+    'circle': 52,
+    'overline': 53,
+	# dark, reverse, concealed
+
 }
+
+
+def ansi_esc_seq(x):
+    try:
+        return '\033[{}m'.format(
+            ANSI_SGR_CODES[x]
+        )
+    except KeyError:
+        raise UndefinedAnsiSequence(x)
+
 
 def dquoted(s):
     return '"{}"'.format(s)
 
 
 def clear_screen():
-    stdout.write('\033[H\033[J')
+    stdout.write('\033[H')
+    stdout.write('\033[J')
     stdout.flush()
 
 
@@ -52,7 +75,7 @@ def obfuscate_random_chars(input_string, amount=None, obfuscator='_'):
     return iterable_to_string(string_as_list)
 
 
-_STTY_BIN = command_output('which', 'stty').decode().strip()
+_STTY_BIN = command_output('which', 'stty').decode(ENCODING).strip()
 
 
 def tty_size():
@@ -175,7 +198,7 @@ class echo(object):
         self.output = input_string
 
         self.__fg_color = ''
-        if fg in COLORS.keys():
+        if fg in ANSI_SGR_CODES.keys():
             self.__fg_color = fg
 
         self.__mode = self.modes[0]
@@ -206,8 +229,8 @@ def screen_str(string='\n', color=None, lag=0, random_lag=1):
 
     try:
         exception = None
-        if color in COLORS.keys():
-            screen_str(COLORS[color])
+        if color in ANSI_SGR_CODES.keys():
+            screen_str(ansi_esc_seq(color))
 
         for c in str(string):
             screen_chr(c, lag, random_lag)
@@ -216,8 +239,8 @@ def screen_str(string='\n', color=None, lag=0, random_lag=1):
         exception = x
 
     finally:
-        if color in COLORS.keys():
-            screen_str(COLORS['reset'])
+        if color in ANSI_SGR_CODES.keys():
+            screen_str(ansi_esc_seq('reset'))
         if exception:
             raise exception
 
@@ -236,6 +259,7 @@ class FString(object):
 
         self.align = align			# l, r, cl, cr
         self.set_colors(colors) 	# grey, red, green, yellow, blue, magenta, cyan, white
+
         self.fx = fx				# bold, dark, underline, blink, reverse, concealed
 
     def resize(self, size=None):
@@ -343,12 +367,15 @@ class FString(object):
         self.output_string = '{}{}{}'.format(uno, due, tre)
 
     def color_output_string(self):
-        if len(self.colors) == 1 and self.colors[0] in COLORS.keys() :
+        if len(self.colors) == 1 and self.colors[0] in ANSI_SGR_CODES.keys() :
+
+            for f in self.fx:
+                self.output_string = ansi_esc_seq(f) +self.output_string
             # self.output_string = colored(self.output_string, self.colors[0], attrs=self.fx)
             self.output_string = '{}{}{}'.format(
-                COLORS[self.colors[0]],
+                ansi_esc_seq(self.colors[0]),
                 self.output_string,
-                COLORS['reset'],
+                ansi_esc_seq('reset'),
             )
 
         # elif len(self.colors) == 2:
@@ -430,8 +457,8 @@ def replace_special_chars(t):
         'â€ž': '“',
         'â€œ': '”',
         'â€¦': '…',
-        b'\xe2\x80\x8e'.decode() : '', # left-to-right-mark
-        b'\xe2\x80\x8b'.decode() : '',	# zero-width-space
+        b'\xe2\x80\x8e'.decode(ENCODING) : '', # left-to-right-mark
+        b'\xe2\x80\x8b'.decode(ENCODING) : '',	# zero-width-space
         '&amp' : '&',
         '&;': '&',
         '【': '[',
