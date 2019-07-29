@@ -105,6 +105,7 @@ class Row(object):
         )
 
         # calculate INDIVIDUAL size for each adaptive string + any leftover spaces
+        leftover_spaces = 0
         if adaptive_fstrings_count:
             adaptive_fstrings_size, leftover_spaces = divmod(leftover_size, adaptive_fstrings_count)
 
