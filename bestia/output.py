@@ -106,41 +106,37 @@ class Row(object):
         self.__fstrings = []
         for s in input_strings:
             self.append(s)
-        # self.resize_fstrings()
+        # self.assign_spaces()
 
-    def resize_fstrings(self):
+    def assign_spaces(self):
+        spaces_left = self.width
 
-        # calculate TOTAL size left for adaptive strings 
-        leftover_size = self.width
+        # remove fixed_fs sizes
         for fs in self.fixed_fstrings():
-            # what if static_size strings remove more size than instantiated?
-            leftover_size -= fs.output_size
+            spaces_left -= fs.output_size
+        # what if they remove more than instantiated?
 
-        # input(leftover_size)
-
-        # gather adaptive strings
-        adaptive_fstrings_count = len(
+        # gather adaptive_fs
+        adaptive_fs_count = len(
             [ fs for fs in self.adaptive_fstrings() ]
         )
+        if not adaptive_fs_count:
+            return
 
-        # calculate INDIVIDUAL size for each adaptive string + any leftover spaces
-        leftover_spaces = 0
-        if adaptive_fstrings_count:
-            adaptive_fstrings_size, leftover_spaces = divmod(leftover_size, adaptive_fstrings_count)
+        # calculate individual size for each adaptive_fs + any spaces left
+        adaptive_fs_size, spaces_left = divmod(
+            spaces_left, adaptive_fs_count
+        )
 
-        # input(adaptive_fstrings_count)
-        # input(adaptive_fstrings_size)
-        # input(leftover_spaces)
-
-        # resize adaptive strings
+        # resize adaptive_fs
         for i, _ in enumerate(self.__fstrings):
             if not self.__fstrings[i].fixed_size:
                 self.__fstrings[i].resize(
-                    adaptive_fstrings_size
+                    adaptive_fs_size
                 )
 
-        # deal leftover_spaces to adaptive_strings 1 by 1
-        while leftover_spaces:
+        # deal spaces_left to adaptive_fs 1 by 1
+        while spaces_left:
 
             for i, _ in enumerate(self.__fstrings):
 
@@ -150,10 +146,9 @@ class Row(object):
                 self.__fstrings[i].resize(
                     self.__fstrings[i].output_size +1
                 )
-                # self.__fstrings[i].echo()
-                # input(self.__fstrings[i].output_size)
-                leftover_spaces -= 1
-                if not leftover_spaces:
+
+                spaces_left -= 1
+                if not spaces_left:
                     break
 
     @property
@@ -162,7 +157,7 @@ class Row(object):
 
     @property
     def output(self):
-        self.resize_fstrings()
+        self.assign_spaces()
         for fs in self.__fstrings:
             self.__output = self.__output + '{}'.format(fs)
         return self.__output
