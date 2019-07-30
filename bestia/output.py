@@ -102,18 +102,16 @@ class Row(object):
 
     def __init__(self, *input_strings, width=False):
 
-        self.fixed_width = width
         self.__output = ''
-        self.__fstrings = []
-
-        # input(self.width())
+        self.__fixed_width = width
 
         # convert all to fstrings
+        self.__fstrings = []
         for s in input_strings:
             self.append(s)
 
         # calculate TOTAL size left for adaptive strings 
-        leftover_size = self.width()
+        leftover_size = self.width
         for fstring in self.__fstrings:
             if fstring._explicit_size:
                 # what if static_size strings remove more size than instantiated?
@@ -161,7 +159,6 @@ class Row(object):
 
     @property
     def output(self):
-        # build output
         for fs in self.__fstrings:
             self.__output = self.__output + '{}'.format(fs)
         return self.__output
@@ -176,8 +173,9 @@ class Row(object):
             if not fs._explicit_size:
                 yield fs
 
+    @property
     def width(self):
-        return self.fixed_width if self.fixed_width else tty_columns()
+        return self.__fixed_width if self.__fixed_width else tty_columns()
 
     def append(self, s):
         self.__fstrings.append(
