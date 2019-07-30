@@ -110,7 +110,7 @@ class Row(object):
         for s in input_strings:
             self.append(s)
 
-        self.resize_fstrings()
+        # self.resize_fstrings()
 
     def resize_fstrings(self):
 
@@ -167,6 +167,7 @@ class Row(object):
 
     @property
     def output(self):
+        self.resize_fstrings()
         for fs in self.__fstrings:
             self.__output = self.__output + '{}'.format(fs)
         return self.__output
