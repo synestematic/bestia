@@ -110,6 +110,10 @@ class Row(object):
         for s in input_strings:
             self.append(s)
 
+        self.resize_fstrings()
+
+    def resize_fstrings(self):
+
         # calculate TOTAL size left for adaptive strings 
         leftover_size = self.width
         for fstring in self.__fstrings:
@@ -158,6 +162,10 @@ class Row(object):
                     break
 
     @property
+    def width(self):
+        return self.__fixed_width if self.__fixed_width else tty_columns()
+
+    @property
     def output(self):
         for fs in self.__fstrings:
             self.__output = self.__output + '{}'.format(fs)
@@ -172,10 +180,6 @@ class Row(object):
         for fs in self.__fstrings:
             if not fs._explicit_size:
                 yield fs
-
-    @property
-    def width(self):
-        return self.__fixed_width if self.__fixed_width else tty_columns()
 
     def append(self, s):
         self.__fstrings.append(
