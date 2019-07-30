@@ -101,25 +101,20 @@ def tty_columns():
 class Row(object):
 
     def __init__(self, *input_strings, width=False):
-
         self.__output = ''
         self.__fixed_width = width
-
-        # convert all to fstrings
         self.__fstrings = []
         for s in input_strings:
             self.append(s)
-
         # self.resize_fstrings()
 
     def resize_fstrings(self):
 
         # calculate TOTAL size left for adaptive strings 
         leftover_size = self.width
-        for fstring in self.__fstrings:
-            if fstring._explicit_size:
-                # what if static_size strings remove more size than instantiated?
-                leftover_size -= fstring.output_size
+        for fs in self.fixed_fstrings():
+            # what if static_size strings remove more size than instantiated?
+            leftover_size -= fs.output_size
 
         # input(leftover_size)
 
@@ -139,7 +134,7 @@ class Row(object):
 
         # resize adaptive strings
         for i, _ in enumerate(self.__fstrings):
-            if not self.__fstrings[i]._explicit_size:
+            if not self.__fstrings[i].fixed_size:
                 self.__fstrings[i].resize(
                     adaptive_fstrings_size
                 )
@@ -149,7 +144,7 @@ class Row(object):
 
             for i, _ in enumerate(self.__fstrings):
 
-                if self.__fstrings[i]._explicit_size:
+                if self.__fstrings[i].fixed_size:
                     continue
 
                 self.__fstrings[i].resize(
@@ -176,10 +171,14 @@ class Row(object):
     # def output(self, value):
     #     self.__output = value
 
+    def fixed_fstrings(self):
+        for fs in self.__fstrings:
+            if fs.fixed_size:
+                yield fs
 
     def adaptive_fstrings(self):
         for fs in self.__fstrings:
-            if not fs._explicit_size:
+            if not fs.fixed_size:
                 yield fs
 
     def append(self, s):
@@ -256,13 +255,17 @@ def screen_str(string='\n', color=None, lag=0, random_lag=1):
 
 
 class FString(object):
-    def __init__(self, input_string, size=False, align='l', pad=None, colors=[], fx=[]):
 
-        self._explicit_size = True if size else False
+    def __init__(self, input_string='', size=False, align='l', pad=None, colors=[], fx=[]):
 
-        self.input_string = ''
+        self.fixed_size = True if size else False
 
+        self.__input_string = ''
         self.append(input_string)
+
+
+
+
         self.resize(size)
 
         self.pad = str(pad)[0] if pad else ' '      # improve this shit
@@ -288,8 +291,8 @@ class FString(object):
 
     def append(self, string):
 
-        self.input_string = '{}{}'.format(
-            self.input_string,
+        self.__input_string = '{}{}'.format(
+            self.__input_string,
             self.filter_utf_chars(string),
             # string
         )
@@ -306,9 +309,9 @@ class FString(object):
         color_end_byte = b'm'
         self.input_size = 0
         add = True
-        for char in self.input_string:
+        for char in self.__input_string:
         # when encoding input_string into byte_string: byte_string will not necessarily have the same amount of bytes as characters in the input_string ( some characters will be made of several bytes ), therefore, the input_string should not be encoded but EACH INDIVIDUAL CHAR should
-        # for byte in self.input_string.encode(ENCODING):
+        # for byte in self.__input_string.encode(ENCODING):
             byte = char.encode(ENCODING)
             if byte == color_start_byte and add:
                 add = False
@@ -347,7 +350,7 @@ class FString(object):
         self.big_pad = self.pad * (exact_half + excess)
 
     def set_ouput_string(self):
-        self.output = self.input_string
+        self.output = self.__input_string
         self.output = self.output.replace("\t", ' ') # can't afford to have tabs in output as they are never displayed the same
         if self.input_size > self.output_size:
             self.resize_output()
@@ -361,8 +364,6 @@ class FString(object):
 
     def align_output(self):
         self.set_pads()
-
-        # cl, cr seem switched...
 
         uno, due, tre = self.output, self.small_pad, self.big_pad
         # ASSUME "l" to avoid nasty fail...
