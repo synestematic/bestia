@@ -100,22 +100,21 @@ def tty_columns():
 
 class Row(object):
 
-    def __init__(self, *input_strings, width=None):
+    def __init__(self, *input_strings, width=False):
 
         self.fixed_width = width
-        self.output_string = ''
-        self.input_strings = list(input_strings)
+        self.__output = ''
+        self.__fstrings = []
 
         # input(self.width())
 
         # convert all to fstrings
-        for i, string in enumerate(self.input_strings):
-            if type(string) != FString:
-                self.input_strings[i] = FString(string)
+        for s in input_strings:
+            self.append(s)
 
         # calculate TOTAL size left for adaptive strings 
         leftover_size = self.width()
-        for fstring in self.input_strings:
+        for fstring in self.__fstrings:
             if fstring._explicit_size:
                 # what if static_size strings remove more size than instantiated?
                 leftover_size -= fstring.output_size
@@ -137,51 +136,59 @@ class Row(object):
         # input(leftover_spaces)
 
         # resize adaptive strings
-        for i, _ in enumerate(self.input_strings):
-            if not self.input_strings[i]._explicit_size:
-                self.input_strings[i].resize(
+        for i, _ in enumerate(self.__fstrings):
+            if not self.__fstrings[i]._explicit_size:
+                self.__fstrings[i].resize(
                     adaptive_fstrings_size
                 )
 
         # deal leftover_spaces to adaptive_strings 1 by 1
         while leftover_spaces:
 
-            for i, _ in enumerate(self.input_strings):
+            for i, _ in enumerate(self.__fstrings):
 
-                if self.input_strings[i]._explicit_size:
+                if self.__fstrings[i]._explicit_size:
                     continue
 
-                self.input_strings[i].resize(
-                    self.input_strings[i].output_size +1
+                self.__fstrings[i].resize(
+                    self.__fstrings[i].output_size +1
                 )
-                # self.input_strings[i].echo()
-                # input(self.input_strings[i].output_size)
+                # self.__fstrings[i].echo()
+                # input(self.__fstrings[i].output_size)
                 leftover_spaces -= 1
                 if not leftover_spaces:
                     break
 
-        # build output_string
-        for fs in self.input_strings:
-            self.output_string = self.output_string + '{}'.format(fs)
+    @property
+    def output(self):
+        # build output
+        for fs in self.__fstrings:
+            self.__output = self.__output + '{}'.format(fs)
+        return self.__output
+
+    # @output.setter
+    # def output(self, value):
+    #     self.__output = value
+
 
     def adaptive_fstrings(self):
-        for fs in self.input_strings:
+        for fs in self.__fstrings:
             if not fs._explicit_size:
                 yield fs
 
     def width(self):
         return self.fixed_width if self.fixed_width else tty_columns()
 
-    def echo(self, *args, **kwargs):
-        echo(self.output_string, *args, **kwargs)
+    def append(self, s):
+        self.__fstrings.append(
+            FString(s) if type(s) != FString else s
+        )
 
-    def append(self, string):
-        if type(string) != FString:
-            string = FString(string)
-        self.output_string = self.output_string + '{}'.format(string)
+    def echo(self, *args, **kwargs):
+        echo(self, *args, **kwargs)
 
     def __str__(self):
-        return self.output_string
+        return self.output
 
 
 class echo(object):
@@ -263,7 +270,7 @@ class FString(object):
         self.fx = fx				# bold, dark, underline, blink, reverse, concealed
 
     def resize(self, size=None):
-        self.output_size = int(size) if size else self.input_size # desired len of output_string
+        self.output_size = int(size) if size else self.input_size # desired len of output
 
     def filter_utf_chars(self, string):
         '''
@@ -311,14 +318,14 @@ class FString(object):
 
     def __str__(self):
         self.set_ouput_string()
-        return self.output_string
+        return self.output
 
     def __len__(self):
         return self.output_size
 
     def __add__(self, other):
         self.set_ouput_string()
-        return self.output_string + '{}'.format(other)
+        return self.output + '{}'.format(other)
 
     def echo(self, *args, **kwargs):
         return echo(self, *args, **kwargs)
@@ -337,49 +344,49 @@ class FString(object):
         self.big_pad = self.pad * (exact_half + excess)
 
     def set_ouput_string(self):
-        self.output_string = self.input_string
-        self.output_string = self.output_string.replace("\t", ' ') # can't afford to have tabs in output_string as they are never displayed the same
+        self.output = self.input_string
+        self.output = self.output.replace("\t", ' ') # can't afford to have tabs in output as they are never displayed the same
         if self.input_size > self.output_size:
-            self.resize_output_string()
-        self.color_output_string()
+            self.resize_output()
+        self.color_output()
         if self.output_size > self.input_size:
-            self.align_output_string()
+            self.align_output()
 
-    def resize_output_string(self):
+    def resize_output(self):
         delta_length = self.input_size - self.output_size
-        self.output_string = self.output_string[:0-delta_length]
+        self.output = self.output[:0-delta_length]
 
-    def align_output_string(self):
+    def align_output(self):
         self.set_pads()
 
         # cl, cr seem switched...
 
-        uno, due, tre = self.output_string, self.small_pad, self.big_pad
+        uno, due, tre = self.output, self.small_pad, self.big_pad
         # ASSUME "l" to avoid nasty fail...
         # but I should Raise an Exception if I pass invalid value "w"
         if self.align == 'cl' or self.align == 'lc' or self.align == 'c':
-            uno, due, tre = self.small_pad, self.output_string, self.big_pad
+            uno, due, tre = self.small_pad, self.output, self.big_pad
         elif self.align == 'cr' or self.align == 'rc':
-            uno, due, tre = self.big_pad, self.output_string, self.small_pad
+            uno, due, tre = self.big_pad, self.output, self.small_pad
         elif self.align == 'r':
-            uno, due, tre = self.small_pad, self.big_pad, self.output_string
+            uno, due, tre = self.small_pad, self.big_pad, self.output
 
-        self.output_string = '{}{}{}'.format(uno, due, tre)
+        self.output = '{}{}{}'.format(uno, due, tre)
 
-    def color_output_string(self):
+    def color_output(self):
         if len(self.colors) == 1 and self.colors[0] in ANSI_SGR_CODES.keys() :
 
             for f in self.fx:
-                self.output_string = ansi_esc_seq(f) +self.output_string
-            # self.output_string = colored(self.output_string, self.colors[0], attrs=self.fx)
-            self.output_string = '{}{}{}'.format(
+                self.output = ansi_esc_seq(f) +self.output
+            # self.output = colored(self.output, self.colors[0], attrs=self.fx)
+            self.output = '{}{}{}'.format(
                 ansi_esc_seq(self.colors[0]),
-                self.output_string,
+                self.output,
                 ansi_esc_seq('reset'),
             )
 
         # elif len(self.colors) == 2:
-        #     self.output_string = colored(self.output_string, self.colors[0], self.colors[1], attrs=self.fx)
+        #     self.output = colored(self.output, self.colors[0], self.colors[1], attrs=self.fx)
 
 
 def expand_seconds(input_seconds, output_string=False):
