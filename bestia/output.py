@@ -331,12 +331,20 @@ class FString(object):
         return echo(self, *args, **kwargs)
 
 
-    def set_pads(self):
-        delta_len = self.__output_size -self.input_size
-        excess = delta_len %2
-        exact_half = int( (delta_len -excess) /2 )
-        self.__sml_pad = self.__pad * exact_half
-        self.__big_pad = self.__pad *(exact_half +excess)
+    @property
+    def __sml_pad(self):
+        exact_half, excess = divmod(
+            self.__output_size -self.input_size, 2
+        )
+        return self.__pad * exact_half
+
+    @property
+    def __big_pad(self):
+        exact_half, excess = divmod(
+            self.__output_size -self.input_size, 2
+        )
+        return self.__pad * (exact_half +excess)
+
 
     def set_output(self):
         self.__output = self.__input_string
@@ -348,15 +356,14 @@ class FString(object):
             self.align_output()
 
     def resize_output(self):
-        delta_length = self.input_size - self.__output_size
-        self.__output = self.__output[:0-delta_length]
+        delta_len = self.input_size - self.__output_size
+        self.__output = self.__output[:0 -delta_len]
 
     def align_output(self):
-        self.set_pads()
-
-        uno, due, tre = self.__output, self.__sml_pad, self.__big_pad
-        # ASSUME "l" to avoid nasty fail...
+        # assumes "l" to avoid nasty fail...
         # but I should Raise an Exception if I pass invalid value "w"
+        uno, due, tre = self.__output, self.__sml_pad, self.__big_pad
+
         if self.align == 'cl' or self.align == 'lc' or self.align == 'c':
             uno, due, tre = self.__sml_pad, self.__output, self.__big_pad
         elif self.align == 'cr' or self.align == 'rc':
@@ -364,7 +371,7 @@ class FString(object):
         elif self.align == 'r':
             uno, due, tre = self.__sml_pad, self.__big_pad, self.__output
 
-        self.__output = '{}{}{}'.format(uno, due, tre)
+        self.__output = uno + due + tre
 
     def color_output(self):
         if len(self.colors) == 1 and self.colors[0] in ANSI_SGR_CODES.keys() :
