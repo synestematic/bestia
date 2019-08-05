@@ -310,15 +310,13 @@ class FString(object):
                 self.input_size += 1
 
     def __str__(self):
-        self.set_output()
-        return self.__output
+        return self.output
 
     def __len__(self):
         return self.__output_size
 
     def __add__(self, other):
-        self.set_output()
-        return self.__output + '{}'.format(other)
+        return self.output + '{}'.format(other)
 
     def echo(self, *args, **kwargs):
         return echo(self, *args, **kwargs)
@@ -345,8 +343,8 @@ class FString(object):
         )
         return self.__pad * (exact_half +excess)
 
-
-    def set_output(self):
+    @property
+    def output(self):
         self.__output = self.__input_string
         self.__output = self.__output.replace("\t", ' ') # can't afford to have tabs in output as they are never displayed the same
         if self.input_size > self.__output_size:
@@ -354,6 +352,7 @@ class FString(object):
         self.color_output()
         if self.__output_size > self.input_size:
             self.align_output()
+        return self.__output
 
     def resize_output(self):
         delta_len = self.input_size - self.__output_size
