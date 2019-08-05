@@ -258,12 +258,12 @@ class FString(object):
 
         self.__pad = pad
 
-        self.align = align			# l, r, cl, cr
+        self.__align = align			# l, r, cl, cr
         self.colors = colors        # black, red, green, yellow, blue, magenta, cyan, white
         self.fx = fx				# bold, dark, underline, blink, reverse, concealed
 
     def resize(self, size=None):
-        self.__output_size = int(size) if size else self.input_size # desired len of output
+        self.__output_size = int(size) if size else self.__input_size # desired len of output
 
 
     def filter_utf_chars(self, string):
@@ -295,7 +295,7 @@ class FString(object):
         ]
         color_start_byte = b'\x1b'
         color_end_byte = b'm'
-        self.input_size = 0
+        self.__input_size = 0
         add = True
         for char in self.__input_string:
         # when encoding input_string into byte_string: byte_string will not necessarily have the same amount of bytes as characters in the input_string ( some characters will be made of several bytes ), therefore, the input_string should not be encoded but EACH INDIVIDUAL CHAR should
@@ -307,7 +307,7 @@ class FString(object):
                 add = True
                 continue
             if add and byte not in ignore_these:
-                self.input_size += 1
+                self.__input_size += 1
 
     def __str__(self):
         return self.output
@@ -330,49 +330,58 @@ class FString(object):
         self.__pad_char = str(p)[0] if p else ' '
 
     @property
-    def __sml_pad(self):
-        exact_half, excess = divmod(
-            self.__output_size -self.input_size, 2
-        )
-        return self.__pad * exact_half
-
-    @property
     def __big_pad(self):
         exact_half, excess = divmod(
-            self.__output_size -self.input_size, 2
+            self.__output_size - self.__input_size, 2
         )
-        return self.__pad * (exact_half +excess)
+        return self.__pad * (exact_half + excess)
+
+    @property
+    def __sml_pad(self):
+        exact_half, excess = divmod(
+            self.__output_size - self.__input_size, 2
+        )
+        return self.__pad * exact_half
 
     @property
     def output(self):
         self.__output = self.__input_string
         self.__output = self.__output.replace("\t", ' ') # can't afford to have tabs in output as they are never displayed the same
-        if self.input_size > self.__output_size:
-            self.resize_output()
-        self.color_output()
-        if self.__output_size > self.input_size:
-            self.align_output()
+        
+        if self.__input_size > self.__output_size:
+            self.__crop_output()
+        
+        self.__color_output()
+        
+        if self.__output_size > self.__input_size:
+            self.__align_output()
+        
         return self.__output
 
-    def resize_output(self):
-        delta_len = self.input_size - self.__output_size
-        self.__output = self.__output[:0 -delta_len]
+    def __crop_output(self):
+        delta_len = self.__input_size - self.__output_size
+        self.__output = self.__output[:0 - delta_len]
 
-    def align_output(self):
-        # assumes "l" to avoid nasty fail...
-        # but I should Raise an Exception if I pass invalid value "w"
-        uno, due, tre = self.__output, self.__sml_pad, self.__big_pad
+    def __align_output(self):
 
-        if self.align == 'cl' or self.align == 'lc' or self.align == 'c':
-            uno, due, tre = self.__sml_pad, self.__output, self.__big_pad
-        elif self.align == 'cr' or self.align == 'rc':
-            uno, due, tre = self.__big_pad, self.__output, self.__sml_pad
-        elif self.align == 'r':
+        if self.__align == 'l':
+            uno, due, tre = self.__output, self.__sml_pad, self.__big_pad
+
+        elif self.__align == 'r':
             uno, due, tre = self.__sml_pad, self.__big_pad, self.__output
+        
+        elif self.__align in ('c', 'cl', 'lc'):
+            uno, due, tre = self.__sml_pad, self.__output, self.__big_pad
+
+        elif self.__align in ('cr', 'rc'):
+            uno, due, tre = self.__big_pad, self.__output, self.__sml_pad
+
+        else:
+            raise UndefinedAlignment(self.__align)
 
         self.__output = uno + due + tre
 
-    def color_output(self):
+    def __color_output(self):
         if len(self.colors) == 1 and self.colors[0] in ANSI_SGR_CODES.keys() :
 
             for f in self.fx:
@@ -386,6 +395,7 @@ class FString(object):
 
         # elif len(self.colors) == 2:
         #     self.__output = colored(self.__output, self.colors[0], self.colors[1], attrs=self.fx)
+
 
 
 def expand_seconds(input_seconds, output=dict):
