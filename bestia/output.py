@@ -388,27 +388,27 @@ class FString(object):
         #     self.__output = colored(self.__output, self.colors[0], self.colors[1], attrs=self.fx)
 
 
-def expand_seconds(input_seconds, output_string=False):
+def expand_seconds(input_seconds, output=dict):
     ''' expands input_seconds into a dict with as less keys as needed: 
             seconds, minutes, hours, days, weeks
 
         can also return string
     '''
-    expanded_time = {}
-    expanded_time['minutes'], expanded_time['seconds'] = divmod(input_seconds, 60)
-    expanded_time['hours'], expanded_time['minutes'] = divmod(expanded_time['minutes'], 60)
-    expanded_time['days'], expanded_time['hours'] = divmod(expanded_time['hours'], 24)
-    expanded_time['weeks'], expanded_time['days'] = divmod(expanded_time['days'], 7)
+    time = {}
+    time['minutes'], time['seconds'] = divmod(input_seconds, 60)
+    time['hours'], time['minutes'] = divmod(time['minutes'], 60)
+    time['days'], time['hours'] = divmod(time['hours'], 24)
+    time['weeks'], time['days'] = divmod(time['days'], 7)
 
-    if output_string:
-        seconds = ' {} seconds'.format(round(expanded_time['seconds'], 2))
-        minutes = ' {} minutes'.format(int(expanded_time['minutes'])) if expanded_time['minutes'] else ''
-        hours = ' {} hours'.format(int(expanded_time['hours'])) if expanded_time['hours'] else ''
-        days = ' {} days'.format(int(expanded_time['days'])) if expanded_time['days'] else ''
-        weeks = ' {} weeks'.format(int(expanded_time['weeks'])) if expanded_time['weeks'] else ''
+    if output == str:
+        seconds = ' {} seconds'.format(round(time['seconds'], 2))
+        minutes = ' {} minutes'.format(int(time['minutes'])) if time['minutes'] else ''
+        hours = ' {} hours'.format(int(time['hours'])) if time['hours'] else ''
+        days = ' {} days'.format(int(time['days'])) if time['days'] else ''
+        weeks = ' {} weeks'.format(int(time['weeks'])) if time['weeks'] else ''
         return '{}{}{}{}{}'.format(weeks, days, hours, minutes, seconds).strip()
 
-    return expanded_time
+    return time
 
 
 def remove_path(input_path, depth=-1):
