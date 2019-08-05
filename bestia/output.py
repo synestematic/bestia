@@ -193,13 +193,14 @@ class echo(object):
         'raw',
     )
 
-    def __init__(self, input_string='', fg='', mode='modern'):
+    def __init__(self, input_string='', *args, mode='modern'):
 
         self.__output = input_string
 
         self.__fg_color = ''
-        if fg in ANSI_SGR_CODES.keys():
-            self.__fg_color = fg
+        for a in args:
+            if a in ANSI_SGR_CODES.keys():
+                self.__fg_color = a
 
         self.__mode = self.modes[0]
         if mode in self.modes:
