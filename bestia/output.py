@@ -62,14 +62,14 @@ def obfuscate_random_chars(input_string, amount=None, obfuscator='_'):
     ''' returns input string with amount of random chars obfuscated '''
     amount = len(input_string) - 4 if not amount or amount >= len(input_string) else amount
 
-    string_indexes = [
+    string_indecae = [
         i for i in range(
             len(str(input_string))
         )
     ]
 
     string_as_list = string_to_list(input_string)
-    for random_index in unique_random_items(string_indexes, amount):
+    for random_index in unique_random_items(string_indecae, amount):
         string_as_list[random_index] = obfuscator
 
     return iterable_to_string(string_as_list)
@@ -81,7 +81,7 @@ _STTY_BIN = command_output('which', 'stty').decode(ENCODING).strip()
 def tty_size():
     ''' dinamically returns size of current terminal  '''
     if not _STTY_BIN:
-        raise SttyBinMissing('stty bin NOT found')
+        raise MissingBinary('stty binary not found')
 
     proc = popen('{} size'.format(_STTY_BIN), 'r')
     rows, columns = proc.read().split()
@@ -345,8 +345,8 @@ class FString(object):
 
     @property
     def output(self):
-        self.__output = self.__input_string
-        self.__output = self.__output.replace("\t", ' ') # can't afford to have tabs in output as they are never displayed the same
+
+        self.__output = self.__input_string.replace('\t', ' ') # can't afford to have tabs in output as they are never displayed the same
         
         if self.__input_size > self.__output_size:
             self.__crop_output()

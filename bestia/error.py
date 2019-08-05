@@ -4,16 +4,7 @@ class UndefinedAnsiSequence(Exception):
 class UndefinedAlignment(Exception):
     pass
 
-class SttyBinMissing(Exception):
-    pass
-
-class SayBinMissing(Exception):
-    pass
-
-class FileBinMissing(Exception):
-    pass
-
-class CurlBinMissing(Exception):
+class MissingBinary(Exception):
     pass
 
 class CurlFailed(Exception):

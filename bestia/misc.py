@@ -30,7 +30,7 @@ def say(text):
         mainly intended for use with DARWIN systems
     '''
     if not _SAY_BIN:
-        raise SayBinMissing('say bin NOT found')
+        raise MissingBinary('say binary not found')
     say_command = '{} \'{}\''.format(_SAY_BIN, text)
     return system(say_command)
 
@@ -42,7 +42,7 @@ def file_type(resource):
         requires installation of "file" binary
     '''
     if not _FILE_BIN:
-        raise FileBinMissing('file bin NOT found')
+        raise MissingBinary('file binary not found')
 
     proc = popen('{} {}'.format(_FILE_BIN, resource), 'r')
 

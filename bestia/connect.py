@@ -30,7 +30,7 @@ def http_get(url, browser='', credentials=(), follow_redirects=True, silent=True
         can return data as raw bytes or as utf-8 encoded string
     '''
     if not _CURL_BIN:
-        raise CurlBinMissing('curl bin NOT found')
+        raise MissingBinary('curl binary not found')
 
     request_data = None
     if '?' in url:
