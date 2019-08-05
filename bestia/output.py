@@ -162,10 +162,6 @@ class Row(object):
             self.__output = self.__output + '{}'.format(fs)
         return self.__output
 
-    # @output.setter
-    # def output(self, value):
-    #     self.__output = value
-
     def fixed_fstrings(self):
         for fs in self.__fstrings:
             if fs.fixed_size:
@@ -259,17 +255,15 @@ class FString(object):
         self.append(input_string)
 
         self.resize(size)
-        self.set_pad(pad)
+
+        self.__pad = pad
 
         self.align = align			# l, r, cl, cr
-        self.colors = colors        # grey, red, green, yellow, blue, magenta, cyan, white
+        self.colors = colors        # black, red, green, yellow, blue, magenta, cyan, white
         self.fx = fx				# bold, dark, underline, blink, reverse, concealed
 
     def resize(self, size=None):
         self.__output_size = int(size) if size else self.input_size # desired len of output
-
-    def set_pad(self, pad=None):
-        self.__pad = str(pad)[0] if pad else ' '
 
 
     def filter_utf_chars(self, string):
@@ -305,7 +299,6 @@ class FString(object):
         add = True
         for char in self.__input_string:
         # when encoding input_string into byte_string: byte_string will not necessarily have the same amount of bytes as characters in the input_string ( some characters will be made of several bytes ), therefore, the input_string should not be encoded but EACH INDIVIDUAL CHAR should
-        # for byte in self.__input_string.encode(ENCODING):
             byte = char.encode(ENCODING)
             if byte == color_start_byte and add:
                 add = False
@@ -330,6 +323,13 @@ class FString(object):
     def echo(self, *args, **kwargs):
         return echo(self, *args, **kwargs)
 
+    @property
+    def __pad(self):
+        return self.__pad_char
+
+    @__pad.setter
+    def __pad(self, p):
+        self.__pad_char = str(p)[0] if p else ' '
 
     @property
     def __sml_pad(self):
