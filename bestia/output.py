@@ -199,7 +199,7 @@ class echo(object):
 
     def __init__(self, input_string='', fg='', mode='modern'):
 
-        self.output = input_string
+        self.__output = input_string
 
         self.__fg_color = ''
         if fg in ANSI_SGR_CODES.keys():
@@ -213,7 +213,7 @@ class echo(object):
         
     def __call__(self):
         screen_str(
-            self.output,
+            self.__output,
             lag = RETRO_LAG if self.__mode == 'retro' else 0,
             random_lag = 100 if self.__mode == 'retro' else 1,
             color = self.__fg_color
@@ -318,14 +318,14 @@ class FString(object):
 
     def __str__(self):
         self.set_output()
-        return self.output
+        return self.__output
 
     def __len__(self):
         return self.__output_size
 
     def __add__(self, other):
         self.set_output()
-        return self.output + '{}'.format(other)
+        return self.__output + '{}'.format(other)
 
     def echo(self, *args, **kwargs):
         return echo(self, *args, **kwargs)
@@ -335,12 +335,12 @@ class FString(object):
         delta_len = self.__output_size -self.input_size
         excess = delta_len %2
         exact_half = int( (delta_len -excess) /2 )
-        self.__sml_pad = self.__pad *exact_half
+        self.__sml_pad = self.__pad * exact_half
         self.__big_pad = self.__pad *(exact_half +excess)
 
     def set_output(self):
-        self.output = self.__input_string
-        self.output = self.output.replace("\t", ' ') # can't afford to have tabs in output as they are never displayed the same
+        self.__output = self.__input_string
+        self.__output = self.__output.replace("\t", ' ') # can't afford to have tabs in output as they are never displayed the same
         if self.input_size > self.__output_size:
             self.resize_output()
         self.color_output()
@@ -349,37 +349,37 @@ class FString(object):
 
     def resize_output(self):
         delta_length = self.input_size - self.__output_size
-        self.output = self.output[:0-delta_length]
+        self.__output = self.__output[:0-delta_length]
 
     def align_output(self):
         self.set_pads()
 
-        uno, due, tre = self.output, self.__sml_pad, self.__big_pad
+        uno, due, tre = self.__output, self.__sml_pad, self.__big_pad
         # ASSUME "l" to avoid nasty fail...
         # but I should Raise an Exception if I pass invalid value "w"
         if self.align == 'cl' or self.align == 'lc' or self.align == 'c':
-            uno, due, tre = self.__sml_pad, self.output, self.__big_pad
+            uno, due, tre = self.__sml_pad, self.__output, self.__big_pad
         elif self.align == 'cr' or self.align == 'rc':
-            uno, due, tre = self.__big_pad, self.output, self.__sml_pad
+            uno, due, tre = self.__big_pad, self.__output, self.__sml_pad
         elif self.align == 'r':
-            uno, due, tre = self.__sml_pad, self.__big_pad, self.output
+            uno, due, tre = self.__sml_pad, self.__big_pad, self.__output
 
-        self.output = '{}{}{}'.format(uno, due, tre)
+        self.__output = '{}{}{}'.format(uno, due, tre)
 
     def color_output(self):
         if len(self.colors) == 1 and self.colors[0] in ANSI_SGR_CODES.keys() :
 
             for f in self.fx:
-                self.output = ansi_esc_seq(f) +self.output
-            # self.output = colored(self.output, self.colors[0], attrs=self.fx)
-            self.output = '{}{}{}'.format(
+                self.__output = ansi_esc_seq(f) +self.__output
+            # self.__output = colored(self.__output, self.colors[0], attrs=self.fx)
+            self.__output = '{}{}{}'.format(
                 ansi_esc_seq(self.colors[0]),
-                self.output,
+                self.__output,
                 ansi_esc_seq('reset'),
             )
 
         # elif len(self.colors) == 2:
-        #     self.output = colored(self.output, self.colors[0], self.colors[1], attrs=self.fx)
+        #     self.__output = colored(self.__output, self.colors[0], self.colors[1], attrs=self.fx)
 
 
 def expand_seconds(input_seconds, output_string=False):
