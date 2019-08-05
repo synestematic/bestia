@@ -113,7 +113,7 @@ class Row(object):
 
         # remove fixed_fs sizes
         for fs in self.fixed_fstrings():
-            spaces_left -= fs.output_size
+            spaces_left -= len(fs)
         # what if they remove more than instantiated?
 
         # gather adaptive_fs
@@ -144,7 +144,7 @@ class Row(object):
                     continue
 
                 self.__fstrings[i].resize(
-                    self.__fstrings[i].output_size +1
+                    len(self.__fstrings[i]) +1
                 )
 
                 spaces_left -= 1
@@ -266,7 +266,7 @@ class FString(object):
         self.fx = fx				# bold, dark, underline, blink, reverse, concealed
 
     def resize(self, size=None):
-        self.output_size = int(size) if size else self.input_size # desired len of output
+        self.__output_size = int(size) if size else self.input_size # desired len of output
 
     def set_pad(self, pad=None):
         self.__pad = str(pad)[0] if pad else ' '
@@ -321,7 +321,7 @@ class FString(object):
         return self.output
 
     def __len__(self):
-        return self.output_size
+        return self.__output_size
 
     def __add__(self, other):
         self.set_output()
@@ -332,23 +332,23 @@ class FString(object):
 
 
     def set_pads(self):
-        delta_length = self.output_size - self.input_size
-        excess = delta_length % 2
-        exact_half = int((delta_length - excess) / 2)
-        self.__sml_pad = self.__pad * exact_half
-        self.__big_pad = self.__pad * (exact_half + excess)
+        delta_len = self.__output_size -self.input_size
+        excess = delta_len %2
+        exact_half = int( (delta_len -excess) /2 )
+        self.__sml_pad = self.__pad *exact_half
+        self.__big_pad = self.__pad *(exact_half +excess)
 
     def set_output(self):
         self.output = self.__input_string
         self.output = self.output.replace("\t", ' ') # can't afford to have tabs in output as they are never displayed the same
-        if self.input_size > self.output_size:
+        if self.input_size > self.__output_size:
             self.resize_output()
         self.color_output()
-        if self.output_size > self.input_size:
+        if self.__output_size > self.input_size:
             self.align_output()
 
     def resize_output(self):
-        delta_length = self.input_size - self.output_size
+        delta_length = self.input_size - self.__output_size
         self.output = self.output[:0-delta_length]
 
     def align_output(self):
