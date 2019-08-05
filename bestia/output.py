@@ -259,8 +259,7 @@ class FString(object):
         self.append(input_string)
 
         self.resize(size)
-
-        self.pad = str(pad)[0] if pad else ' '      # improve this shit
+        self.set_pad(pad)
 
         self.align = align			# l, r, cl, cr
         self.colors = colors        # grey, red, green, yellow, blue, magenta, cyan, white
@@ -268,6 +267,10 @@ class FString(object):
 
     def resize(self, size=None):
         self.output_size = int(size) if size else self.input_size # desired len of output
+
+    def set_pad(self, pad=None):
+        self.__pad = str(pad)[0] if pad else ' '
+
 
     def filter_utf_chars(self, string):
         '''
@@ -332,8 +335,8 @@ class FString(object):
         delta_length = self.output_size - self.input_size
         excess = delta_length % 2
         exact_half = int((delta_length - excess) / 2)
-        self.small_pad = self.pad * exact_half
-        self.big_pad = self.pad * (exact_half + excess)
+        self.__sml_pad = self.__pad * exact_half
+        self.__big_pad = self.__pad * (exact_half + excess)
 
     def set_output(self):
         self.output = self.__input_string
@@ -351,15 +354,15 @@ class FString(object):
     def align_output(self):
         self.set_pads()
 
-        uno, due, tre = self.output, self.small_pad, self.big_pad
+        uno, due, tre = self.output, self.__sml_pad, self.__big_pad
         # ASSUME "l" to avoid nasty fail...
         # but I should Raise an Exception if I pass invalid value "w"
         if self.align == 'cl' or self.align == 'lc' or self.align == 'c':
-            uno, due, tre = self.small_pad, self.output, self.big_pad
+            uno, due, tre = self.__sml_pad, self.output, self.__big_pad
         elif self.align == 'cr' or self.align == 'rc':
-            uno, due, tre = self.big_pad, self.output, self.small_pad
+            uno, due, tre = self.__big_pad, self.output, self.__sml_pad
         elif self.align == 'r':
-            uno, due, tre = self.small_pad, self.big_pad, self.output
+            uno, due, tre = self.__sml_pad, self.__big_pad, self.output
 
         self.output = '{}{}{}'.format(uno, due, tre)
 
