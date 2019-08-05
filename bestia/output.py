@@ -259,8 +259,8 @@ class FString(object):
         self.__pad = pad
 
         self.__align = align			# l, r, cl, cr
-        self.colors = colors        # black, red, green, yellow, blue, magenta, cyan, white
-        self.fx = fx				# bold, dark, underline, blink, reverse, concealed
+        self.__colors = colors        # black, red, green, yellow, blue, magenta, cyan, white
+        self.__fx = fx				# bold, dark, underline, blink, reverse, concealed
 
     def resize(self, size=None):
         self.__output_size = int(size) if size else self.__input_size # desired len of output
@@ -351,16 +351,36 @@ class FString(object):
         if self.__input_size > self.__output_size:
             self.__crop_output()
         
-        self.__color_output()
+        if self.__colors or self.__fx:
+            self.__paint_output()
         
         if self.__output_size > self.__input_size:
             self.__align_output()
         
         return self.__output
 
+
     def __crop_output(self):
         delta_len = self.__input_size - self.__output_size
         self.__output = self.__output[:0 - delta_len]
+
+
+    def __paint_output(self):
+
+        if self.__colors[0] in ANSI_SGR_CODES.keys() :
+
+            for f in self.__fx:
+                self.__output = ansi_esc_seq(f) +self.__output
+            # self.__output = colored(self.__output, self.__colors[0], attrs=self.__fx)
+            self.__output = '{}{}{}'.format(
+                ansi_esc_seq(self.__colors[0]),
+                self.__output,
+                ansi_esc_seq('reset'),
+            )
+
+        # elif len(self.__colors) == 2:
+        #     self.__output = colored(self.__output, self.__colors[0], self.__colors[1], attrs=self.__fx)
+
 
     def __align_output(self):
 
@@ -380,21 +400,6 @@ class FString(object):
             raise UndefinedAlignment(self.__align)
 
         self.__output = uno + due + tre
-
-    def __color_output(self):
-        if len(self.colors) == 1 and self.colors[0] in ANSI_SGR_CODES.keys() :
-
-            for f in self.fx:
-                self.__output = ansi_esc_seq(f) +self.__output
-            # self.__output = colored(self.__output, self.colors[0], attrs=self.fx)
-            self.__output = '{}{}{}'.format(
-                ansi_esc_seq(self.colors[0]),
-                self.__output,
-                ansi_esc_seq('reset'),
-            )
-
-        # elif len(self.colors) == 2:
-        #     self.__output = colored(self.__output, self.colors[0], self.colors[1], attrs=self.fx)
 
 
 
