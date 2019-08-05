@@ -318,14 +318,14 @@ class FString(object):
                 self.input_size += 1
 
     def __str__(self):
-        self.set_ouput_string()
+        self.set_output()
         return self.output
 
     def __len__(self):
         return self.output_size
 
     def __add__(self, other):
-        self.set_ouput_string()
+        self.set_output()
         return self.output + '{}'.format(other)
 
     def echo(self, *args, **kwargs):
@@ -344,7 +344,7 @@ class FString(object):
         self.small_pad = self.pad * exact_half
         self.big_pad = self.pad * (exact_half + excess)
 
-    def set_ouput_string(self):
+    def set_output(self):
         self.output = self.__input_string
         self.output = self.output.replace("\t", ' ') # can't afford to have tabs in output as they are never displayed the same
         if self.input_size > self.output_size:
@@ -411,22 +411,22 @@ def expand_seconds(input_seconds, output_string=False):
     return expanded_time
 
 
-def remove_path(input_path, deepness=-1):
+def remove_path(input_path, depth=-1):
     ''' removes directories from file path
         supports various levels of dir removal
     '''
     try:
-        if deepness > 0:
-            deepness = 0 - deepness
-        elif deepness == 0:
-            deepness = -1
+        if depth > 0:
+            depth = 0 - depth
+        elif depth == 0:
+            depth = -1
         levels = []
-        while deepness <= -1:
-            levels.append(input_path.split(PATH_SEPARATOR)[deepness])
-            deepness += 1
+        while depth <= -1:
+            levels.append(input_path.split(PATH_SEPARATOR)[depth])
+            depth += 1
         return PATH_JOIN(*levels)
     except IndexError:
-        return remove_path(input_path, deepness=deepness+1)
+        return remove_path(input_path, depth=depth+1)
 
 
 def replace_special_chars(t):
