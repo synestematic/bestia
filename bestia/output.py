@@ -258,16 +258,12 @@ class FString(object):
         self.__input_string = ''
         self.append(input_string)
 
-
-
-
         self.resize(size)
 
         self.pad = str(pad)[0] if pad else ' '      # improve this shit
 
         self.align = align			# l, r, cl, cr
-        self.set_colors(colors) 	# grey, red, green, yellow, blue, magenta, cyan, white
-
+        self.colors = colors        # grey, red, green, yellow, blue, magenta, cyan, white
         self.fx = fx				# bold, dark, underline, blink, reverse, concealed
 
     def resize(self, size=None):
@@ -331,11 +327,6 @@ class FString(object):
     def echo(self, *args, **kwargs):
         return echo(self, *args, **kwargs)
 
-    def set_colors(self, colors):
-        if len(colors) > 1:
-            colors[1] = colors[1].replace('on_', '')
-            colors[1] = 'on_{}'.format(colors[1])
-        self.colors = colors
 
     def set_pads(self):
         delta_length = self.output_size - self.input_size
