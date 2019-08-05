@@ -1,6 +1,9 @@
 class UndefinedAnsiSequence(Exception):
     pass
 
+class UndefinedAlignment(Exception):
+    pass
+
 class SttyBinMissing(Exception):
     pass
 
