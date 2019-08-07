@@ -259,7 +259,9 @@ class FString(object):
 
         self.__pad = pad
 
-        self.colors = colors
+        self.__fg_clr = ''
+        self.__bg_clr = ''
+        self.__colors = colors
         # black, red, green, yellow, blue, magenta, cyan, white
 
         self.__fx = fx				# bold, dark, underline, blink, reverse, concealed
@@ -334,16 +336,21 @@ class FString(object):
         self.__pad_char = str(p)[0] if p else ' '
 
     @property
-    def colors(self):
-        return self.__colors
+    def __colors(self):
+        return (self.__fg_clr, self.__bg_clr)
 
-    @colors.setter
-    def colors(self, cs):
-        self.__colors = []
+    @__colors.setter
+    def __colors(self, cs):
+        if not cs:
+            return
+
         for c in cs:
             if c not in ANSI_SGR_CODES:
                 raise UndefinedAnsiSequence(c)
-            self.__colors.append(c)
+
+        self.__fg_clr = cs[0]
+        if len(cs) > 1:
+            self.__bg_clr = cs[1]
 
 
     @property
@@ -368,7 +375,7 @@ class FString(object):
         if self.__input_size > self.__output_size:
             self.__crop_output()
 
-        if self.__colors or self.__fx:
+        if self.__fg_clr or self.__bg_clr or self.__fx:
             self.__paint_output()
 
         if self.__output_size > self.__input_size:
@@ -385,11 +392,13 @@ class FString(object):
     def __paint_output(self):
 
         for f in self.__fx:
-            self.__output = ansi_esc_seq(f) +self.__output
+            self.__output = ansi_esc_seq(f) + self.__output
 
-        self.__output = ansi_esc_seq(self.__colors[0]) +self.__output
-        if len(self.__colors) > 1:
-            self.__output = ansi_esc_seq(self.__colors[1], offset=10) +self.__output
+        if self.__fg_clr:
+            self.__output = ansi_esc_seq(self.__fg_clr) + self.__output
+            if self.__bg_clr:
+                # background color range is +10 respect to foreground color
+                self.__output = ansi_esc_seq(self.__bg_clr, offset=10) + self.__output
 
         self.__output = self.__output + ansi_esc_seq('reset')
 
