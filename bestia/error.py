@@ -1,11 +1,14 @@
+### generic exceptions ###################
+class MissingBinary(Exception):
+    pass
+
+### output module exceptions #############
 class UndefinedAnsiSequence(Exception):
     pass
 
 class UndefinedAlignment(Exception):
     pass
 
-class MissingBinary(Exception):
-    pass
-
+### connect module exceptions ############
 class CUrlFail(Exception):
     pass
