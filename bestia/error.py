@@ -7,5 +7,5 @@ class UndefinedAlignment(Exception):
 class MissingBinary(Exception):
     pass
 
-class CurlFailed(Exception):
+class CUrlFail(Exception):
     pass

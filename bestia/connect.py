@@ -73,7 +73,7 @@ def http_get(url, browser='', credentials=(), follow_redirects=True, silent=True
     # input(echo(curl_command, 'cyan'))
     rc = system(curl_command)
     if rc != 0: # system when NOT want to store cmd output to var
-        raise CurlFailed('curl returned: {}'.format(rc))
+        raise CUrlFail('[{}] {}'.format(rc, url))
 
     with open(out_file, 'rb') as stream:
         response_data = stream.read()
