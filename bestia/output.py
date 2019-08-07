@@ -39,10 +39,10 @@ ANSI_SGR_CODES = { # Select Graphic Rendition subset
 }
 
 
-def ansi_esc_seq(x):
+def ansi_esc_seq(fx, offset=0):
     try:
         return '\033[{}m'.format(
-            ANSI_SGR_CODES[x]
+            ANSI_SGR_CODES[fx] + offset
         )
     except KeyError:
         raise UndefinedAnsiSequence(x)
@@ -207,7 +207,7 @@ class echo(object):
             self.__mode = mode
 
         self()
-        
+
     def __call__(self):
         screen_str(
             self.__output,
@@ -259,9 +259,12 @@ class FString(object):
 
         self.__pad = pad
 
-        self.__align = align			# l, r, cl, cr
-        self.__colors = colors        # black, red, green, yellow, blue, magenta, cyan, white
+        self.colors = colors
+        # black, red, green, yellow, blue, magenta, cyan, white
+
         self.__fx = fx				# bold, dark, underline, blink, reverse, concealed
+
+        self.__align = align			# l, r, cl, cr
 
     def resize(self, size=None):
         self.__output_size = int(size) if size else self.__input_size # desired len of output
@@ -331,6 +334,19 @@ class FString(object):
         self.__pad_char = str(p)[0] if p else ' '
 
     @property
+    def colors(self):
+        return self.__colors
+
+    @colors.setter
+    def colors(self, cs):
+        self.__colors = []
+        for c in cs:
+            if c not in ANSI_SGR_CODES:
+                raise UndefinedAnsiSequence(c)
+            self.__colors.append(c)
+
+
+    @property
     def __big_pad(self):
         exact_half, excess = divmod(
             self.__output_size - self.__input_size, 2
@@ -348,16 +364,16 @@ class FString(object):
     def output(self):
 
         self.__output = self.__input_string.replace('\t', ' ') # can't afford to have tabs in output as they are never displayed the same
-        
+
         if self.__input_size > self.__output_size:
             self.__crop_output()
-        
+
         if self.__colors or self.__fx:
             self.__paint_output()
-        
+
         if self.__output_size > self.__input_size:
             self.__align_output()
-        
+
         return self.__output
 
 
@@ -368,19 +384,14 @@ class FString(object):
 
     def __paint_output(self):
 
-        if self.__colors[0] in ANSI_SGR_CODES.keys() :
+        for f in self.__fx:
+            self.__output = ansi_esc_seq(f) +self.__output
 
-            for f in self.__fx:
-                self.__output = ansi_esc_seq(f) +self.__output
-            # self.__output = colored(self.__output, self.__colors[0], attrs=self.__fx)
-            self.__output = '{}{}{}'.format(
-                ansi_esc_seq(self.__colors[0]),
-                self.__output,
-                ansi_esc_seq('reset'),
-            )
+        self.__output = ansi_esc_seq(self.__colors[0]) +self.__output
+        if len(self.__colors) > 1:
+            self.__output = ansi_esc_seq(self.__colors[1], offset=10) +self.__output
 
-        # elif len(self.__colors) == 2:
-        #     self.__output = colored(self.__output, self.__colors[0], self.__colors[1], attrs=self.__fx)
+        self.__output = self.__output + ansi_esc_seq('reset')
 
 
     def __align_output(self):
@@ -390,7 +401,7 @@ class FString(object):
 
         elif self.__align == 'r':
             uno, due, tre = self.__sml_pad, self.__big_pad, self.__output
-        
+
         elif self.__align in ('c', 'cl', 'lc'):
             uno, due, tre = self.__sml_pad, self.__output, self.__big_pad
 
@@ -405,7 +416,7 @@ class FString(object):
 
 
 def expand_seconds(input_seconds, output=dict):
-    ''' expands input_seconds into a dict with as less keys as needed: 
+    ''' expands input_seconds into a dict with as less keys as needed:
             seconds, minutes, hours, days, weeks
 
         can also return string
