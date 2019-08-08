@@ -345,7 +345,7 @@ class FString(object):
             return
 
         for c in cs:
-            if c not in ANSI_SGR_CODES:
+            if c and c not in ANSI_SGR_CODES:
                 raise UndefinedAnsiSequence(c)
 
         self.__fg_clr = cs[0]
