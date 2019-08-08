@@ -79,7 +79,7 @@ _STTY_BIN = command_output('which', 'stty').decode(ENCODING).strip()
 
 
 def tty_size():
-    ''' dinamically returns size of current terminal  '''
+    ''' returns dynamic size of current terminal  '''
     if not _STTY_BIN:
         raise MissingBinary('stty binary not found')
 
@@ -89,24 +89,26 @@ def tty_size():
 
 
 def tty_rows():
-    ''' dinamically returns rows of current terminal '''
+    ''' returns dynamic rows of current terminal '''
     return tty_size()[0]
 
 
 def tty_columns():
-    ''' dinamically returns columns of current terminal '''
+    ''' returns dynamic columns of current terminal '''
     return tty_size()[1]
 
 
 class Row(object):
 
-    def __init__(self, *input_strings, width=False):
+    '''a string with width == terminal size (unless otherwise specified). Instantiate a Row object with as many str|FString items as you like and it will keep its width constant by cropping/aligning items without a fixed_size'''
+
+    def __init__(self, *items, width=False):
         self.__output = ''
         self.__fixed_width = width
         self.__fstrings = []
-        for s in input_strings:
-            self.append(s)
-        # self.assign_spaces()
+        for item in items:
+            self.append(item)
+
 
     def assign_spaces(self):
         spaces_left = self.width
@@ -114,7 +116,6 @@ class Row(object):
         # remove fixed_fs sizes
         for fs in self.fixed_fstrings():
             spaces_left -= len(fs)
-        # what if they remove more than instantiated?
 
         # gather adaptive_fs
         adaptive_fs_count = len(
@@ -122,6 +123,12 @@ class Row(object):
         )
         if not adaptive_fs_count:
             return
+
+        # if spaces_left < 1:
+            ### CROP if removed more spaces than available?
+            # return
+
+        ### ALIGN
 
         # calculate individual size for each adaptive_fs + any spaces left
         adaptive_fs_size, spaces_left = divmod(
@@ -319,7 +326,7 @@ class FString(object):
         return self.output
 
     def __len__(self):
-        return self.__output_size
+        return self.__output_size if self.__output_size > 0 else 0
 
     def __add__(self, other):
         return self.output + '{}'.format(other)
