@@ -15,7 +15,7 @@ _WEB_BROWSERS = {
     'IE11': 'Mozilla/5.0 (compatible, MSIE 11, Windows NT 6.3; Trident/7.0; rv:11.0) like Gecko',
 }
 
-def __random_browser():
+def random_browser():
     ''' returns random browser for basic anti-crawler prevention '''
     allowed_browsers = [v for k, v in _WEB_BROWSERS.items() if k != 'IE11'] # IE11 gets banned on several sites...
     return unique_random_items(allowed_browsers, amount=1)[0]
@@ -40,11 +40,12 @@ def http_get(url, browser='', credentials=(), follow_redirects=True, silent=True
         input('THIS URL SUCKS: {}'.format(url))
 
     out_file = path.join('/', 'tmp', uuid4().hex) if not store else store
-    browser = __random_browser() if not browser else browser
-
+    
     curl_command = [
         _CURL_BIN, '-G', dquoted(url),
-        '--user-agent', dquoted(browser),
+        '--user-agent', dquoted(
+            random_browser() if not browser else browser
+        ),
         '--output', out_file,
     ]
 
