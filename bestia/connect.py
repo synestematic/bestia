@@ -16,7 +16,7 @@ _WEB_BROWSERS = {
 }
 
 def random_browser(exclude='IE11'):
-    ''' returns random browser for bas
+    ''' returns random browser to simulate human interaction within scripts
         IE11 is excluded by default since it's banned on several websites
     '''
     allowed_browsers = [ v for k, v in _WEB_BROWSERS.items() if k != exclude ]
