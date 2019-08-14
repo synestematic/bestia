@@ -5,6 +5,7 @@ bestia is a library of functions and classes designed to help you build dynamic 
 ## available functions / classes
 ### connect.py
 * http_get
+* random_browser
 
 ### iterate.py
 * string_to_list

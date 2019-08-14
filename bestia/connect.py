@@ -15,9 +15,11 @@ _WEB_BROWSERS = {
     'IE11': 'Mozilla/5.0 (compatible, MSIE 11, Windows NT 6.3; Trident/7.0; rv:11.0) like Gecko',
 }
 
-def random_browser():
-    ''' returns random browser for basic anti-crawler prevention '''
-    allowed_browsers = [v for k, v in _WEB_BROWSERS.items() if k != 'IE11'] # IE11 gets banned on several sites...
+def random_browser(exclude='IE11'):
+    ''' returns random browser for bas
+        IE11 is excluded by default since it's banned on several websites
+    '''
+    allowed_browsers = [ v for k, v in _WEB_BROWSERS.items() if k != exclude ]
     return unique_random_items(allowed_browsers, amount=1)[0]
 
 
