@@ -278,13 +278,13 @@ def screen_str(string='\n', color=None, lag=0, random_lag=1):
 
 class FString(object):
 
-    def __init__(self, input_string='', size=False, pad=' ', align='l', fg='', bg='', fx=[], colors=[]):
+    def __init__(self, init_string='', size=0, pad=' ', align='l', fg='', bg='', fx=[]):
 
         self.fixed_size = True if size else False
 
         self.__input_string = ''
-        self.append(input_string)
-
+        self.append(init_string)
+-
         self.__output_size = self.__input_size
         self.size = size
 
