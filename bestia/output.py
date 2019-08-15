@@ -282,7 +282,7 @@ def screen_str(string='\n', color=None, lag=0, random_lag=1):
 
 class FString(object):
 
-    def __init__(self, input_string='', size=False, align='l', pad=' ', colors=[], fg='', bg='', fx=[]):
+    def __init__(self, input_string='', size=False, pad=' ', align='l', fg='', bg='', fx=[], colors=[]):
 
         self.fixed_size = True if size else False
 
@@ -293,6 +293,10 @@ class FString(object):
 
         self.__pad = ' '
         self.pad = pad
+
+        # l, r, cl, cr
+        self.__align = 'l'
+        self.align = align
 
         # black, red, green, yellow, blue, magenta, cyan, white
         self.__fg_color = ''
@@ -305,8 +309,6 @@ class FString(object):
         self.__fx = []
         self.fx = fx
 
-        # l, r, cl, cr
-        self.__align = align			
 
     def resize(self, size=None):
         self.__output_size = int(size) if size else self.__input_size # desired len of output
@@ -374,6 +376,16 @@ class FString(object):
     @pad.setter
     def pad(self, p):
         self.__pad = str(p)[0] if p else ' '
+
+    @property
+    def align(self):
+        return self.__align
+
+    @align.setter
+    def align(self, a):
+        if a not in ('l', 'r', 'c', 'lc', 'cl', 'rc', 'cr'):
+            raise UndefinedAlignment(a)
+        self.__align = a
 
     @property
     def fg_color(self):
@@ -459,22 +471,16 @@ class FString(object):
     def __align_output(self):
 
         if self.__align == 'l':
-            uno, due, tre = self.__output, self.__sml_pad, self.__big_pad
+            self.__output = self.__output + self.__sml_pad + self.__big_pad
 
         elif self.__align == 'r':
-            uno, due, tre = self.__sml_pad, self.__big_pad, self.__output
+            self.__output = self.__sml_pad + self.__big_pad + self.__output
 
         elif self.__align in ('c', 'cl', 'lc'):
-            uno, due, tre = self.__sml_pad, self.__output, self.__big_pad
+            self.__output = self.__sml_pad + self.__output + self.__big_pad
 
         elif self.__align in ('cr', 'rc'):
-            uno, due, tre = self.__big_pad, self.__output, self.__sml_pad
-
-        else:
-            raise UndefinedAlignment(self.__align)
-
-        self.__output = uno + due + tre
-
+            self.__output = self.__big_pad + self.__output + self.__sml_pad
 
 
 def expand_seconds(input_seconds, output=dict):
@@ -577,3 +583,7 @@ f.bg_color = 'white'
 
 
 f.echo()
+f.align = 'l'
+
+f.echo()
+
