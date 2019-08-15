@@ -45,7 +45,7 @@ def ansi_esc_seq(fx, offset=0):
             ANSI_SGR_CODES[fx] + offset
         )
     except KeyError:
-        raise UndefinedAnsiSequence(x)
+        raise UndefinedAnsiSequence(fx)
 
 
 def dquoted(s):
@@ -255,7 +255,7 @@ def screen_str(string='\n', color=None, lag=0, random_lag=1):
 
 class FString(object):
 
-    def __init__(self, input_string='', size=False, align='l', pad=None, colors=[], fx=[]):
+    def __init__(self, input_string='', size=False, align='l', pad=None, colors=[], fg='', bg='', fx=[]):
 
         self.fixed_size = True if size else False
 
@@ -266,14 +266,18 @@ class FString(object):
 
         self.__pad = pad
 
-        self.__fg_clr = ''
-        self.__bg_clr = ''
-        self.__colors = colors
         # black, red, green, yellow, blue, magenta, cyan, white
+        self.__fg_color = ''
+        self.fg_color = fg
 
-        self.__fx = fx				# bold, dark, underline, blink, reverse, concealed
+        self.__bg_color = ''
+        self.bg_color = bg
 
-        self.__align = align			# l, r, cl, cr
+        # bold, dark, underline, blink, reverse, concealed
+        self.__fx = fx				
+
+        # l, r, cl, cr
+        self.__align = align			
 
     def resize(self, size=None):
         self.__output_size = int(size) if size else self.__input_size # desired len of output
@@ -343,22 +347,31 @@ class FString(object):
         self.__pad_char = str(p)[0] if p else ' '
 
     @property
-    def __colors(self):
-        return (self.__fg_clr, self.__bg_clr)
+    def fg_color(self):
+        return self.__fg_color
 
-    @__colors.setter
-    def __colors(self, cs):
-        if not cs:
-            return
-
-        for c in cs:
-            if c and c not in ANSI_SGR_CODES:
+    @property
+    def bg_color(self):
+        return self.__bg_color
+    
+    def validate_color(xx_color):
+        def _(self, c):
+            if not c:
+                return
+            if c not in ANSI_SGR_CODES:
                 raise UndefinedAnsiSequence(c)
+            xx_color(self, c)
+        return _
 
-        self.__fg_clr = cs[0]
-        if len(cs) > 1:
-            self.__bg_clr = cs[1]
+    @bg_color.setter
+    @validate_color
+    def bg_color(self, c):
+        self.__bg_color = c
 
+    @fg_color.setter
+    @validate_color
+    def fg_color(self, c):
+        self.__fg_color = c
 
     @property
     def __big_pad(self):
@@ -382,7 +395,7 @@ class FString(object):
         if self.__input_size > self.__output_size:
             self.__crop_output()
 
-        if self.__fg_clr or self.__bg_clr or self.__fx:
+        if self.__fg_color or self.__bg_color or self.__fx:
             self.__paint_output()
 
         if self.__output_size > self.__input_size:
@@ -401,11 +414,12 @@ class FString(object):
         for f in self.__fx:
             self.__output = ansi_esc_seq(f) + self.__output
 
-        if self.__fg_clr:
-            self.__output = ansi_esc_seq(self.__fg_clr) + self.__output
-            if self.__bg_clr:
-                # background color range is +10 respect to foreground color
-                self.__output = ansi_esc_seq(self.__bg_clr, offset=10) + self.__output
+        if self.__fg_color:
+            self.__output = ansi_esc_seq(self.__fg_color) + self.__output
+
+        if self.__bg_color:
+            # background color range is +10 respect to foreground color
+            self.__output = ansi_esc_seq(self.__bg_color, offset=10) + self.__output
 
         self.__output = self.__output + ansi_esc_seq('reset')
 
