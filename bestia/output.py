@@ -62,7 +62,7 @@ def validate_ansi(ansi_name, ansi_type):
     elif ansi_type == 'fx':
         if ANSI_SGR_CODES[ansi_name] in ANSI_CLR_VALUES:
             raise InvalidFx(ansi_name)
-    
+
     return ansi_name
 
 
@@ -284,7 +284,7 @@ class FString(object):
 
         self.__input_string = ''
         self.append(init_string)
--
+
         self.__output_size = self.__input_size
         self.size = size
 
