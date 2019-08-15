@@ -165,9 +165,7 @@ class Row(object):
         # resize adaptive_fs
         for i, _ in enumerate(self.__fstrings):
             if not self.__fstrings[i].fixed_size:
-                self.__fstrings[i].resize(
-                    adaptive_fs_size
-                )
+                self.__fstrings[i].size = adaptive_fs_size
 
         # deal spaces_left to adaptive_fs 1 by 1
         while spaces_left:
@@ -177,9 +175,7 @@ class Row(object):
                 if self.__fstrings[i].fixed_size:
                     continue
 
-                self.__fstrings[i].resize(
-                    len(self.__fstrings[i]) +1
-                )
+                self.__fstrings[i].size += 1
 
                 spaces_left -= 1
                 if not spaces_left:
@@ -289,12 +285,13 @@ class FString(object):
         self.__input_string = ''
         self.append(input_string)
 
-        self.resize(size)
+        self.__output_size = self.__input_size
+        self.size = size
 
         self.__pad = ' '
         self.pad = pad
 
-        # l, r, cl, cr
+        # l, r, c, cl, lc, cr, rc
         self.__align = 'l'
         self.align = align
 
@@ -310,10 +307,6 @@ class FString(object):
         self.fx = fx
 
 
-    def resize(self, size=None):
-        self.__output_size = int(size) if size else self.__input_size # desired len of output
-
-
     def filter_utf_chars(self, string):
         '''
             filters out chars that can cause misalignments
@@ -326,13 +319,11 @@ class FString(object):
         ).decode(ENCODING)
 
     def append(self, string):
-
         self.__input_string = '{}{}'.format(
             self.__input_string,
             self.filter_utf_chars(string),
-            # string
+            # string,
         )
-
         self.set_input_size()
 
     def set_input_size(self):
@@ -368,6 +359,15 @@ class FString(object):
 
     def echo(self, *args, **kwargs):
         return echo(self, *args, **kwargs)
+
+    @property
+    def size(self):
+        return len(self)
+
+    @size.setter
+    def size(self, s=None):
+        self.__output_size = int(s) if s else self.__input_size # desired len of output
+
 
     @property
     def pad(self):
@@ -571,19 +571,4 @@ def replace_special_chars(t):
     for o, i in special_chars.items():
         t = str(t).replace(o, i)
     return t
-
-
-f = FString(
-    'asd', fg='magenta', bg=None, fx=['underline', 'bold'], size=8, align='rc', pad=123
-)
-
-# f.fg_color = 'yellow'
-f.bg_color = 'white'
-# f.pad = '@sd'
-
-
-f.echo()
-f.align = 'l'
-
-f.echo()
 
