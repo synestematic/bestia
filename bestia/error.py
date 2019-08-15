@@ -3,6 +3,12 @@ class MissingBinary(Exception):
     pass
 
 ### output module exceptions #############
+class InvalidColor(Exception):
+    pass
+
+class InvalidFX(Exception):
+    pass
+
 class UndefinedAnsiSequence(Exception):
     pass
 

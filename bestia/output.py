@@ -13,6 +13,13 @@ CHAR_SIZE = getsizeof('A')
 ENCODING = 'utf-8'
 RETRO_LAG = 0.00003 #  0.0005
 
+class AnsiSgrCode(object):
+
+    def __init__(self, name, code):
+        self.name = name
+        self.code = code
+
+
 ANSI_SGR_CODES = { # Select Graphic Rendition subset
 
     'reset': 0,
@@ -37,6 +44,26 @@ ANSI_SGR_CODES = { # Select Graphic Rendition subset
 	# dark, reverse, concealed
 
 }
+
+ANSI_CLR_VALUES = tuple( [ n for n in range(30, 50) ] )
+
+def validate_ansi(ansi_name, ansi_type=True):
+
+    if not ansi_name:
+        return
+
+    if ansi_name not in ANSI_SGR_CODES:
+        raise UndefinedAnsiSequence(ansi_name)
+
+    if ansi_type == 'color':
+        if ANSI_SGR_CODES[ansi_name] not in ANSI_CLR_VALUES:
+            raise InvalidColor(ansi_name)
+
+    elif ansi_type == 'fx':
+        if ANSI_SGR_CODES[ansi_name] in ANSI_CLR_VALUES:
+            raise InvalidFx(ansi_name)
+    
+    return ansi_name
 
 
 def ansi_esc_seq(fx, offset=0):
@@ -274,7 +301,8 @@ class FString(object):
         self.bg_color = bg
 
         # bold, dark, underline, blink, reverse, concealed
-        self.__fx = fx				
+        self.__fx = []
+        self.fx = fx
 
         # l, r, cl, cr
         self.__align = align			
@@ -353,25 +381,28 @@ class FString(object):
     @property
     def bg_color(self):
         return self.__bg_color
-    
-    def validate_color(xx_color):
-        def _(self, c):
-            if not c:
-                return
-            if c not in ANSI_SGR_CODES:
-                raise UndefinedAnsiSequence(c)
-            xx_color(self, c)
-        return _
 
-    @bg_color.setter
-    @validate_color
-    def bg_color(self, c):
-        self.__bg_color = c
+    @property
+    def fx(self):
+        return self.__fx
 
     @fg_color.setter
-    @validate_color
     def fg_color(self, c):
-        self.__fg_color = c
+        if validate_ansi(c, ansi_type='color'):
+            self.__fg_color = c
+
+    @bg_color.setter
+    def bg_color(self, c):
+        if validate_ansi(c, ansi_type='color'):
+            self.__bg_color = c
+
+    @fx.setter
+    def fx(self, fx):
+        self.__fx = []
+        for f in fx:
+            if validate_ansi(f, ansi_type='fx'):
+                self.__fx.append(f)
+
 
     @property
     def __big_pad(self):
@@ -533,3 +564,13 @@ def replace_special_chars(t):
     for o, i in special_chars.items():
         t = str(t).replace(o, i)
     return t
+
+
+f = FString(
+    'asd', fg='magenta', bg=None, fx=['underline', 'bold']
+)
+
+# f.fg_color = 'yellow'
+f.bg_color = 'white'
+
+f.echo()
