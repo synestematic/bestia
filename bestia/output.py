@@ -47,7 +47,7 @@ ANSI_SGR_CODES = { # Select Graphic Rendition subset
 
 ANSI_CLR_VALUES = tuple( [ n for n in range(30, 50) ] )
 
-def validate_ansi(ansi_name, ansi_type=True):
+def validate_ansi(ansi_name, ansi_type):
 
     if not ansi_name:
         return
@@ -282,7 +282,7 @@ def screen_str(string='\n', color=None, lag=0, random_lag=1):
 
 class FString(object):
 
-    def __init__(self, input_string='', size=False, align='l', pad=None, colors=[], fg='', bg='', fx=[]):
+    def __init__(self, input_string='', size=False, align='l', pad=' ', colors=[], fg='', bg='', fx=[]):
 
         self.fixed_size = True if size else False
 
@@ -291,7 +291,8 @@ class FString(object):
 
         self.resize(size)
 
-        self.__pad = pad
+        self.__pad = ' '
+        self.pad = pad
 
         # black, red, green, yellow, blue, magenta, cyan, white
         self.__fg_color = ''
@@ -367,12 +368,12 @@ class FString(object):
         return echo(self, *args, **kwargs)
 
     @property
-    def __pad(self):
-        return self.__pad_char
+    def pad(self):
+        return self.__pad
 
-    @__pad.setter
-    def __pad(self, p):
-        self.__pad_char = str(p)[0] if p else ' '
+    @pad.setter
+    def pad(self, p):
+        self.__pad = str(p)[0] if p else ' '
 
     @property
     def fg_color(self):
@@ -409,14 +410,14 @@ class FString(object):
         exact_half, excess = divmod(
             self.__output_size - self.__input_size, 2
         )
-        return self.__pad * (exact_half + excess)
+        return self.pad * (exact_half + excess)
 
     @property
     def __sml_pad(self):
         exact_half, excess = divmod(
             self.__output_size - self.__input_size, 2
         )
-        return self.__pad * exact_half
+        return self.pad * exact_half
 
     @property
     def output(self):
@@ -567,10 +568,12 @@ def replace_special_chars(t):
 
 
 f = FString(
-    'asd', fg='magenta', bg=None, fx=['underline', 'bold']
+    'asd', fg='magenta', bg=None, fx=['underline', 'bold'], size=8, align='rc', pad=123
 )
 
 # f.fg_color = 'yellow'
 f.bg_color = 'white'
+# f.pad = '@sd'
+
 
 f.echo()
