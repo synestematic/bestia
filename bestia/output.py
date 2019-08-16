@@ -574,8 +574,3 @@ def replace_special_chars(t):
         t = str(t).replace(o, i)
     return t
 
-a = Row(width=12)
-
-print(
-    len(a)
-)
