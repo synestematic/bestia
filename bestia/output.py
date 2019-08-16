@@ -189,9 +189,11 @@ class Row(object):
 
     @property
     def output(self):
+        self.__output = ''
         self.assign_spaces()
         for fs in self.__fstrings:
-            self.__output = self.__output + '{}'.format(fs)
+            # self.__output = self.__output + '{}'.format(fs)
+            self.__output = self.__output + str(fs)
         return self.__output
 
     def fixed_fstrings(self):
