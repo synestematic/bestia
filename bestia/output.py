@@ -136,6 +136,8 @@ class Row(object):
         for item in items:
             self.append(item)
 
+    def __len__(self):
+        return self.__fixed_width if self.__fixed_width else tty_columns()
 
     def assign_spaces(self):
         spaces_left = self.width
@@ -183,7 +185,7 @@ class Row(object):
 
     @property
     def width(self):
-        return self.__fixed_width if self.__fixed_width else tty_columns()
+        return len(self)
 
     @property
     def output(self):
@@ -572,3 +574,8 @@ def replace_special_chars(t):
         t = str(t).replace(o, i)
     return t
 
+a = Row(width=12)
+
+print(
+    len(a)
+)
