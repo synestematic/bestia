@@ -13,20 +13,17 @@ CHAR_SIZE = getsizeof('A')
 ENCODING = 'utf-8'
 RETRO_LAG = 0.00003 #  0.0005
 
-class AnsiSgrCode(object):
-
-    def __init__(self, name, code):
-        self.name = name
-        self.code = code
-
-
 ANSI_SGR_CODES = { # Select Graphic Rendition subset
 
     'reset': 0,
     'bold': 1,
-    'faint': 2,
+    'faint': 2,     # dark
     'underline': 4,
     'blink': 5,
+
+    'reverse': 7,
+    'conceal': 8,
+    'cross': 9,
 
     'black': 30,    # NOT gray...
     'red': 31,
@@ -36,13 +33,10 @@ ANSI_SGR_CODES = { # Select Graphic Rendition subset
     'magenta': 35,
     'cyan': 36,
     'white': 37,
-
-    # works NOT
-    'frame': 51,
-    'circle': 52,
-    'overline': 53,
-	# dark, reverse, concealed
-
+    # ANYTHING ABOVE THIS NEVER WORKS...
+    # 'frame': 51,
+    # 'circle': 52,
+    # 'overline': 53,
 }
 
 ANSI_CLR_VALUES = tuple( [ n for n in range(30, 50) ] )
