@@ -9,12 +9,15 @@ class InvalidColor(Exception):
 class InvalidFx(Exception):
     pass
 
-class UndefinedAnsiSequence(Exception):
+class InvalidMode(Exception):
     pass
 
-class UndefinedAlignment(Exception):
+class InvalidAnsiSequence(Exception):
+    pass
+
+class InvalidAlignment(Exception):
     pass
 
 ### connect module exceptions ############
-class CUrlFail(Exception):
+class CurlFail(Exception):
     pass

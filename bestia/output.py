@@ -47,7 +47,7 @@ def validate_ansi(ansi_name, ansi_type=None):
         return
 
     if ansi_name not in ANSI_SGR_CODES:
-        raise UndefinedAnsiSequence(ansi_name)
+        raise InvalidAnsiSequence(ansi_name)
 
     if not ansi_type:
         return ansi_name
@@ -69,7 +69,7 @@ def ansi_esc_seq(fx, offset=0):
             ANSI_SGR_CODES[fx] + offset
         )
     except KeyError:
-        raise UndefinedAnsiSequence(fx)
+        raise InvalidAnsiSequence(fx)
 
 
 def dquoted(s):
@@ -387,7 +387,7 @@ class FString(object):
     @align.setter
     def align(self, a):
         if a not in ('l', 'r', 'c', 'lc', 'cl', 'rc', 'cr'):
-            raise UndefinedAlignment(a)
+            raise InvalidAlignment(a)
         self.__align = a
 
     @property
