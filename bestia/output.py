@@ -224,9 +224,9 @@ class echo(object):
         'raw',
     )
 
-    def __init__(self, input_string='', *fx, mode='modern'):
+    def __init__(self, init_string='', *fx, mode='modern'):
 
-        self.__output = input_string
+        self.__output = str(init_string)
 
         self.__fx = []
         for f in fx:
@@ -240,48 +240,43 @@ class echo(object):
 
         self()
 
+
     def __call__(self):
-        screen_str(
-            self.__output,
-            lag = RETRO_LAG if self.__mode == 'retro' else 0,
-            random_lag = 100 if self.__mode == 'retro' else 1,
-            fx = self.__fx
-        )
-        if self.__mode != 'raw':
-            screen_str()
+
+        try:
+            exception = None
+            for f in self.__fx:
+                for char in ansi_esc_seq(f):
+                    _lag_chr(char)
+
+            for char in self.__output:
+                # only output chars get lagged...
+                _lag_chr(
+                    char,
+                    lag =  RETRO_LAG if self.__mode == 'retro' else 0,
+                    random_lag = 100 if self.__mode == 'retro' else 1,
+                )
+
+        except Exception as x:
+            exception = x
+
+        finally:
+            if self.__fx:
+                for char in ansi_esc_seq('reset'):
+                    _lag_chr(char)
+
+            if exception:
+                raise exception
+
+            if self.__mode != 'raw':
+                _lag_chr('\n')
 
 
-def screen_chr(char=' ', lag=0, random_lag=1):
+def _lag_chr(char=' ', lag=0, random_lag=1):
     random_multiplier = randint(1, random_lag)
     sleep(lag *random_multiplier)
     stdout.write(char)
     stdout.flush()
-
-
-def screen_str(string='\n', fx=[], lag=0, random_lag=1):
-
-    try:
-        exception = None
-        for f in fx:
-            screen_str(
-                ansi_esc_seq(f)
-            )
-
-        for c in str(string):
-            screen_chr(
-                c, lag, random_lag
-            )
-
-    except Exception as x:
-        exception = x
-
-    finally:
-        if fx:
-            screen_str(
-                ansi_esc_seq('reset')
-            )
-        if exception:
-            raise exception
 
 
 class FString(object):
