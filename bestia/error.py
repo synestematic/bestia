@@ -6,7 +6,7 @@ class MissingBinary(Exception):
 class InvalidColor(Exception):
     pass
 
-class InvalidFX(Exception):
+class InvalidFx(Exception):
     pass
 
 class UndefinedAnsiSequence(Exception):

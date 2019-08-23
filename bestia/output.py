@@ -41,7 +41,7 @@ ANSI_SGR_CODES = { # Select Graphic Rendition subset
 
 ANSI_CLR_VALUES = tuple( [ n for n in range(30, 50) ] )
 
-def validate_ansi(ansi_name, ansi_type):
+def validate_ansi(ansi_name, ansi_type=None):
 
     if not ansi_name:
         return
@@ -49,7 +49,10 @@ def validate_ansi(ansi_name, ansi_type):
     if ansi_name not in ANSI_SGR_CODES:
         raise UndefinedAnsiSequence(ansi_name)
 
-    if ansi_type == 'color':
+    if not ansi_type:
+        return ansi_name
+
+    elif ansi_type == 'color':
         if ANSI_SGR_CODES[ansi_name] not in ANSI_CLR_VALUES:
             raise InvalidColor(ansi_name)
 
@@ -221,14 +224,15 @@ class echo(object):
         'raw',
     )
 
-    def __init__(self, input_string='', *args, mode='modern'):
+    def __init__(self, input_string='', *fx, mode='modern'):
 
         self.__output = input_string
 
-        self.__fg_color = ''
-        for a in args:
-            if a in ANSI_SGR_CODES.keys():
-                self.__fg_color = a
+        self.__fx = []
+        for f in fx:
+            self.__fx.append(
+                validate_ansi(f, ansi_type=None)
+            )
 
         self.__mode = self.modes[0]
         if mode in self.modes:
@@ -241,7 +245,7 @@ class echo(object):
             self.__output,
             lag = RETRO_LAG if self.__mode == 'retro' else 0,
             random_lag = 100 if self.__mode == 'retro' else 1,
-            color = self.__fg_color
+            fx = self.__fx
         )
         if self.__mode != 'raw':
             screen_str()
@@ -254,22 +258,28 @@ def screen_chr(char=' ', lag=0, random_lag=1):
     stdout.flush()
 
 
-def screen_str(string='\n', color=None, lag=0, random_lag=1):
+def screen_str(string='\n', fx=[], lag=0, random_lag=1):
 
     try:
         exception = None
-        if color in ANSI_SGR_CODES.keys():
-            screen_str(ansi_esc_seq(color))
+        for f in fx:
+            screen_str(
+                ansi_esc_seq(f)
+            )
 
         for c in str(string):
-            screen_chr(c, lag, random_lag)
+            screen_chr(
+                c, lag, random_lag
+            )
 
     except Exception as x:
         exception = x
 
     finally:
-        if color in ANSI_SGR_CODES.keys():
-            screen_str(ansi_esc_seq('reset'))
+        if fx:
+            screen_str(
+                ansi_esc_seq('reset')
+            )
         if exception:
             raise exception
 
