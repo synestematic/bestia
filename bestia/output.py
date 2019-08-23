@@ -13,8 +13,8 @@ CHAR_SIZE = getsizeof('A')
 ENCODING = 'utf-8'
 RETRO_LAG = 0.00003 #  0.0005
 
-ANSI_SGR_CODES = { # Select Graphic Rendition subset
-
+ANSI_SGR_CODES = {
+    # Select Graphic Rendition
     'reset': 0,
     'bold': 1,
     'faint': 2,     # dark
@@ -33,10 +33,10 @@ ANSI_SGR_CODES = { # Select Graphic Rendition subset
     'magenta': 35,
     'cyan': 36,
     'white': 37,
-    # ANYTHING ABOVE THIS NEVER WORKS...
-    # 'frame': 51,
-    # 'circle': 52,
-    # 'overline': 53,
+    # fx above this index are rarely supported...
+    'frame': 51,
+    'circle': 52,
+    'overline': 53,
 }
 
 ANSI_CLR_VALUES = tuple( [ n for n in range(30, 50) ] )
@@ -195,7 +195,6 @@ class Row(object):
         self.__output = ''
         self.assign_spaces()
         for fs in self.__fstrings:
-            # self.__output = self.__output + '{}'.format(fs)
             self.__output = self.__output + str(fs)
         return self.__output
 
@@ -357,7 +356,7 @@ class FString(object):
         return self.__output_size if self.__output_size > 0 else 0
 
     def __add__(self, other):
-        return self.output + '{}'.format(other)
+        return self.output + str(other)
 
     def echo(self, *args, **kwargs):
         return echo(self, *args, **kwargs)
