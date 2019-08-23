@@ -41,6 +41,12 @@ ANSI_SGR_CODES = { # Select Graphic Rendition subset
 
 ANSI_CLR_VALUES = tuple( [ n for n in range(30, 50) ] )
 
+ECHO_MODES = (
+    'modern',
+    'retro',
+    'raw',
+)
+
 def validate_ansi(ansi_name, ansi_type=None):
 
     if not ansi_name:
@@ -217,13 +223,6 @@ class Row(object):
 
 class echo(object):
 
-    modes = (
-        # first item is default
-        'modern',
-        'retro',
-        'raw',
-    )
-
     def __init__(self, init_string='', *fx, mode='modern'):
 
         self.__output = str(init_string)
@@ -234,9 +233,9 @@ class echo(object):
                 validate_ansi(f, ansi_type=None)
             )
 
-        self.__mode = self.modes[0]
-        if mode in self.modes:
-            self.__mode = mode
+        if mode not in ECHO_MODES:
+            raise InvalidMode(mode)
+        self.__mode = mode
 
         self()
 
