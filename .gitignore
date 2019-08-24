@@ -1,7 +1,7 @@
 *.pyc
 .DS_Store
 bestia.egg-info/*
+bestia/__pycache__/*
 build/*
 dist/*
 bestia/dev.py
-
