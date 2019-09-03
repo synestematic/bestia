@@ -352,6 +352,10 @@ class FString(object):
     def __str__(self):
         return self.output
 
+    def __iter__(self):
+        for c in self.output:
+            yield c
+
     def __len__(self):
         return self.__output_size if self.__output_size > 0 else 0
 
