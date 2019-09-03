@@ -11,7 +11,7 @@ from bestia.error import *
 
 CHAR_SIZE = getsizeof('A')
 ENCODING = 'utf-8'
-RETRO_LAG = 0.00003 #  0.0005
+RETRO_LAG = 0.00001 #  0.0005
 
 ANSI_SGR_CODES = {
     # Select Graphic Rendition
@@ -88,7 +88,7 @@ def clear_screen():
     stdout.flush()
 
 
-def obfuscate_random_chars(input_string, amount=None, obfuscator='_'):
+def obfuscate_random_chars(input_string, amount=0, obfuscator='_'):
     ''' returns input string with amount of random chars obfuscated '''
     amount = len(input_string) - 4 if not amount or amount >= len(input_string) else amount
 
