@@ -13,9 +13,9 @@ build: get_version setup.py ${PACKAGE}
 	@python3 setup.py sdist bdist_wheel && echo "Success" || exit
 
 install: get_version ${DISTR_DIRS}
-	@pip3 show "${PACKAGE}" &>/dev/null && (echo "Uninstalling old version"; pip3 uninstall "${PACKAGE}" -y )
+	#@pip3 show "${PACKAGE}" &>/dev/null && (echo "Uninstalling old version"; pip3 uninstall "${PACKAGE}" -y )
 	@echo "Installing ${PACKAGE} ${VERSION}"
-	@cd dist && pip3 install "${PACKAGE}"-"${VERSION}"-py3-none-any.whl && cd ..
+	@cd dist && pip3 install --ignore-installed "${PACKAGE}"-"${VERSION}"-py3-none-any.whl && cd ..
 
 publish: dist
 	@echo "Uploading to PyPI "
