@@ -226,11 +226,7 @@ class echo(object):
 
         self.__output = str(init_string)
 
-        self.__fx = []
-        for f in fx:
-            self.__fx.append(
-                validate_ansi(f, ansi_type=None)
-            )
+        self.__fx = [ validate_ansi(f, ansi_type=None) for f in fx if f ]
 
         if mode not in ECHO_MODES:
             raise InvalidMode(mode)
