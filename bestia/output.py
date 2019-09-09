@@ -576,24 +576,49 @@ def replace_special_chars(t):
 
 class ProgressBar(object):
 
-    def __init__(self, total, pad='#'):
-        self.__current = 0
-        self.__total = int(total)
-        self.__width = tty_columns() -4
-        self.__pad = str(pad)
+    def __init__(self, total, pad='#', width=0):
+        self.__current = 0.0
+        self.__total = float(total)
+
+        self.__width = int(
+            width if width else tty_columns() -4
+        )
+
+        self.__pad = str(pad)[0]
+
 
     @property
     def done(self):
         return self.__current >= self.__total
 
     def update(self, n):
-        if not self.__current:
-            echo('[', 'red', mode='raw')
-        self.__current += n
-        echo(
-            self.__pad,
-            'green' if self.done else 'yellow',
-            mode='raw'
-        )
+
+        # progress is done
         if self.done:
-            echo(']', 'red', mode='raw')
+            return
+
+        # progress is starting
+        if not self.__current:
+            stdout.write('[')
+            stdout.write('.'  * (self.__width - 2) )
+            stdout.write(']')
+            stdout.flush()
+            stdout.write('\b' * (self.__width - 1) )
+            # return to start of line, after [ 
+
+        # update offset
+        self.__current += n
+
+        # decide how many chars to write
+        bla = self.__total / self.__current
+        chunk_size = int(  self.__width / bla  )
+
+        stdout.write(self.__pad * chunk_size)
+        stdout.flush()
+
+        if self.done:
+            stdout.write(']')
+            stdout.write('\n')
+            stdout.flush()
+
+
