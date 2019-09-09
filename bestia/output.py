@@ -573,3 +573,27 @@ def replace_special_chars(t):
         t = str(t).replace(o, i)
     return t
 
+
+class ProgressBar(object):
+
+    def __init__(self, total, pad='#'):
+        self.__current = 0
+        self.__total = int(total)
+        self.__width = tty_columns() -4
+        self.__pad = str(pad)
+
+    @property
+    def done(self):
+        return self.__current >= self.__total
+
+    def update(self, n):
+        if not self.__current:
+            echo('[', 'red', mode='raw')
+        self.__current += n
+        echo(
+            self.__pad,
+            'green' if self.done else 'yellow',
+            mode='raw'
+        )
+        if self.done:
+            echo(']', 'red', mode='raw')

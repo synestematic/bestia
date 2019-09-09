@@ -26,6 +26,7 @@ bestia is a library of functions and classes designed to help you build dynamic 
 * remove_path
 * replace_special_chars
 * obfuscate_random_chars
+* ProgressBar
 
 ### misc.py
 * command_output
