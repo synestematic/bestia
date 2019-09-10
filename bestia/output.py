@@ -576,49 +576,65 @@ def replace_special_chars(t):
 
 class ProgressBar(object):
 
-    def __init__(self, total, pad='#', width=0):
-        self.__current = 0.0
-        self.__total = float(total)
+    def __init__(self, goal, width=0, pad='=', color=''):
 
-        self.__width = int(
-            width if width else tty_columns() -4
+        self.goal = float(goal)
+        self.score = 0.0
+
+        self.spaces = int(
+            width if width else tty_columns() - 3
         )
 
-        self.__pad = str(pad)[0]
+        self.scores_by_space = [
+            # 100.1, 100.1, 100.1
+        ]
+        self.calculate_space_scores()
 
+        self.pad = str(pad)[0]
+        self.color = color
 
     @property
     def done(self):
-        return self.__current >= self.__total
+        return self.score >= self.goal
 
-    def update(self, n):
 
-        # progress is done
+    def eval_score(self, value):
+
+        self.score += float(value)
+
+        overcome_scores = []
+        for i, space_score in enumerate(self.scores_by_space):
+            if self.score < space_score:
+                break
+            overcome_scores.append(i)
+            echo(self.pad, 'green', mode='raw')
+
+        for d in range(len(overcome_scores)):
+            del self.scores_by_space[0]
+
+
+    def calculate_space_scores(self):
+        ''' sets threshold needed to fill each space '''
+        score_x_space = self.goal / self.spaces
+        for s in range(self.spaces):
+            self.scores_by_space.append(
+                score_x_space * (s + 1)
+            )
+        assert self.scores_by_space[-1] == self.goal
+
+
+    def update(self, value=0.0):
+
         if self.done:
             return
 
-        # progress is starting
-        if not self.__current:
-            stdout.write('[')
-            stdout.write('.'  * (self.__width - 2) )
-            stdout.write(']')
-            stdout.flush()
-            stdout.write('\b' * (self.__width - 1) )
-            # return to start of line, after [ 
+        if self.score == 0:
+            echo('[', self.color, mode='raw')
+            echo('.' * self.spaces, 'faint', self.color, mode='raw')
+            echo(']', self.color, mode='raw')
+            stdout.write('\b' * (self.spaces +1 ))
 
-        # update offset
-        self.__current += n
-
-        # decide how many chars to write
-        bla = self.__total / self.__current
-        chunk_size = int(  self.__width / bla  )
-
-        stdout.write(self.__pad * chunk_size)
-        stdout.flush()
+        self.eval_score(value)
 
         if self.done:
-            stdout.write(']')
-            stdout.write('\n')
-            stdout.flush()
-
-
+            echo(']', self.color)
