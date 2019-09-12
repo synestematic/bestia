@@ -318,8 +318,8 @@ class FString(object):
     def append(self, string):
         self.__input_string = '{}{}'.format(
             self.__input_string,
-            self.filter_utf_chars(string),
-            # string,
+            # self.filter_utf_chars(string),
+            string,
         )
         self.set_input_size()
 
@@ -607,7 +607,11 @@ class ProgressBar(object):
             if self.score < space_score:
                 break
             overcome_scores.append(i)
-            echo(self.pad, 'green', mode='raw')
+            echo(
+                self.pad,
+                self.color,
+                mode='raw'
+            )
 
         for d in range(len(overcome_scores)):
             del self.scores_by_space[0]
@@ -629,12 +633,12 @@ class ProgressBar(object):
             return
 
         if self.score == 0:
-            echo('[', self.color, mode='raw')
+            echo('[', 'faint', self.color, mode='raw')
             echo('.' * self.spaces, 'faint', self.color, mode='raw')
-            echo(']', self.color, mode='raw')
+            echo(']', 'faint', self.color, mode='raw')
             stdout.write('\b' * (self.spaces +1 ))
 
         self.eval_score(value)
 
         if self.done:
-            echo(']', self.color)
+            echo(']', 'faint', self.color)
