@@ -53,8 +53,25 @@ def looped_list_item(i, iterable):
         works also for large negative i's
         recursion is NOT a good approach for very large i's
     '''
-    count = len(iterable)
-    if abs(i) < count:
+    if abs(i) < len(iterable):
         return iterable[i]
-    _, remainder = divmod(i, count)
+    _, remainder = divmod(i, len(iterable))
     return iterable[remainder]
+
+
+class LoopedList(list):
+    ''' a mutable array that loops thru items when required index is out of range '''
+
+    def __init__(self, *i):
+        ''' Note the slightly different init syntax:
+            * list( [ 1, 2, 3 ] )   single iterable arg
+            * LoopedList(1, 2, 3)   arbitrary number of args
+        '''
+        super().__init__(i)
+
+    def __getitem__(self, i):
+        if abs(i) < super().__len__():
+            return super().__getitem__(i)
+        _, r = divmod(i, super().__len__())
+        return super().__getitem__(r)
+
