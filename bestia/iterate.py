@@ -48,22 +48,11 @@ def pop_random_item(lst):
         return None
 
 
-def looped_list_item(i, iterable):
-    ''' returns iterable[i] but loops thru iterable if i > len(iterable)
-        works also for large negative i's
-        recursion is NOT a good approach for very large i's
-    '''
-    if abs(i) < len(iterable):
-        return iterable[i]
-    _, remainder = divmod(i, len(iterable))
-    return iterable[remainder]
-
-
 class LoopedList(list):
-    ''' a mutable array that loops thru items when required index is out of range '''
+    ''' a mutable array that loops thru items when getting/setting an item with out-of-range index '''
 
     def __init__(self, *i):
-        ''' Note the slightly different init syntax:
+        ''' Notice the slightly different init syntax:
             * list( [ 1, 2, 3 ] )   single iterable arg
             * LoopedList(1, 2, 3)   arbitrary number of args
         '''
@@ -75,3 +64,8 @@ class LoopedList(list):
         _, r = divmod(i, super().__len__())
         return super().__getitem__(r)
 
+    def __setitem__(self, k, v):
+        if abs(k) < super().__len__():
+            return super().__setitem__(k, v)
+        _, r = divmod(k, super().__len__())
+        return super().__setitem__(r, v)
