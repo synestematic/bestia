@@ -1,50 +1,28 @@
-bestia version 1.3
-==================
+bestia
+======
 
-bestia is a library of functions and classes designed to help you build dynamic command-line applications on Linux / Darwin systems.
+.. image:: https://img.shields.io/pypi/v/labelimg.svg
+        :target: https://pypi.python.org/pypi/labelimg
 
+.. image:: https://img.shields.io/travis/tzutalin/labelImg.svg
+        :target: https://travis-ci.org/tzutalin/labelImg
 
-## available functions / classes
-### connect.py
-* http_get
-* random_browser
+.. image:: /resources/icons/app.png
+    :width: 200px
+    :align: center
 
-### iterate.py
-* LoopedList
-* string_to_list
-* iterable_to_string
-* items_are_equal
-* unique_random_items
-* pop_random_item
+LabelImg is a graphical image annotation tool.
 
-### output.py
-* tty_size
-* tty_rows
-* tty_columns
-* clear_screen
-* Row
-* echo
-* FString
-* expand_seconds
-* remove_path
-* replace_special_chars
-* obfuscate_random_chars
-* ProgressBar
+It is written in Python and uses Qt for its graphical interface.
 
-### misc.py
-* command_output
-* copy_to_clipboard
-* file_type
-* say
+Annotations are saved as XML files in PASCAL VOC format, the format used
+by `ImageNet <http://www.image-net.org/>`__.  Besides, it also supports YOLO format
 
-## dependencies
-Installing bestia will install the following pip packages on your system:
+.. image:: https://raw.githubusercontent.com/tzutalin/labelImg/master/demo/demo3.jpg
+     :alt: Demo Image
 
-* pyperclip
+.. image:: https://raw.githubusercontent.com/tzutalin/labelImg/master/demo/demo.jpg
+     :alt: Demo Image
 
-The following binaries are also required by some functions:
+`Watch a demo video <https://youtu.be/p0nR2YsCY_U>`__
 
-* file
-* curl
-* stty
-* say
