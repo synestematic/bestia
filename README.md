@@ -8,6 +8,7 @@ bestia is a library of functions and classes designed to help you build dynamic 
 * random_browser
 
 ### iterate.py
+* LoopedList
 * string_to_list
 * iterable_to_string
 * items_are_equal
