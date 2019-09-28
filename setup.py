@@ -1,12 +1,12 @@
 import setuptools
 from codecs import open
 
-with open('DESCRIPTION.rst', encoding='utf-8') as fh:
+with open('README.rst', encoding='utf-8') as fh:
     long_description = fh.read()
 
 setuptools.setup(
     name="bestia",
-    version="1.3.8",
+    version="1.3.9",
     author="Federico Rizzo",
     author_email="foo@bar.com",
     description="A collection of tools for building dynamic Command-Line applications",
