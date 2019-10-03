@@ -1,16 +1,15 @@
 import setuptools
-from codecs import open
 
-# with open('README.md', encoding='utf-8') as fh:
-#     long_description = fh.read()
+with open('README.md', 'r') as f:
+    long_description = f.read()
 
 setuptools.setup(
     name="bestia",
-    version="1.4.1",
+    version="1.4.2",
     author="Federico Rizzo",
     author_email="foo@bar.com",
     description="A collection of tools for building dynamic Command-Line applications",
-    # long_description=long_description,
+    long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/synestematic/bestia",
     license="MIT",
