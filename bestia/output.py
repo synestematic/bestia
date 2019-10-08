@@ -14,18 +14,20 @@ ENCODING = 'utf-8'
 RETRO_LAG = 0.00001 #  0.0005
 
 ANSI_SGR_CODES = {
+    
     # Select Graphic Rendition
     'reset': 0,
-    'bold': 1,
-    'faint': 2,     # dark
-    'underline': 4,
-    'blink': 5,
+    'bold': 1,       # bolds  ONLY fg, NOT ul
+    'faint': 2,      # faints ONLY fg, NOT ul           (AKA dark)
+    'underline': 4,  # <<< SHOULD NOT affect padding
+    'blink': 5,      # blinks ONLY fg, ul
 
-    'reverse': 7,
-    'conceal': 8,
-    'cross': 9,
+    'reverse': 7,    # reverses fg + ul, bg
+    'conceal': 8,    # conceals ONLY fg, ul, NOT bg
 
-    'black': 30,    # NOT gray...
+    'cross': 9,      # HARDLY supported...
+
+    'black': 30,     # NOT gray...
     'red': 31,
     'green': 32,
     'yellow': 33,
@@ -33,10 +35,12 @@ ANSI_SGR_CODES = {
     'magenta': 35,
     'cyan': 36,
     'white': 37,
+
     # fx above this index are rarely supported...
     'frame': 51,
     'circle': 52,
     'overline': 53,
+
 }
 
 ANSI_CLR_VALUES = tuple( [ n for n in range(30, 50) ] )
@@ -432,6 +436,22 @@ class FString(object):
         )
         return self.pad * exact_half
 
+
+    def __paint_pad(self, s):
+        ''' reverse fx needs to work pads as well '''
+
+        if 'reverse' in self.__fx:
+            s = ansi_esc_seq('reverse') + s
+
+        if self.__fg_color:
+            s = ansi_esc_seq(self.__fg_color) + s
+
+        if self.__bg_color:
+            s = ansi_esc_seq(self.__bg_color, 10) + s
+
+        return s + ansi_esc_seq('reset')
+
+
     @property
     def output(self):
 
@@ -472,16 +492,16 @@ class FString(object):
     def __align_output(self):
 
         if self.__align == 'l':
-            self.__output = self.__output + self.__sml_pad + self.__big_pad
+            self.__output = self.__output + self.__paint_pad(self.__sml_pad + self.__big_pad)
 
         elif self.__align == 'r':
-            self.__output = self.__sml_pad + self.__big_pad + self.__output
+            self.__output = self.__paint_pad(self.__sml_pad + self.__big_pad) + self.__output
 
         elif self.__align in ('c', 'cl', 'lc'):
-            self.__output = self.__sml_pad + self.__output + self.__big_pad
+            self.__output = self.__paint_pad(self.__sml_pad) + self.__output + self.__paint_pad(self.__big_pad)
 
         elif self.__align in ('cr', 'rc'):
-            self.__output = self.__big_pad + self.__output + self.__sml_pad
+            self.__output = self.__paint_pad(self.__big_pad) + self.__output + self.__paint_pad(self.__sml_pad)
 
 
 def expand_seconds(input_seconds, output=dict):
