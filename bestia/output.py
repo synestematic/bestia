@@ -437,19 +437,20 @@ class FString(object):
         return self.pad * exact_half
 
 
-    def __paint_pad(self, s):
-        ''' reverse fx needs to work pads as well '''
+    def __paint_pad(self, p):
+        ''' pads get bg_color as well BUT NOT if reverse option is specified '''
 
         if 'reverse' in self.__fx:
-            s = ansi_esc_seq('reverse') + s
+            # s = ansi_esc_seq('reverse') + s
+            return p
 
         if self.__fg_color:
-            s = ansi_esc_seq(self.__fg_color) + s
+            p = ansi_esc_seq(self.__fg_color) + p
 
         if self.__bg_color:
-            s = ansi_esc_seq(self.__bg_color, 10) + s
+            p = ansi_esc_seq(self.__bg_color, 10) + p
 
-        return s + ansi_esc_seq('reset')
+        return p + ansi_esc_seq('reset')
 
 
     @property
