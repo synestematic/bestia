@@ -217,8 +217,8 @@ class Row(object):
             FString(s) if type(s) != FString else s
         )
 
-    def echo(self, *args, **kwargs):
-        echo(self, *args, **kwargs)
+    def echo(self, mode='modern'):
+        echo(self, mode=mode)
 
     def __str__(self):
         return self.output
@@ -362,8 +362,8 @@ class FString(object):
     def __add__(self, other):
         return self.output + str(other)
 
-    def echo(self, *args, **kwargs):
-        return echo(self, *args, **kwargs)
+    def echo(self, mode='modern'):
+        echo(self, mode=mode)
 
     @property
     def size(self):
