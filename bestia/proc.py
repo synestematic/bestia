@@ -1,9 +1,12 @@
 from os import pipe, fork, close, dup2, execv, set_blocking, read, waitpid, getpid
 from struct import pack, unpack
 from select import select
-from time import sleep
 
-from bestia.output import echo
+def wait_for(pid):
+    sc = pack(
+        "<I", waitpid(pid, 0)[1]
+    )
+    return unpack("bb", sc[0:2])[1]
 
 def piped_subproc(*args):
     ''' runs command on forked (parallel) subproc
@@ -49,7 +52,7 @@ def piped_subproc(*args):
         return pid, STDIN_write, STDOUT_read, STDERR_read
 
 
-def read_cmd(*cmd):
+def read_cmd(*cmd, buffer_size=1024):
     '''
         allows to read piped_proc stdOut | stdErr
     '''
@@ -67,7 +70,6 @@ def read_cmd(*cmd):
         },
     }
 
-    BUFFER_SIZE = 1024
     while not read_fds[stdOut_fd]['depleted'] or not read_fds[stdErr_fd]['depleted']:
 
         for fd in select(
@@ -77,7 +79,7 @@ def read_cmd(*cmd):
             0.2,
         )[0]:
 
-            current_fd_data = read(fd, BUFFER_SIZE) # how to set optimal BUFFER SIZE?
+            current_fd_data = read(fd, buffer_size) # how to set optimal BUFFER SIZE?
             if current_fd_data:
                 read_fds[fd]['data'].extend(current_fd_data)
             else:
@@ -89,10 +91,3 @@ def read_cmd(*cmd):
         close(fd)
     
     return read_fds[stdOut_fd]['data'], read_fds[stdErr_fd]['data'], status_code
-
-
-def wait_for(pid):
-    sc = pack(
-        "<I", waitpid(pid, 0)[1]
-    )
-    return unpack("bb", sc[0:2])[1]
