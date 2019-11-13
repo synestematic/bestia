@@ -119,6 +119,7 @@ def tty_size():
 
     proc = popen('{} size'.format(_STTY_BIN), 'r')
     rows, columns = proc.read().split()
+    proc.close()
     return (int(rows), int(columns))
 
 
