@@ -417,6 +417,8 @@ class FString(object):
 
     @fx.setter
     def fx(self, fx):
+        if type(fx) != list:
+            raise TypeError('fx argument must be list')
         self.__fx = []
         for f in fx:
             if validate_ansi(f, ansi_type='fx'):
@@ -646,7 +648,7 @@ class ProgressBar(object):
             self.scores_by_space.append(
                 score_x_space * (s + 1)
             )
-        assert self.scores_by_space[-1] == self.goal
+        # assert self.scores_by_space[-1] == self.goal
 
 
     def update(self, value=0.0):
