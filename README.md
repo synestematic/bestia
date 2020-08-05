@@ -49,5 +49,4 @@ The following binaries are also required by some functions:
 
 * file
 * curl
-* stty
 * say
