@@ -1,7 +1,7 @@
 from sys import getsizeof, stdout
 from os.path import join as PATH_JOIN
 from os import sep as PATH_SEPARATOR
-from os import popen
+from os import popen, get_terminal_size
 from time import sleep
 from random import randint
 
@@ -108,30 +108,13 @@ def obfuscate_random_chars(input_string, amount=0, obfuscator='_'):
 
     return iterable_to_string(string_as_list)
 
-
-_STTY_BIN = command_output('which', 'stty').decode(ENCODING).strip()
-
-
-def tty_size():
-    ''' returns dynamic size of current terminal  '''
-    if not _STTY_BIN:
-        raise MissingBinary('stty binary not found')
-
-    proc = popen('{} size'.format(_STTY_BIN), 'r')
-    rows, columns = proc.read().split()
-    proc.close()
-    return (int(rows), int(columns))
-
-
 def tty_rows():
     ''' returns dynamic rows of current terminal '''
-    return tty_size()[0]
+    return get_terminal_size().lines
 
-
-def tty_columns():
-    ''' returns dynamic columns of current terminal '''
-    return tty_size()[1]
-
+def tty_cols():
+    ''' returns dynamic cols of current terminal '''
+    return get_terminal_size().columns
 
 class Row(object):
 
@@ -145,7 +128,7 @@ class Row(object):
             self.append(item)
 
     def __len__(self):
-        return self.__fixed_width if self.__fixed_width else tty_columns()
+        return self.__fixed_width if self.__fixed_width else tty_cols()
 
     def assign_spaces(self):
         spaces_left = self.width
@@ -606,7 +589,7 @@ class ProgressBar(object):
         self.score = 0.0
 
         self.spaces = int(
-            width if width else tty_columns() - 3
+            width if width else tty_cols() - 3
         )
 
         self.scores_by_space = [
