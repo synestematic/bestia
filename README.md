@@ -29,11 +29,6 @@ bestia is a library of functions and classes designed to help you build dynamic 
 * obfuscate_random_chars
 * ProgressBar
 
-### misc.py
-* copy_to_clipboard
-
 ***
 ## dependencies
-Installing bestia will install the following pip packages on your system:
-
-* pyperclip
+Installing bestia does not require you to install any external dependency.
