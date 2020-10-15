@@ -6,7 +6,6 @@ from time import sleep
 from random import randint
 
 from bestia.iterate import string_to_list, iterable_to_string, unique_random_items
-from bestia.misc import command_output
 from bestia.error import *
 
 CHAR_SIZE = getsizeof('A')

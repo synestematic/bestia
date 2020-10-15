@@ -23,18 +23,6 @@ def copy_to_clipboard(text):
         return
 
 
-_SAY_BIN = command_output('which', 'say').decode('UTF-8').strip()
-
-def say(text):
-    ''' says text using accessibility voice-over feature
-        mainly intended for use with DARWIN systems
-    '''
-    if not _SAY_BIN:
-        raise MissingBinary('say binary not found')
-    say_command = '{} \'{}\''.format(_SAY_BIN, text)
-    return system(say_command)
-
-
 _FILE_BIN = command_output('which', 'file').decode('UTF-8').strip()
 
 def file_type(resource):
