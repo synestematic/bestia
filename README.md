@@ -3,9 +3,6 @@ bestia is a library of functions and classes designed to help you build dynamic 
 
 ***
 ## available functions / classes
-### connect.py
-* http_get
-* random_browser
 
 ### proc.py
 * Process
@@ -48,5 +45,4 @@ Installing bestia will install the following pip packages on your system:
 The following binaries are also required by some functions:
 
 * file
-* curl
 * say

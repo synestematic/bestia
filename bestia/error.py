@@ -17,7 +17,3 @@ class InvalidAnsiSequence(Exception):
 
 class InvalidAlignment(Exception):
     pass
-
-### connect module exceptions ############
-class CurlFail(Exception):
-    pass
