@@ -5,7 +5,7 @@ with open('README.md', 'r') as f:
 
 setuptools.setup(
     name="bestia",
-    version="2.1.0",
+    version="2.2.0",
     author="Federico Rizzo",
     author_email="foo@bar.com",
     description="A collection of tools for building dynamic Command-Line applications",
@@ -25,6 +25,5 @@ setuptools.setup(
         "Topic :: Utilities",
     ],
     install_requires=[
-        'pyperclip',
     ],
 )
