@@ -8,8 +8,6 @@ from random import randint
 from bestia.iterate import string_to_list, iterable_to_string, unique_random_items
 from bestia.error import *
 
-CHAR_SIZE = getsizeof('A')
-ENCODING = 'utf-8'
 RETRO_LAG = 0.00001 #  0.0005
 
 ANSI_SGR_CODES = {
@@ -297,10 +295,10 @@ class FString(object):
             because made of more than a byte... makes sense?
         '''
         return bytearray(
-            ord(c.encode(ENCODING)) for c in replace_special_chars(
+            ord(c.encode('utf-8')) for c in replace_special_chars(
                 string
-            ) if len(c.encode(ENCODING)) == 1
-        ).decode(ENCODING)
+            ) if len(c.encode('utf-8')) == 1
+        ).decode('utf-8')
 
     def append(self, string):
         self.__input_string = '{}{}'.format(
@@ -322,7 +320,7 @@ class FString(object):
         add = True
         for char in self.__input_string:
         # when encoding input_string into byte_string: byte_string will not necessarily have the same amount of bytes as characters in the input_string ( some characters will be made of several bytes ), therefore, the input_string should not be encoded but EACH INDIVIDUAL CHAR should
-            byte = char.encode(ENCODING)
+            byte = char.encode('utf-8')
             if byte == color_start_byte and add:
                 add = False
                 continue
@@ -565,8 +563,8 @@ def replace_special_chars(t):
         'â€ž': '“',
         'â€œ': '”',
         'â€¦': '…',
-        b'\xe2\x80\x8e'.decode(ENCODING) : '', # left-to-right-mark
-        b'\xe2\x80\x8b'.decode(ENCODING) : '',	# zero-width-space
+        b'\xe2\x80\x8e'.decode('utf-8') : '', # left-to-right-mark
+        b'\xe2\x80\x8b'.decode('utf-8') : '',	# zero-width-space
         '&amp' : '&',
         '&;': '&',
         '【': '[',

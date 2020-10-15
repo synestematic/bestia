@@ -24,6 +24,5 @@ setuptools.setup(
         "Topic :: Text Processing :: General",
         "Topic :: Utilities",
     ],
-    install_requires=[
-    ],
+    install_requires=[],
 )
