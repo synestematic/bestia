@@ -1,8 +1,7 @@
-### generic exceptions ###################
-class MissingBinary(Exception):
-    pass
+################################
+### output module exceptions ###
+################################
 
-### output module exceptions #############
 class InvalidColor(Exception):
     pass
 
