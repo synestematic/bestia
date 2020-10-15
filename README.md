@@ -31,14 +31,9 @@ bestia is a library of functions and classes designed to help you build dynamic 
 
 ### misc.py
 * copy_to_clipboard
-* file_type
 
 ***
 ## dependencies
 Installing bestia will install the following pip packages on your system:
 
 * pyperclip
-
-The following binaries are also required by some functions:
-
-* file

@@ -4,16 +4,6 @@ import pyperclip
 
 from bestia.error import *
 
-def command_output(*args):
-    ''' returns command output as bytes, decode() if needed '''
-    try:
-        output = check_output(args)
-    except CalledProcessError:
-        output = b''
-    finally:
-        return output
-
-
 def copy_to_clipboard(text):
     ''' copies text to clipboard '''
     try:
@@ -22,24 +12,3 @@ def copy_to_clipboard(text):
     except pyperclip.PyperclipException:
         return
 
-
-_FILE_BIN = command_output('which', 'file').decode('UTF-8').strip()
-
-def file_type(resource):
-    ''' returns file_type of input resource
-        requires installation of "file" binary
-    '''
-    if not _FILE_BIN:
-        raise MissingBinary('file binary not found')
-
-    proc = popen('{} {}'.format(_FILE_BIN, resource), 'r')
-
-    std_out = proc.read()
-    if proc.close() is not None: # return None on success
-        return
-
-    if '(No such file or directory)' in std_out:
-        return
-
-    ignore_first_chars = len(resource) + 2
-    return std_out[ignore_first_chars:].strip()
