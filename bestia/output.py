@@ -8,36 +8,31 @@ from random import randint
 from bestia.iterate import string_to_list, iterable_to_string, unique_random_items
 from bestia.error import *
 
-RETRO_LAG = 0.00001 #  0.0005
+DEFAULT_RETRO_LAG = 0.00001
 
-ANSI_SGR_CODES = {
-    
-    # Select Graphic Rendition
-    'reset': 0,
-    'bold': 1,       # bolds  ONLY fg, NOT ul
-    'faint': 2,      # faints ONLY fg, NOT ul           (AKA dark)
-    'underline': 4,  # <<< SHOULD NOT affect padding
-    'blink': 5,      # blinks ONLY fg, ul
+ANSI_SGR_CODES = {     # Select Graphic Rendition
+    'reset':     0,
+    'bold':      1,    # bolds  ONLY fg, NOT ul
+    'faint':     2,    # faints ONLY fg, NOT ul           (AKA dark)
+    'underline': 4,    # should not affect padding
+    'blink':     5,    # blinks ONLY fg, ul
+    'reverse':   7,    # reverses fg + ul, bg
+    'conceal':   8,    # conceals ONLY fg, ul, NOT bg
+    'cross':     9,    # HARDLY supported...
 
-    'reverse': 7,    # reverses fg + ul, bg
-    'conceal': 8,    # conceals ONLY fg, ul, NOT bg
-
-    'cross': 9,      # HARDLY supported...
-
-    'black': 30,     # NOT gray...
-    'red': 31,
-    'green': 32,
-    'yellow': 33,
-    'blue': 34,
-    'magenta': 35,
-    'cyan': 36,
-    'white': 37,
+    'black':     30,   # NOT gray...
+    'red':       31,
+    'green':     32,
+    'yellow':    33,
+    'blue':      34,
+    'magenta':   35,
+    'cyan':      36,
+    'white':     37,
 
     # fx above this index are rarely supported...
-    'frame': 51,
-    'circle': 52,
-    'overline': 53,
-
+    'frame':     51,
+    'circle':    52,
+    'overline':  53,
 }
 
 ANSI_CLR_VALUES = tuple( [ n for n in range(30, 50) ] )
@@ -232,7 +227,7 @@ class echo(object):
                 # only output chars get lagged...
                 _lag_chr(
                     char,
-                    lag =  RETRO_LAG if self.__mode == 'retro' else 0,
+                    lag =  DEFAULT_RETRO_LAG if self.__mode == 'retro' else 0,
                     random_lag = 100 if self.__mode == 'retro' else 1,
                 )
 
