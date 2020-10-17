@@ -15,19 +15,18 @@ bestia is a library of functions and classes designed to help you build dynamic 
 * pop_random_item
 
 ### output.py
+* Row
+* FString
+* echo
 * tty_size
 * tty_rows
 * tty_cols
 * clear_screen
-* Row
-* echo
-* FString
 * expand_seconds
 * remove_path
-* replace_special_chars
 * obfuscate_random_chars
 * ProgressBar
 
 ***
 ## dependencies
-Installing bestia does not require you to install any external dependency.
+Installing bestia does not require you to install any external dependencies.

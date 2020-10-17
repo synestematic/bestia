@@ -43,29 +43,23 @@ ECHO_MODES = (
     'raw',
 )
 
-def validate_ansi(ansi_name, ansi_type=None):
-
+def _validate_ansi(ansi_name, ansi_type=None):
     if not ansi_name:
         return
-
     if ansi_name not in ANSI_SGR_CODES:
         raise InvalidAnsiSequence(ansi_name)
-
     if not ansi_type:
         return ansi_name
-
     elif ansi_type == 'color':
         if ANSI_SGR_CODES[ansi_name] not in ANSI_CLR_VALUES:
             raise InvalidColor(ansi_name)
-
     elif ansi_type == 'fx':
         if ANSI_SGR_CODES[ansi_name] in ANSI_CLR_VALUES:
             raise InvalidFx(ansi_name)
-
     return ansi_name
 
 
-def ansi_esc_seq(fx, offset=0):
+def _ansi_esc_seq(fx, offset=0):
     try:
         return '\033[{}m'.format(
             ANSI_SGR_CODES[fx] + offset
@@ -74,40 +68,8 @@ def ansi_esc_seq(fx, offset=0):
         raise InvalidAnsiSequence(fx)
 
 
-def clear_screen():
-    stdout.write('\033[H')
-    stdout.write('\033[J')
-    stdout.flush()
-
-
-def obfuscate_random_chars(input_string, amount=0, obfuscator='_'):
-    ''' returns input string with amount of random chars obfuscated '''
-    amount = len(input_string) - 4 if not amount or amount >= len(input_string) else amount
-
-    string_indecae = [
-        i for i in range(
-            len( str(input_string) )
-        )
-    ]
-
-    string_as_list = list(input_string)
-    for random_index in unique_random_items(string_indecae, amount):
-        string_as_list[random_index] = obfuscator
-
-    return iterable_to_string(string_as_list)
-
-
-def tty_rows():
-    ''' returns dynamic rows of current terminal '''
-    return get_terminal_size().lines
-
-def tty_cols():
-    ''' returns dynamic cols of current terminal '''
-    return get_terminal_size().columns
-
 class Row(object):
-
-    '''a string with width == terminal size (unless otherwise specified). Instantiate a Row object with as many str|FString items as you like and it will keep its width constant by cropping/aligning items without a fixed_size'''
+    '''a string with width === terminal_len (unless otherwise specified). Instantiate a Row object with str|FString instances and it will keep its width constant by cropping/aligning objects with no fixed_size'''
 
     def __init__(self, *items, width=False):
         self.__output = ''
@@ -203,7 +165,7 @@ class echo(object):
 
         self.__output = str(init_string)
 
-        self.__fx = [ validate_ansi(f, ansi_type=None) for f in fx if f ]
+        self.__fx = [ _validate_ansi(f, ansi_type=None) for f in fx if f ]
 
         if mode not in ECHO_MODES:
             raise InvalidMode(mode)
@@ -217,7 +179,7 @@ class echo(object):
         try:
             exception = None
             for f in self.__fx:
-                for char in ansi_esc_seq(f):
+                for char in _ansi_esc_seq(f):
                     _lag_chr(char)
 
             for char in self.__output:
@@ -233,7 +195,7 @@ class echo(object):
 
         finally:
             if self.__fx:
-                for char in ansi_esc_seq('reset'):
+                for char in _ansi_esc_seq('reset'):
                     _lag_chr(char)
 
             if exception:
@@ -368,12 +330,12 @@ class FString(object):
 
     @fg_color.setter
     def fg_color(self, c):
-        if validate_ansi(c, ansi_type='color'):
+        if _validate_ansi(c, ansi_type='color'):
             self.__fg_color = c
 
     @bg_color.setter
     def bg_color(self, c):
-        if validate_ansi(c, ansi_type='color'):
+        if _validate_ansi(c, ansi_type='color'):
             self.__bg_color = c
 
     @fx.setter
@@ -382,7 +344,7 @@ class FString(object):
             raise TypeError('fx argument must be list')
         self.__fx = []
         for f in fx:
-            if validate_ansi(f, ansi_type='fx'):
+            if _validate_ansi(f, ansi_type='fx'):
                 self.__fx.append(f)
 
 
@@ -405,16 +367,16 @@ class FString(object):
         ''' pads get bg_color as well BUT NOT if reverse option is specified '''
 
         if 'reverse' in self.__fx:
-            # s = ansi_esc_seq('reverse') + s
+            # s = _ansi_esc_seq('reverse') + s
             return p
 
         if self.__fg_color:
-            p = ansi_esc_seq(self.__fg_color) + p
+            p = _ansi_esc_seq(self.__fg_color) + p
 
         if self.__bg_color:
-            p = ansi_esc_seq(self.__bg_color, 10) + p
+            p = _ansi_esc_seq(self.__bg_color, 10) + p
 
-        return p + ansi_esc_seq('reset')
+        return p + _ansi_esc_seq('reset')
 
 
     @property
@@ -442,16 +404,16 @@ class FString(object):
     def __paint_output(self):
 
         for f in self.__fx:
-            self.__output = ansi_esc_seq(f) + self.__output
+            self.__output = _ansi_esc_seq(f) + self.__output
 
         if self.__fg_color:
-            self.__output = ansi_esc_seq(self.__fg_color) + self.__output
+            self.__output = _ansi_esc_seq(self.__fg_color) + self.__output
 
         if self.__bg_color:
             # background color range is +10 respect to foreground color
-            self.__output = ansi_esc_seq(self.__bg_color, offset=10) + self.__output
+            self.__output = _ansi_esc_seq(self.__bg_color, offset=10) + self.__output
 
-        self.__output = self.__output + ansi_esc_seq('reset')
+        self.__output = self.__output + _ansi_esc_seq('reset')
 
 
     def __align_output(self):
@@ -467,6 +429,38 @@ class FString(object):
 
         elif self.__align in ('cr', 'rc'):
             self.__output = self.__paint_pad(self.__big_pad) + self.__output + self.__paint_pad(self.__sml_pad)
+
+
+def clear_screen():
+    stdout.write('\033[H')
+    stdout.write('\033[J')
+    stdout.flush()
+
+
+def obfuscate_random_chars(input_string, amount=0, obfuscator='_'):
+    ''' returns input string with amount of random chars obfuscated '''
+    amount = len(input_string) - 4 if not amount or amount >= len(input_string) else amount
+
+    string_indecae = [
+        i for i in range(
+            len( str(input_string) )
+        )
+    ]
+
+    string_as_list = list(input_string)
+    for random_index in unique_random_items(string_indecae, amount):
+        string_as_list[random_index] = obfuscator
+
+    return iterable_to_string(string_as_list)
+
+
+def tty_rows():
+    ''' returns dynamic rows of current terminal '''
+    return get_terminal_size().lines
+
+def tty_cols():
+    ''' returns dynamic cols of current terminal '''
+    return get_terminal_size().columns
 
 
 def expand_seconds(input_seconds, output=dict):
