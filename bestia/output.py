@@ -5,7 +5,7 @@ from os import popen, get_terminal_size
 from time import sleep
 from random import randint
 
-from bestia.iterate import string_to_list, iterable_to_string, unique_random_items
+from bestia.iterate import iterable_to_string, unique_random_items
 from bestia.error import *
 
 DEFAULT_RETRO_LAG = 0.00001
@@ -94,11 +94,12 @@ def obfuscate_random_chars(input_string, amount=0, obfuscator='_'):
         )
     ]
 
-    string_as_list = string_to_list(input_string)
+    string_as_list = list(input_string)
     for random_index in unique_random_items(string_indecae, amount):
         string_as_list[random_index] = obfuscator
 
     return iterable_to_string(string_as_list)
+
 
 def tty_rows():
     ''' returns dynamic rows of current terminal '''
