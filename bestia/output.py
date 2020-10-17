@@ -74,10 +74,6 @@ def ansi_esc_seq(fx, offset=0):
         raise InvalidAnsiSequence(fx)
 
 
-def dquoted(s):
-    return '"{}"'.format(s)
-
-
 def clear_screen():
     stdout.write('\033[H')
     stdout.write('\033[J')
@@ -90,7 +86,7 @@ def obfuscate_random_chars(input_string, amount=0, obfuscator='_'):
 
     string_indecae = [
         i for i in range(
-            len(str(input_string))
+            len( str(input_string) )
         )
     ]
 
@@ -284,17 +280,6 @@ class FString(object):
         self.__fx = []
         self.fx = fx
 
-
-    def filter_utf_chars(self, string):
-        '''
-            filters out chars that can cause misalignments
-            because made of more than a byte... makes sense?
-        '''
-        return bytearray(
-            ord(c.encode('utf-8')) for c in replace_special_chars(
-                string
-            ) if len(c.encode('utf-8')) == 1
-        ).decode('utf-8')
 
     def append(self, string):
         self.__input_string = '{}{}'.format(
@@ -524,54 +509,6 @@ def remove_path(input_path, depth=-1):
     except IndexError:
         return remove_path(input_path, depth=depth+1)
 
-
-def replace_special_chars(t):
-    ''' https://www.i18nqa.com/debug/utf8-debug.html
-        some of the chars here im not sure are correct,
-        check dumbo dublat romana translation
-    '''
-    special_chars = {
-        # 'Äƒ': 'Ã',
-        # 'Äƒ': 'ă',
-        'Ã¢': 'â',
-        'Ã¡': 'á', 'ã¡': 'á',
-        'Ã ': 'à',
-        'Ã¤': 'ä',
-        'Å£': 'ã',
-        # 'ÅŸ': 'ß',
-        'ÃŸ': 'ß',
-        'Ã©': 'é', 'ã©': 'é',
-        'Ã¨': 'è',
-        'Ã' : 'É', 'Ã‰': 'É',
-        'Ã­': 'í',
-        'Ã': 'Í',
-        # 'Ã®': 'î',
-        'Ã³': 'ó',
-        'Ã“': 'Ó',
-        'Ã¶': 'ö',
-        'Ãº': 'ú',
-        'Ã¹': 'ù',
-        'Ã¼': 'ü',
-        'Ã±': 'ñ',
-        'Ã‘': 'Ñ',
-        'Â´': '\'',
-        '´': '\'',
-        'â€ž': '“',
-        'â€œ': '”',
-        'â€¦': '…',
-        b'\xe2\x80\x8e'.decode('utf-8') : '', # left-to-right-mark
-        b'\xe2\x80\x8b'.decode('utf-8') : '',	# zero-width-space
-        '&amp' : '&',
-        '&;': '&',
-        '【': '[',
-        '】': ']',
-        'â€“': '-',
-        '⑥': '6',
-    }
-
-    for o, i in special_chars.items():
-        t = str(t).replace(o, i)
-    return t
 
 
 class ProgressBar(object):
