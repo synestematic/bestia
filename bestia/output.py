@@ -8,10 +8,16 @@ from random import randint
 from bestia.iterate import iterable_to_string, unique_random_items
 from bestia.error import *
 
-NO_SPACE_CHARS = [
+NO_SPACE_CHARS = (
     b'\xe2\x80\x8e', # left-to-right-mark
     b'\xe2\x80\x8b', # zero-width-space
-]
+)
+
+BI_SPACE_CHARS = {
+    '⭐': '*',
+    '【': '[',
+    '】': ']',
+}
 
 DEFAULT_RETRO_LAG = 0.00001
 
