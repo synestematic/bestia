@@ -8,6 +8,11 @@ from random import randint
 from bestia.iterate import iterable_to_string, unique_random_items
 from bestia.error import *
 
+NO_SPACE_CHARS = [
+    b'\xe2\x80\x8e', # left-to-right-mark
+    b'\xe2\x80\x8b', # zero-width-space
+]
+
 DEFAULT_RETRO_LAG = 0.00001
 
 ANSI_SGR_CODES = {     # Select Graphic Rendition
@@ -253,10 +258,6 @@ class FString(object):
 
     def set_input_size(self):
         # calculate input_string length without color bytes
-        ignore_these = [
-            b'\xe2\x80\x8e', # left-to-right-mark
-            b'\xe2\x80\x8b', # zero-width-space
-        ]
         color_start_byte = b'\x1b'
         color_end_byte = b'm'
         self.__input_size = 0
@@ -270,7 +271,7 @@ class FString(object):
             elif byte == color_end_byte and not add:
                 add = True
                 continue
-            if add and byte not in ignore_these:
+            if add and byte not in NO_SPACE_CHARS:
                 self.__input_size += 1
 
     def __str__(self):
