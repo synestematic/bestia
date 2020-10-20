@@ -112,4 +112,13 @@ A Row() object is a string that's width is exactly one entire row of your curren
 123                                                              ABC
 ```
 
+## screenshots
+
+Here are some examples of what you can do using bestia:
+
+![](resources/k.png)
+
+![](resources/r.png)
+
+![](resources/th.png)
 
