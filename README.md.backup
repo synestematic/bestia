@@ -114,10 +114,10 @@ A Row() object is a string that's width is exactly one entire row of your curren
 
 You will often need the strings within your Row not to be resized (static size). In order to achieve this use a FString and specify the `size` attribute to what you want it to be. 
 
+Unfortunately MarkDown is not great at showing off the possibilites that the library gives you in terms of creating vibrant looking CLI applications so in the next section I will let
 
-Unfortunately MarkDown is not great at showing off the possibilites that the library gives you in terms of creating vibrant looking CLI tools so in the next section I will let you take a look at a couple of applications built using bestia.
+Here are some examples of what you can do using bestia:
 
-Enjoy!
 
 
 ## screenshots
