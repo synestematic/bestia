@@ -109,7 +109,7 @@ A Row() object is a string that's width is exactly one entire row of your curren
 ```
 >>> r = Row('123', FString('ABC', align='r'))
 >>> r.echo()
-123                                                              ABC
+123                                                                          ABC
 ```
 
 ## screenshots
