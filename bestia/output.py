@@ -135,7 +135,7 @@ class FString(object):
 
     def __init__(self, init_string='', size=0, pad=' ', align='l', fg='', bg='', fx=[]):
 
-        self.fixed_size = True if size else False
+        self.fixed_size = size  # used by Row to decide whether to resize or not
 
         self.__input_string = ''
         self.append(init_string)
@@ -146,7 +146,6 @@ class FString(object):
         self.__pad = ' '
         self.pad = pad
 
-        # l, r, c, cl, lc, cr, rc
         self.__align = 'l'
         self.align = align
 
@@ -209,7 +208,7 @@ class FString(object):
         return len(self)
 
     @size.setter
-    def size(self, s=None):
+    def size(self, s):
         self.__output_size = int(s) if s else self.__input_size # desired len of output
 
     @property
@@ -362,12 +361,13 @@ class Row(object):
         spaces_left = len(self)
 
         # remove fixed_fs sizes
-        for fs in self.fixed_fstrings():
-            spaces_left -= len(fs)
+        for fs in self.__fstrings:
+            if fs.fixed_size:
+                spaces_left -= len(fs)
 
         # gather adaptive_fs
         adaptive_fs_count = len(
-            [ fs for fs in self.adaptive_fstrings() ]
+            [ fs for fs in self.__fstrings if not fs.fixed_size ]
         )
         if not adaptive_fs_count:
             return
@@ -417,16 +417,6 @@ class Row(object):
         for fs in self.__fstrings:
             self.__output = self.__output + str(fs)
         return self.__output
-
-    def fixed_fstrings(self):
-        for fs in self.__fstrings:
-            if fs.fixed_size:
-                yield fs
-
-    def adaptive_fstrings(self):
-        for fs in self.__fstrings:
-            if not fs.fixed_size:
-                yield fs
 
     def append(self, s):
         self.__fstrings.append(
