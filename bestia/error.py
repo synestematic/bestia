@@ -2,16 +2,16 @@
 ### output module exceptions ###
 ################################
 
-class InvalidColor(Exception):
+class InvalidAnsiSequence(Exception):
     pass
 
-class InvalidFx(Exception):
+class InvalidColor(InvalidAnsiSequence):
+    pass
+
+class InvalidFx(InvalidAnsiSequence):
     pass
 
 class InvalidMode(Exception):
-    pass
-
-class InvalidAnsiSequence(Exception):
     pass
 
 class InvalidAlignment(Exception):

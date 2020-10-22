@@ -171,70 +171,55 @@ class Row(object):
 
 
 def echo(init_string='', *fx, mode='modern'):
-    obj = EchoCLass(init_string, *fx, mode=mode)
-    obj()
+    output = str(init_string)
+    fx = [ _validate_ansi(f, ansi_type=None) for f in fx if f ]
+    fg = ''
+    bg = ''
+    # filter colors from fx
+    colors = [ c for c in fx if ANSI_SGR_CODES[c] in ANSI_CLR_VALUES ]
+    if len(colors) > 0:
+        fg = colors[0]
+        fx.remove(colors[0])
+    if len(colors) > 1:
+        bg = colors[1]
+        fx.remove(colors[1])
+    if len(colors) > 2:
+        raise InvalidColor('Exceeded 2 maximum colors')
 
+    if mode not in ECHO_MODES:
+        raise InvalidMode(mode)
 
-class EchoCLass(object):
+    try:
+        exception = None
+        if fg:
+            stdout.write( _ansi_esc_seq(fg) )
+        if bg:
+            stdout.write( _ansi_esc_seq(bg, offset=10) )
+        for fx in fx:
+            stdout.write( _ansi_esc_seq(fx) )
 
-    def __init__(self, init_string='', *fx, mode='modern'):
+        for c in output:
+            # only output chars get lagged...
+            lag = DEFAULT_RETRO_LAG if mode == 'retro' else 0
+            random_multiplier = randint(1, 100 if mode == 'retro' else 1)
+            sleep( lag * random_multiplier )
+            stdout.write(c)
+            stdout.flush()
 
-        self.__output = str(init_string)
+    except Exception as x:
+        exception = x
 
-        self.__fg = ''
-        self.__bg = ''
-        self.__fx = [ _validate_ansi(f, ansi_type=None) for f in fx if f ]
+    finally:
+        if fg or bg or fx:
+            stdout.write( _ansi_esc_seq('reset') )
+            stdout.flush()
 
-        self.gather_colors()
+        if exception:
+            raise exception
 
-        if mode not in ECHO_MODES:
-            raise InvalidMode(mode)
-        self.__mode = mode
-
-        # self()
-
-    def gather_colors(self):
-        colors = [ c for c in self.__fx if ANSI_SGR_CODES[c] in ANSI_CLR_VALUES ]
-        if len(colors) > 0:
-            self.fg = colors[0]
-        if len(colors) > 1:
-            self.bg = colors[1]
-        if len(colors) > 2:
-            raise InvalidColor('Exceeded 2 maximum colors')
-
-
-    def __call__(self):
-
-        try:
-            exception = None
-            for f in self.__fx:
-                for char in _ansi_esc_seq(f):
-                    stdout.write(char)
-                    stdout.flush()
-
-            for char in self.__output:
-                # only output chars get lagged...
-                lag = DEFAULT_RETRO_LAG if self.__mode == 'retro' else 0
-                random_multiplier = randint(1, 100 if self.__mode == 'retro' else 1)
-                sleep( lag * random_multiplier )
-                stdout.write(char)
-                stdout.flush()
-
-        except Exception as x:
-            exception = x
-
-        finally:
-            if self.__fx:
-                for char in _ansi_esc_seq('reset'):
-                    stdout.write(char)
-                    stdout.flush()
-
-            if exception:
-                raise exception
-
-            if self.__mode != 'raw':
-                stdout.write('\n')
-                stdout.flush()
+        if mode != 'raw':
+            stdout.write('\n')
+            stdout.flush()
 
 
 class FString(object):
