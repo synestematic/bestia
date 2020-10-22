@@ -50,28 +50,26 @@ The highlight of this library is the output module and more specifically the _ec
 
 ### echo() function:
 
-This is a very basic function which takes your string as first argument, followed by any number of effects that you may want to apply to your text:
+This is a very basic function which takes your string as first argument, followed by any number of effects that you may want to apply to your text. You can specify up to a maximum of 2 colors (1st: foreground, 2nd: background) and you can even use 'reverse' to switch between them.
 
-```
->>> echo('Hello World!', 'blue', 'cross', 'bold')
-```
-
-You can specify up to a maximum of 2 colors for foreground and background and you can even use the 'reverse' to change between them.
+![](resources/e.png)
 
 
-
-Supported fg and bg colors are:  
+Supported `fg` and `bg` values:  
 `'black' 'red' 'green' 'yellow' 'blue' 'magenta' 'cyan' 'white'`  
 
 
-Supported fx are: `'reset' 'bold' 'faint' 'underline' 'blink' 'reverse' 'conceal' 'cross' 'frame' 'circle' 'overline'`  
+Supported `fx` values:  
+`'reset' 'bold' 'faint' 'underline' 'blink' 'reverse' 'conceal' 'cross' 'frame' 'circle' 'overline'`  
 
-This is of course as long as your terminal emulator supports these as well. Some of the later ones are rarely supported unfortunately.
+Not all terminal emulators support the same colors or fx so some of these may not work depending on what you are using.
 
-As an extra, the echo function has an optional last argument mode that has 3 possible values: 
+The echo function has an optional last keyword argument `mode` that alters how strings are rendered|terminated. 
+
+Supported `mode` values:  
 `"modern", "raw", "retro"`  
-These have to do with how the strings are rendered|terminated. Play with them and see what you like!
 
+Play with them and see what you like!
 
 
 ### FString() class:
@@ -111,7 +109,7 @@ A Row() object is a string that's width is exactly one entire row of your curren
 ```
 >>> r = Row('123', FString('ABC', align='r'))
 >>> r.echo()
-123                                                                                                                  ABC
+123                                                                                                               ABC
 ```
 
 You will often need the strings within your Row not to be resized (static size). In order to achieve this use a FString and specify the `size` attribute to what you want it to be. 
