@@ -346,20 +346,20 @@ class FString(object):
 
 
 class Row(object):
-    '''a string with width === terminal_len (unless otherwise specified). Instantiate a Row object with str|FString instances and it will keep its width constant by cropping/aligning objects with no fixed_size'''
+    '''a string with size === terminal_len (unless otherwise specified). Instantiate a Row object with str|FString instances and it will keep its size constant by cropping/aligning objects with no fixed_size'''
 
-    def __init__(self, *items, width=False):
+    def __init__(self, *items, size=0):
         self.__output = ''
-        self.__fixed_width = width
+        self.__fixed_size = size
         self.__fstrings = []
         for item in items:
             self.append(item)
 
     def __len__(self):
-        return self.__fixed_width if self.__fixed_width else tty_cols()
+        return self.__fixed_size if self.__fixed_size else tty_cols()
 
     def assign_spaces(self):
-        spaces_left = self.width
+        spaces_left = len(self)
 
         # remove fixed_fs sizes
         for fs in self.fixed_fstrings():
@@ -403,8 +403,12 @@ class Row(object):
                     break
 
     @property
-    def width(self):
-        return len(self)
+    def size(self):
+        return self.__fixed_size
+
+    @size.setter
+    def size(self, s):
+        self.__fixed_size = s
 
     @property
     def output(self):
