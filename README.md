@@ -1,5 +1,5 @@
 # bestia
-bestia is a library of functions and classes designed to help you build dynamic command-line applications on Linux / Darwin systems.
+bestia is a library of functions and classes designed to help you build command-line applications on Linux / Darwin systems that dinamically change along with the size of your terminal.
 
 
 ## available functions / classes
@@ -45,18 +45,20 @@ Installing bestia does not require you to install any external dependencies.
 
 The highlight of this library is the output module and more specifically the _echo()_ function along with the *FString()* and _Row()_ classes. Let's have a quick look at how these work:
 
-`from bestia.output import echo, FString, Row `
+`>>> from bestia.output import echo, FString, Row `
 
 
 ### echo() function:
 
-This is the simplest of the three, allowing to fast echo a string that reflects a particular color:
+This is a very basic function which takes your string as first argument, followed by any number of effects that you may want to apply to your text:
 
 ```
->>> echo('Hello World!', 'blue', 'underline', mode='retro')
+>>> echo('Hello World!', 'blue', 'cross', 'bold')
 ```
 
-<span style="color:blue"> `Hello World!` </span>
+You can specify up to a maximum of 2 colors for foreground and background and you can even use the 'reverse' to change between them.
+
+
 
 Supported fg and bg colors are:  
 `'black' 'red' 'green' 'yellow' 'blue' 'magenta' 'cyan' 'white'`  

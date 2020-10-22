@@ -29,7 +29,7 @@ ANSI_SGR_CODES = {     # Select Graphic Rendition
     'blink':     5,    # blinks ONLY fg, ul
     'reverse':   7,    # reverses fg + ul, bg
     'conceal':   8,    # conceals ONLY fg, ul, NOT bg
-    'cross':     9,    # HARDLY supported...
+    'cross':     9,    # little support...
 
     'black':     30,   # NOT gray...
     'red':       31,
@@ -77,97 +77,6 @@ def _ansi_esc_seq(fx, offset=0):
         )
     except KeyError:
         raise InvalidAnsiSequence(fx)
-
-
-class Row(object):
-    '''a string with width === terminal_len (unless otherwise specified). Instantiate a Row object with str|FString instances and it will keep its width constant by cropping/aligning objects with no fixed_size'''
-
-    def __init__(self, *items, width=False):
-        self.__output = ''
-        self.__fixed_width = width
-        self.__fstrings = []
-        for item in items:
-            self.append(item)
-
-    def __len__(self):
-        return self.__fixed_width if self.__fixed_width else tty_cols()
-
-    def assign_spaces(self):
-        spaces_left = self.width
-
-        # remove fixed_fs sizes
-        for fs in self.fixed_fstrings():
-            spaces_left -= len(fs)
-
-        # gather adaptive_fs
-        adaptive_fs_count = len(
-            [ fs for fs in self.adaptive_fstrings() ]
-        )
-        if not adaptive_fs_count:
-            return
-
-        # if spaces_left < 1:
-            ### CROP if removed more spaces than available?
-            # return
-
-        ### ALIGN
-
-        # calculate individual size for each adaptive_fs + any spaces left
-        adaptive_fs_size, spaces_left = divmod(
-            spaces_left, adaptive_fs_count
-        )
-
-        # resize adaptive_fs
-        for i, _ in enumerate(self.__fstrings):
-            if not self.__fstrings[i].fixed_size:
-                self.__fstrings[i].size = adaptive_fs_size
-
-        # deal spaces_left to adaptive_fs 1 by 1
-        while spaces_left:
-
-            for i, _ in enumerate(self.__fstrings):
-
-                if self.__fstrings[i].fixed_size:
-                    continue
-
-                self.__fstrings[i].size += 1
-
-                spaces_left -= 1
-                if not spaces_left:
-                    break
-
-    @property
-    def width(self):
-        return len(self)
-
-    @property
-    def output(self):
-        self.__output = ''
-        self.assign_spaces()
-        for fs in self.__fstrings:
-            self.__output = self.__output + str(fs)
-        return self.__output
-
-    def fixed_fstrings(self):
-        for fs in self.__fstrings:
-            if fs.fixed_size:
-                yield fs
-
-    def adaptive_fstrings(self):
-        for fs in self.__fstrings:
-            if not fs.fixed_size:
-                yield fs
-
-    def append(self, s):
-        self.__fstrings.append(
-            FString(s) if type(s) != FString else s
-        )
-
-    def echo(self, mode='modern'):
-        echo(self, mode=mode)
-
-    def __str__(self):
-        return self.output
 
 
 def echo(init_string='', *fx, mode='modern'):
@@ -435,6 +344,97 @@ class FString(object):
 
         elif self.__align in ('cr', 'rc'):
             self.__output = self.__paint_pad(self.__big_pad) + self.__output + self.__paint_pad(self.__sml_pad)
+
+
+class Row(object):
+    '''a string with width === terminal_len (unless otherwise specified). Instantiate a Row object with str|FString instances and it will keep its width constant by cropping/aligning objects with no fixed_size'''
+
+    def __init__(self, *items, width=False):
+        self.__output = ''
+        self.__fixed_width = width
+        self.__fstrings = []
+        for item in items:
+            self.append(item)
+
+    def __len__(self):
+        return self.__fixed_width if self.__fixed_width else tty_cols()
+
+    def assign_spaces(self):
+        spaces_left = self.width
+
+        # remove fixed_fs sizes
+        for fs in self.fixed_fstrings():
+            spaces_left -= len(fs)
+
+        # gather adaptive_fs
+        adaptive_fs_count = len(
+            [ fs for fs in self.adaptive_fstrings() ]
+        )
+        if not adaptive_fs_count:
+            return
+
+        # if spaces_left < 1:
+            ### CROP if removed more spaces than available?
+            # return
+
+        ### ALIGN
+
+        # calculate individual size for each adaptive_fs + any spaces left
+        adaptive_fs_size, spaces_left = divmod(
+            spaces_left, adaptive_fs_count
+        )
+
+        # resize adaptive_fs
+        for i, _ in enumerate(self.__fstrings):
+            if not self.__fstrings[i].fixed_size:
+                self.__fstrings[i].size = adaptive_fs_size
+
+        # deal spaces_left to adaptive_fs 1 by 1
+        while spaces_left:
+
+            for i, _ in enumerate(self.__fstrings):
+
+                if self.__fstrings[i].fixed_size:
+                    continue
+
+                self.__fstrings[i].size += 1
+
+                spaces_left -= 1
+                if not spaces_left:
+                    break
+
+    @property
+    def width(self):
+        return len(self)
+
+    @property
+    def output(self):
+        self.__output = ''
+        self.assign_spaces()
+        for fs in self.__fstrings:
+            self.__output = self.__output + str(fs)
+        return self.__output
+
+    def fixed_fstrings(self):
+        for fs in self.__fstrings:
+            if fs.fixed_size:
+                yield fs
+
+    def adaptive_fstrings(self):
+        for fs in self.__fstrings:
+            if not fs.fixed_size:
+                yield fs
+
+    def append(self, s):
+        self.__fstrings.append(
+            FString(s) if type(s) != FString else s
+        )
+
+    def echo(self, mode='modern'):
+        echo(self, mode=mode)
+
+    def __str__(self):
+        return self.output
 
 
 def clear_screen():
