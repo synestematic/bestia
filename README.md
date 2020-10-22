@@ -1,5 +1,5 @@
 # bestia
-bestia is a library of functions and classes designed to help you build command-line applications on Linux / Darwin systems that dinamically change along with the size of your terminal.
+bestia is a library of functions and classes designed to help you build vibrant and dynamic applications for the command-line on Linux / Darwin systems.
 
 
 ## available functions / classes
@@ -121,15 +121,19 @@ The `echo` method of `FString` can also accept a `mode` attribute which works ex
 
 ### Row() class:
 
-A Row() object is a string that's width is exactly one entire row of your current terminal size. It accepts any number of str|FString objects as arguments and will automatically resize them so that they occupy exactly 1 row.
+Row() is a class that accepts any number of `str` or `FString` objects as arguments and forces them to print on the same terminal row by automatically detecting the size of your terminal window and resizing each item. It is a fantastic tool for building dynamic TUI's
 
 ```
 >>> r = Row('123', FString('ABC', align='r'))
 >>> r.echo()
-123                                                                                                               ABC
+123                                                                                   ABC
 ```
 
-You will often need the strings within your Row not to be resized (static size). In order to achieve this use a FString and specify the `size` attribute to what you want it to be. 
+The size of your terminal is calculated on the fly just before rendering which means that these objects work great at keeping your data neat and viewable even across terminal window resizes.
+
+
+If you need any of the strings that make up your Row to NOT be resized, just init a `FString` and then set it's size attribute to a static size.
+
 
 
 Unfortunately MarkDown is not great at showing off the possibilites that the library gives you in terms of creating vibrant looking CLI tools so in the next section I will let you take a look at a couple of applications built using bestia.
