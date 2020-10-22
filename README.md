@@ -74,32 +74,49 @@ Play with them and see what you like!
 
 ### FString() class:
 
-The FString class was designed to help constructing strings that need to fit into specific areas of the terminal. This is done by dinamically preppending/appending blank spaces to the actual string so that it will be placed as needed on the horizontal plane. Let's take a look at a couple of examples:
+The `FString` class has all the "coloring" functionality of the `echo` function but requires you to explicitly use it's attributes `fg: str, bg: str, fx: list`. This added complexity allows for far more flexibility since you can specify these values when instantiating an object and modify them at will later. You can print your FString either by calling it's echo method or by printing the instance itself.
+
+Coloring is NOT however the main feature of this class, the most important functionality that `FString` provides is the ability to force strings into specific areas of your terminal space. It achieves this by dynamically padding your string with spaces (or any other char) so that it will be placed where needed on the horizontal plane.
 
 ```
->>> fs = FString('123', size=5, align='r')
->>> fs.echo()
+>>> fs1 = FString('123', size=5, align='r')
+>>> print(fs1)
   123
+>>> fs1.size = 10
+>>> fs1.echo()
+       123
+>>> fs1.align = 'c'
+>>> fs1.echo()
+   123    
 ```
 
-Notice how the "123" string has moved to the right by setting it's `size=5` and `align='r'`. The default value for align is `'l'`, but we can also use any of: `'l', 'r', 'c', 'cl', 'cr'`
+Notice how the "123" string moves to the right by setting it's `size` and `align` attributes. The default value for align is `'l'`, but we can also use any of: `'l', 'r', 'c', 'cl', 'cr'`
+
+
+`FString` can add space to your strings but it can also crop them if you set a `size` value lower than the string length. This is extremely useful when you are dealing with dynamic text and you want to ensure it will not take more than a fixed amount of space.
 
 ```
->>> FString(' bla ', size=20, align='cl').echo()
-        bla         
-```
+>>> fs2 = FString('Welcome to the Jungle!', size=10)
+>>> fs2.echo()
+Welcome to
+>>> fs2.size = 16
+>>> fs2.echo()
+Welcome to the J
+```   
 
-When dealing with empty spaces it can be hard to understand where our FStrings end and where the rest of the terminal begins. We can use the `pad` argument to help debug this or to create more interesting TUI's:
+
+Dealing with empty spaces can make it hard to understand where our FStrings finish and begin. You can use the `pad` attribute for debugging purposes or to create mote interesting TUI's:
 
 ```
->>> FString(' asd ', size=20, align='cl', pad='|').echo()
+>>> FString(' asd ', size=20, align='cl', pad='|').echo(mode='modern')
+        asd         
+>>> FString(' asd ', size=20, align='cl', pad='|').echo(mode='modern')
 ||||||| asd ||||||||
-
->>> FString(' asd ', size=20, align='cr', pad='*').echo()
+>>> FString(' asd ', size=20, align='cr', pad='*').echo(mode='modern')
 ******** asd *******
 ```
 
-On top of that, FString supports all the ANSI SGR Codes that echo() does thru the `fg=str, bg=str, fx=[]` arguments
+The `echo` method of `FString` can also accept a `mode` attribute which works exactly as in the `echo` function. 
 
 
 ### Row() class:
