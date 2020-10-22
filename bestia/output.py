@@ -170,19 +170,37 @@ class Row(object):
         return self.output
 
 
-class echo(object):
+def echo(init_string='', *fx, mode='modern'):
+    obj = EchoCLass(init_string, *fx, mode=mode)
+    obj()
+
+
+class EchoCLass(object):
 
     def __init__(self, init_string='', *fx, mode='modern'):
 
         self.__output = str(init_string)
 
+        self.__fg = ''
+        self.__bg = ''
         self.__fx = [ _validate_ansi(f, ansi_type=None) for f in fx if f ]
+
+        self.gather_colors()
 
         if mode not in ECHO_MODES:
             raise InvalidMode(mode)
         self.__mode = mode
 
-        self()
+        # self()
+
+    def gather_colors(self):
+        colors = [ c for c in self.__fx if ANSI_SGR_CODES[c] in ANSI_CLR_VALUES ]
+        if len(colors) > 0:
+            self.fg = colors[0]
+        if len(colors) > 1:
+            self.bg = colors[1]
+        if len(colors) > 2:
+            raise InvalidColor('Exceeded 2 maximum colors')
 
 
     def __call__(self):
@@ -191,15 +209,16 @@ class echo(object):
             exception = None
             for f in self.__fx:
                 for char in _ansi_esc_seq(f):
-                    _lag_chr(char)
+                    stdout.write(char)
+                    stdout.flush()
 
             for char in self.__output:
                 # only output chars get lagged...
-                _lag_chr(
-                    char,
-                    lag =  DEFAULT_RETRO_LAG if self.__mode == 'retro' else 0,
-                    random_lag = 100 if self.__mode == 'retro' else 1,
-                )
+                lag = DEFAULT_RETRO_LAG if self.__mode == 'retro' else 0
+                random_multiplier = randint(1, 100 if self.__mode == 'retro' else 1)
+                sleep( lag * random_multiplier )
+                stdout.write(char)
+                stdout.flush()
 
         except Exception as x:
             exception = x
@@ -207,20 +226,15 @@ class echo(object):
         finally:
             if self.__fx:
                 for char in _ansi_esc_seq('reset'):
-                    _lag_chr(char)
+                    stdout.write(char)
+                    stdout.flush()
 
             if exception:
                 raise exception
 
             if self.__mode != 'raw':
-                _lag_chr('\n')
-
-
-def _lag_chr(char=' ', lag=0, random_lag=1):
-    random_multiplier = randint(1, random_lag)
-    sleep(lag *random_multiplier)
-    stdout.write(char)
-    stdout.flush()
+                stdout.write('\n')
+                stdout.flush()
 
 
 class FString(object):
