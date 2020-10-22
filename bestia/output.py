@@ -133,6 +133,8 @@ def echo(init_string='', *fx, mode='modern'):
 
 class FString(object):
 
+    ALIGN_VALUES = ('l', 'r', 'c', 'lc', 'cl', 'rc', 'cr')
+
     def __init__(self, init_string='', size=0, pad=' ', align='l', fg='', bg='', fx=[]):
 
         self.fixed_size = True if size else False
@@ -151,11 +153,11 @@ class FString(object):
         self.align = align
 
         # black, red, green, yellow, blue, magenta, cyan, white
-        self.__fg_color = ''
-        self.fg_color = fg
+        self.__fg = ''
+        self.fg = fg
 
-        self.__bg_color = ''
-        self.bg_color = bg
+        self.__bg = ''
+        self.bg = bg
 
         # bold, dark, underline, blink, reverse, concealed
         self.__fx = []
@@ -212,7 +214,6 @@ class FString(object):
     def size(self, s=None):
         self.__output_size = int(s) if s else self.__input_size # desired len of output
 
-
     @property
     def pad(self):
         return self.__pad
@@ -227,31 +228,31 @@ class FString(object):
 
     @align.setter
     def align(self, a):
-        if a not in ('l', 'r', 'c', 'lc', 'cl', 'rc', 'cr'):
+        if a not in self.ALIGN_VALUES:
             raise InvalidAlignment(a)
         self.__align = a
 
     @property
-    def fg_color(self):
-        return self.__fg_color
+    def fg(self):
+        return self.__fg
 
     @property
-    def bg_color(self):
-        return self.__bg_color
+    def bg(self):
+        return self.__bg
 
     @property
     def fx(self):
         return self.__fx
 
-    @fg_color.setter
-    def fg_color(self, c):
+    @fg.setter
+    def fg(self, c):
         if _validate_ansi(c, ansi_type='color'):
-            self.__fg_color = c
+            self.__fg = c
 
-    @bg_color.setter
-    def bg_color(self, c):
+    @bg.setter
+    def bg(self, c):
         if _validate_ansi(c, ansi_type='color'):
-            self.__bg_color = c
+            self.__bg = c
 
     @fx.setter
     def fx(self, fx):
@@ -279,17 +280,17 @@ class FString(object):
 
 
     def __paint_pad(self, p):
-        ''' pads get bg_color as well BUT NOT if reverse option is specified '''
+        ''' pads get bg as well BUT NOT if reverse option is specified '''
 
         if 'reverse' in self.__fx:
             # s = _ansi_esc_seq('reverse') + s
             return p
 
-        if self.__fg_color:
-            p = _ansi_esc_seq(self.__fg_color) + p
+        if self.__fg:
+            p = _ansi_esc_seq(self.__fg) + p
 
-        if self.__bg_color:
-            p = _ansi_esc_seq(self.__bg_color, 10) + p
+        if self.__bg:
+            p = _ansi_esc_seq(self.__bg, 10) + p
 
         return p + _ansi_esc_seq('reset')
 
@@ -302,7 +303,7 @@ class FString(object):
         if self.__input_size > self.__output_size:
             self.__crop_output()
 
-        if self.__fg_color or self.__bg_color or self.__fx:
+        if self.__fg or self.__bg or self.__fx:
             self.__paint_output()
 
         if self.__output_size > self.__input_size:
@@ -321,12 +322,12 @@ class FString(object):
         for f in self.__fx:
             self.__output = _ansi_esc_seq(f) + self.__output
 
-        if self.__fg_color:
-            self.__output = _ansi_esc_seq(self.__fg_color) + self.__output
+        if self.__fg:
+            self.__output = _ansi_esc_seq(self.__fg) + self.__output
 
-        if self.__bg_color:
+        if self.__bg:
             # background color range is +10 respect to foreground color
-            self.__output = _ansi_esc_seq(self.__bg_color, offset=10) + self.__output
+            self.__output = _ansi_esc_seq(self.__bg, offset=10) + self.__output
 
         self.__output = self.__output + _ansi_esc_seq('reset')
 
