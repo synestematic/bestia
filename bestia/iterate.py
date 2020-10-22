@@ -1,4 +1,4 @@
-from random import randrange, choice
+import random
 
 class LoopedList(list):
     ''' a mutable array that loops thru items when getting/setting an item with out-of-range index '''
@@ -46,7 +46,7 @@ def unique_random_items(iterable, amount=5):
 
     items_to_return = []
     while amount != 0:
-        random_item = choice(iterable)
+        random_item = random.choice(iterable)
         if random_item not in items_to_return:
             items_to_return.append(random_item)
             amount -= 1
@@ -56,8 +56,7 @@ def unique_random_items(iterable, amount=5):
 def pop_random_item(lst):
     ''' returns/removes random item from list  '''
     try:
-        random_index = randrange(len(lst))
+        random_index = random.randrange(len(lst))
         return lst.pop(random_index)
     except ValueError:
         return None
-

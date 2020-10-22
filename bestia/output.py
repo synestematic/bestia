@@ -1,9 +1,7 @@
-from sys import getsizeof, stdout
-from os.path import join as PATH_JOIN
-from os import sep as PATH_SEPARATOR
-from os import popen, get_terminal_size
-from time import sleep
-from random import randint
+import sys
+import os
+import time
+import random
 
 from bestia.iterate import iterable_to_string, unique_random_items
 from bestia.error import *
@@ -101,34 +99,34 @@ def echo(init_string='', *fx, mode='modern'):
     try:
         exception = None
         if fg:
-            stdout.write( _ansi_esc_seq(fg) )
+            sys.stdout.write( _ansi_esc_seq(fg) )
         if bg:
-            stdout.write( _ansi_esc_seq(bg, offset=10) )
+            sys.stdout.write( _ansi_esc_seq(bg, offset=10) )
         for fx in fx:
-            stdout.write( _ansi_esc_seq(fx) )
+            sys.stdout.write( _ansi_esc_seq(fx) )
 
         for c in output:
             # only output chars get lagged...
             lag = DEFAULT_RETRO_LAG if mode == 'retro' else 0
-            random_multiplier = randint(1, 100 if mode == 'retro' else 1)
-            sleep( lag * random_multiplier )
-            stdout.write(c)
-            stdout.flush()
+            random_multiplier = random.randint(1, 100 if mode == 'retro' else 1)
+            time.sleep( lag * random_multiplier )
+            sys.stdout.write(c)
+            sys.stdout.flush()
 
     except Exception as x:
         exception = x
 
     finally:
         if fg or bg or fx:
-            stdout.write( _ansi_esc_seq('reset') )
-            stdout.flush()
+            sys.stdout.write( _ansi_esc_seq('reset') )
+            sys.stdout.flush()
 
         if exception:
             raise exception
 
         if mode != 'raw':
-            stdout.write('\n')
-            stdout.flush()
+            sys.stdout.write('\n')
+            sys.stdout.flush()
 
 
 class FString(object):
@@ -439,9 +437,9 @@ class Row(object):
 
 
 def clear_screen():
-    stdout.write('\033[H')
-    stdout.write('\033[J')
-    stdout.flush()
+    sys.stdout.write('\033[H')
+    sys.stdout.write('\033[J')
+    sys.stdout.flush()
 
 
 def obfuscate_random_chars(input_string, amount=0, obfuscator='_'):
@@ -463,11 +461,11 @@ def obfuscate_random_chars(input_string, amount=0, obfuscator='_'):
 
 def tty_rows():
     ''' returns dynamic rows of current terminal '''
-    return get_terminal_size().lines
+    return os.get_terminal_size().lines
 
 def tty_cols():
     ''' returns dynamic cols of current terminal '''
-    return get_terminal_size().columns
+    return os.get_terminal_size().columns
 
 
 def expand_seconds(input_seconds, output=dict):
@@ -504,9 +502,9 @@ def remove_path(input_path, depth=-1):
             depth = -1
         levels = []
         while depth <= -1:
-            levels.append(input_path.split(PATH_SEPARATOR)[depth])
+            levels.append(input_path.split(os.sep)[depth])
             depth += 1
-        return PATH_JOIN(*levels)
+        return os.path.join(*levels)
     except IndexError:
         return remove_path(input_path, depth=depth+1)
 
@@ -574,7 +572,7 @@ class ProgressBar(object):
             echo('[', 'faint', self.color, mode='raw')
             echo('.' * self.spaces, 'faint', self.color, mode='raw')
             echo(']', 'faint', self.color, mode='raw')
-            stdout.write('\b' * (self.spaces +1 ))
+            sys.stdout.write('\b' * (self.spaces +1 ))
 
         self.eval_score(value)
 
