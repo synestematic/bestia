@@ -37,10 +37,6 @@ bestia is a library of functions and classes designed to help you build vibrant 
 
 
 
-## dependencies
-Installing bestia does not require you to install any external dependencies.
-
-
 ## api reference
 
 The highlight of this library is the output module and more specifically the _echo()_ function along with the *FString()* and _Row()_ classes. Let's have a quick look at how these work:
@@ -149,4 +145,8 @@ Enjoy!
 ![](resources/r.png)
 
 ![](resources/th.png)
+
+
+## dependencies
+bestia does not require you to install any external dependencies.
 
