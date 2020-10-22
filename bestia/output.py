@@ -11,10 +11,11 @@ NO_SPACE_CHARS = (
     b'\xe2\x80\x8b', # zero-width-space
 )
 
-BI_SPACE_CHARS = {
+MULTI_SPACE_CHARS = {
     '⭐': '*',
     '【': '[',
     '】': ']',
+    '\t': ' ',
 }
 
 DEFAULT_RETRO_LAG = 0.00001
@@ -295,7 +296,11 @@ class FString(object):
     @property
     def output(self):
 
-        self.__output = self.__input_string.replace('\t', ' ') # can't afford to have tabs in output as they are never displayed the same
+        tmp = self.__input_string
+        for k, v in MULTI_SPACE_CHARS.items():
+            # flatten these into single space chars
+            tmp = tmp.replace(k, v)
+        self.__output = tmp
 
         if self.__input_size > self.__output_size:
             self.__crop_output()
