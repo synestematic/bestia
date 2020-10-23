@@ -2,6 +2,17 @@
 bestia is a library of functions and classes designed to help you build vibrant and dynamic applications for the command-line on Linux / Darwin systems. It allows you to create rich evolving TUI's for your terminal-based tools using a simple and readable programming interface.
 
 
+## installation
+Please install bestia using pip:
+
+```
+$   python3 -m pip install bestia
+```
+
+
+The library does not require you to install any external dependencies.
+
+
 ## available functions / classes
 
 ### output.py
@@ -49,7 +60,6 @@ The bestia library is made of 3 different modules. While the `iterate` and `proc
 This is a very basic function which takes your string as first argument, followed by any number of effects that you may want to apply to your text. You can specify up to a maximum of 2 colors (1st: foreground, 2nd: background) and as many effects as you want.
 
 ![](https://github.com/synestematic/bestia/blob/master/resources/e.png?raw=true)
-<!--![](resources/e.png)-->
 
 Supported color values:  
 `'black' 'red' 'green' 'yellow' 'blue' 'magenta' 'cyan' 'white'`  
@@ -166,15 +176,8 @@ Enjoy!
 ## screenshots
 
 ![](https://github.com/synestematic/bestia/blob/master/resources/k.png?raw=true)
-<!--![](resources/k.png)-->
 
 ![](https://github.com/synestematic/bestia/blob/master/resources/r.png?raw=true)
-<!--![](resources/r.png)-->
 
 ![](https://github.com/synestematic/bestia/blob/master/resources/th.png?raw=true)
-<!--![](resources/th.png)-->
-
-
-## dependencies
-bestia does not require you to install any external dependencies.
 
