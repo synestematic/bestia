@@ -490,6 +490,15 @@ def expand_seconds(input_seconds, output=dict):
     return time
 
 
+def human_bytes(byts, suffix='B'):
+    ''' converts bytes as integer into a human readable string '''
+    for unit in ('','K','M','G','T','P','E','Z'):
+        if abs(byts) < 1024.0:
+            return "{:3.3f}{}{}".format(byts, unit, suffix)
+        byts /= 1024.0
+    return "{:.3f}{}{}".format(byts, 'Y', suffix)
+
+
 def remove_path(input_path, depth=-1):
     ''' removes directories from file path
         supports various levels of dir removal
