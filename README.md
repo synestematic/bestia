@@ -23,8 +23,9 @@ The library does not require you to install any external dependencies.
 * Row
 * tty_rows
 * tty_cols
-* clear_screen
+* tty_clear
 * expand_seconds
+* human_bytes
 * remove_path
 * obfuscate_random_chars
 * ProgressBar

@@ -444,12 +444,6 @@ class Row(object):
         return self.output
 
 
-def clear_screen():
-    sys.stdout.write('\033[' + CSI_CODES['CUP'])
-    sys.stdout.write('\033[' + CSI_CODES['ED'])
-    sys.stdout.flush()
-
-
 def obfuscate_random_chars(input_string, amount=0, obfuscator='_'):
     ''' returns input string with amount of random chars obfuscated '''
     amount = len(input_string) - 4 if not amount or amount >= len(input_string) else amount
@@ -466,6 +460,11 @@ def obfuscate_random_chars(input_string, amount=0, obfuscator='_'):
 
     return iterable_to_string(string_as_list)
 
+
+def tty_clear():
+    sys.stdout.write('\033[' + CSI_CODES['CUP'])
+    sys.stdout.write('\033[' + CSI_CODES['ED'])
+    sys.stdout.flush()
 
 def tty_rows():
     ''' returns dynamic rows of current terminal '''
