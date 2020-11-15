@@ -5,4 +5,5 @@ bestia/__pycache__/*
 build/*
 dist/*
 bestia/dev.py
+dev.py
 README.md.backup
