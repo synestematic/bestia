@@ -21,9 +21,10 @@ The library does not require you to install any external dependencies.
 * echo
 * FString
 * Row
+* tty_clear
+* tty_up
 * tty_rows
 * tty_cols
-* tty_clear
 * expand_seconds
 * human_bytes
 * remove_path

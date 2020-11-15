@@ -466,6 +466,10 @@ def tty_clear():
     sys.stdout.write('\033[' + CSI_CODES['ED'])
     sys.stdout.flush()
 
+def tty_up():
+    sys.stdout.write('\033[' + CSI_CODES['CUU'])
+    sys.stdout.flush()
+
 def tty_rows():
     ''' returns dynamic rows of current terminal '''
     return os.get_terminal_size().lines
