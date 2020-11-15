@@ -20,7 +20,15 @@ MULTI_SPACE_CHARS = {
 
 DEFAULT_RETRO_LAG = 0.00001
 
-ANSI_SGR_CODES = {     # Select Graphic Rendition
+CSI_CODES = {
+    # https://en.wikipedia.org/wiki/ANSI_escape_code#CSI_sequences
+    'CUU': 'A', # Cursor Up
+    'CUP': 'H', # Cursor Position
+    'ED' : 'J', # Erase in Display
+    'SGR': 'm', # Select Graphic Rendition
+}
+
+ANSI_SGR_CODES = {
     'reset':     0,
     'bold':      1,    # bolds  ONLY fg, NOT ul
     'faint':     2,    # faints ONLY fg, NOT ul           (AKA dark)
@@ -71,8 +79,9 @@ def _validate_ansi(ansi_name, ansi_type=None):
 
 def _ansi_esc_seq(fx, offset=0):
     try:
-        return '\033[{}m'.format(
-            ANSI_SGR_CODES[fx] + offset
+        return '\033[{}{}'.format(
+            ANSI_SGR_CODES[fx] + offset,
+            CSI_CODES['SGR'],
         )
     except KeyError:
         raise InvalidAnsiSequence(fx)
@@ -436,8 +445,8 @@ class Row(object):
 
 
 def clear_screen():
-    sys.stdout.write('\033[H')
-    sys.stdout.write('\033[J')
+    sys.stdout.write('\033[' + CSI_CODES['CUP'])
+    sys.stdout.write('\033[' + CSI_CODES['ED'])
     sys.stdout.flush()
 
 
