@@ -20,6 +20,8 @@ MULTI_SPACE_CHARS = {
 
 DEFAULT_RETRO_LAG = 0.00001
 
+ANSI_ESC = '\033['
+
 CSI_CODES = {
     # https://en.wikipedia.org/wiki/ANSI_escape_code#CSI_sequences
     'CUU': 'A', # Cursor Up
@@ -79,7 +81,8 @@ def _validate_ansi(ansi_name, ansi_type=None):
 
 def _ansi_esc_seq(fx, offset=0):
     try:
-        return '\033[{}{}'.format(
+        return '{}{}{}'.format(  # \033[m
+            ANSI_ESC,
             ANSI_SGR_CODES[fx] + offset,
             CSI_CODES['SGR'],
         )
@@ -462,12 +465,12 @@ def obfuscate_random_chars(input_string, amount=0, obfuscator='_'):
 
 
 def tty_clear():
-    sys.stdout.write('\033[' + CSI_CODES['CUP'])
-    sys.stdout.write('\033[' + CSI_CODES['ED'])
+    sys.stdout.write(ANSI_ESC + CSI_CODES['CUP']) # \033[H
+    sys.stdout.write(ANSI_ESC + CSI_CODES['ED'])  # \033[J
     sys.stdout.flush()
 
 def tty_up():
-    sys.stdout.write('\033[' + CSI_CODES['CUU'])
+    sys.stdout.write(ANSI_ESC + CSI_CODES['CUU']) # \033[A
     sys.stdout.flush()
 
 def tty_rows():
