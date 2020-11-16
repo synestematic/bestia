@@ -20,7 +20,7 @@ MULTI_SPACE_CHARS = {
 
 DEFAULT_RETRO_LAG = 0.00001
 
-ANSI_ESC = '\033['
+ANSI_ESC = '\033' # octal form,  aka 0x1B, 27
 
 CSI_CODES = {
     # https://en.wikipedia.org/wiki/ANSI_escape_code#CSI_sequences
@@ -79,13 +79,13 @@ def _validate_ansi(ansi_name, ansi_type=None):
     return ansi_name
 
 
-def _ansi_esc_seq(fx, offset=0):
+def _ansi_sgr_seq(fx: str, offset: int = 0) -> str:
+    """ returns ansi sequence for given color|fx :
+            "blink" =>  \033[5m
+        offset param allows to get bg sequences, instead of fg
+    """
     try:
-        return '{}{}{}'.format(  # \033[m
-            ANSI_ESC,
-            ANSI_SGR_CODES[fx] + offset,
-            CSI_CODES['SGR'],
-        )
+        return ANSI_ESC + '[' + str(ANSI_SGR_CODES[fx] + offset) + CSI_CODES['SGR']
     except KeyError:
         raise InvalidAnsiSequence(fx)
 
@@ -112,11 +112,11 @@ def echo(init_string='', *fx, mode='modern'):
     try:
         exception = None
         if fg:
-            sys.stdout.write( _ansi_esc_seq(fg) )
+            sys.stdout.write( _ansi_sgr_seq(fg) )
         if bg:
-            sys.stdout.write( _ansi_esc_seq(bg, offset=10) )
+            sys.stdout.write( _ansi_sgr_seq(bg, offset=10) )
         for fx in fx:
-            sys.stdout.write( _ansi_esc_seq(fx) )
+            sys.stdout.write( _ansi_sgr_seq(fx) )
 
         for c in output:
             # only output chars get lagged...
@@ -131,7 +131,7 @@ def echo(init_string='', *fx, mode='modern'):
 
     finally:
         if fg or bg or fx:
-            sys.stdout.write( _ansi_esc_seq('reset') )
+            sys.stdout.write( _ansi_sgr_seq('reset') )
             sys.stdout.flush()
 
         if exception:
@@ -177,15 +177,14 @@ class FString(object):
     def append(self, string):
         self.__input_string = '{}{}'.format(
             self.__input_string,
-            # self.filter_utf_chars(string),
             string,
         )
         self.set_input_size()
 
     def set_input_size(self):
-        # calculate input_string length without color bytes
-        color_start_byte = b'\x1b'
-        color_end_byte = b'm'
+        """ calculates input_string len disregarding sgr bytes """
+        color_start_byte = ANSI_ESC.encode()        #  b'\x1b'
+        color_end_byte = CSI_CODES['SGR'].encode()  #  b'm'
         self.__input_size = 0
         add = True
         for char in self.__input_string:
@@ -293,16 +292,16 @@ class FString(object):
         ''' pads get bg as well BUT NOT if reverse option is specified '''
 
         if 'reverse' in self.__fx:
-            # s = _ansi_esc_seq('reverse') + s
+            # s = _ansi_sgr_seq('reverse') + s
             return p
 
         if self.__fg:
-            p = _ansi_esc_seq(self.__fg) + p
+            p = _ansi_sgr_seq(self.__fg) + p
 
         if self.__bg:
-            p = _ansi_esc_seq(self.__bg, 10) + p
+            p = _ansi_sgr_seq(self.__bg, 10) + p
 
-        return p + _ansi_esc_seq('reset')
+        return p + _ansi_sgr_seq('reset')
 
 
     @property
@@ -334,16 +333,16 @@ class FString(object):
     def __paint_output(self):
 
         for f in self.__fx:
-            self.__output = _ansi_esc_seq(f) + self.__output
+            self.__output = _ansi_sgr_seq(f) + self.__output
 
         if self.__fg:
-            self.__output = _ansi_esc_seq(self.__fg) + self.__output
+            self.__output = _ansi_sgr_seq(self.__fg) + self.__output
 
         if self.__bg:
             # background color range is +10 respect to foreground color
-            self.__output = _ansi_esc_seq(self.__bg, offset=10) + self.__output
+            self.__output = _ansi_sgr_seq(self.__bg, offset=10) + self.__output
 
-        self.__output = self.__output + _ansi_esc_seq('reset')
+        self.__output = self.__output + _ansi_sgr_seq('reset')
 
 
     def __align_output(self):
@@ -465,12 +464,12 @@ def obfuscate_random_chars(input_string, amount=0, obfuscator='_'):
 
 
 def tty_clear():
-    sys.stdout.write(ANSI_ESC + CSI_CODES['CUP']) # \033[H
-    sys.stdout.write(ANSI_ESC + CSI_CODES['ED'])  # \033[J
+    sys.stdout.write(ANSI_ESC + '[' + CSI_CODES['CUP']) # \033[H
+    sys.stdout.write(ANSI_ESC + '[' + CSI_CODES['ED'])  # \033[J
     sys.stdout.flush()
 
 def tty_up():
-    sys.stdout.write(ANSI_ESC + CSI_CODES['CUU']) # \033[A
+    sys.stdout.write(ANSI_ESC + '[' + CSI_CODES['CUU']) # \033[A
     sys.stdout.flush()
 
 def tty_rows():
