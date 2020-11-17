@@ -113,9 +113,11 @@ def echo(init_string='', *fx, mode='modern'):
 
         for c in output:
             # only output chars get lagged...
-            lag = 0.00001 if mode == 'retro' else 0
-            random_multiplier = random.randint(1, 100 if mode == 'retro' else 1)
-            time.sleep( lag * random_multiplier )
+            if mode == 'retro':
+                time.sleep(
+                    # random_multipler     * default_lag
+                    random.randint(1, 100) * 0.00001
+                )
             sys.stdout.write(c)
             sys.stdout.flush()
 
@@ -439,23 +441,6 @@ class Row(object):
         return self.output
 
 
-def obfuscate_random_chars(input_string, amount=0, obfuscator='_'):
-    ''' returns input string with amount of random chars obfuscated '''
-    amount = len(input_string) - 4 if not amount or amount >= len(input_string) else amount
-
-    string_indecae = [
-        i for i in range(
-            len( str(input_string) )
-        )
-    ]
-
-    string_as_list = list(input_string)
-    for random_index in unique_random_items(string_indecae, amount):
-        string_as_list[random_index] = obfuscator
-
-    return iterable_to_string(string_as_list)
-
-
 def tty_clear():
     sys.stdout.write(ANSI_ESC + '[' + CSI_CODES['CUP']) # \033[H
     sys.stdout.write(ANSI_ESC + '[' + CSI_CODES['ED'])  # \033[J
@@ -523,6 +508,22 @@ def remove_path(input_path, depth=-1):
     except IndexError:
         return remove_path(input_path, depth=depth+1)
 
+
+def obfuscate_random_chars(input_string, amount=0, obfuscator='_'):
+    ''' returns input string with amount of random chars obfuscated '''
+    amount = len(input_string) - 4 if not amount or amount >= len(input_string) else amount
+
+    string_indecae = [
+        i for i in range(
+            len( str(input_string) )
+        )
+    ]
+
+    string_as_list = list(input_string)
+    for random_index in unique_random_items(string_indecae, amount):
+        string_as_list[random_index] = obfuscator
+
+    return iterable_to_string(string_as_list)
 
 
 class ProgressBar(object):
