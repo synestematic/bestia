@@ -2,13 +2,13 @@
 ### output module exceptions ###
 ################################
 
-class InvalidAnsiSequence(Exception):
+class InvalidSgr(Exception):
     pass
 
-class InvalidColor(InvalidAnsiSequence):
+class InvalidColor(InvalidSgr):
     pass
 
-class InvalidFx(InvalidAnsiSequence):
+class InvalidFx(InvalidSgr):
     pass
 
 class InvalidMode(Exception):

@@ -6,20 +6,6 @@ import random
 from bestia.iterate import iterable_to_string, unique_random_items
 from bestia.error import *
 
-NO_SPACE_CHARS = (
-    b'\xe2\x80\x8e', # left-to-right-mark
-    b'\xe2\x80\x8b', # zero-width-space
-)
-
-MULTI_SPACE_CHARS = {
-    '⭐': '*',
-    '【': '[',
-    '】': ']',
-    '\t': ' ',
-}
-
-DEFAULT_RETRO_LAG = 0.00001
-
 ANSI_ESC = '\033' # octal form,  aka 0x1B, 27
 
 CSI_CODES = {
@@ -30,7 +16,7 @@ CSI_CODES = {
     'SGR': 'm', # Select Graphic Rendition
 }
 
-ANSI_SGR_CODES = {
+SGR_CODES = {
     'reset':     0,
     'bold':      1,    # bolds  ONLY fg, NOT ul
     'faint':     2,    # faints ONLY fg, NOT ul           (AKA dark)
@@ -55,28 +41,35 @@ ANSI_SGR_CODES = {
     'overline':  53,
 }
 
-ANSI_CLR_VALUES = tuple( [ n for n in range(30, 50) ] )
+SGR_COLOR_NUMBERS = tuple( [ n for n in range(30, 50) ] )
 
-ECHO_MODES = (
-    'modern',
-    'retro',
-    'raw',
+NO_SPACE_CHARS = (
+    b'\xe2\x80\x8e', # left-to-right-mark
+    b'\xe2\x80\x8b', # zero-width-space
 )
 
-def _validate_ansi(ansi_name, ansi_type=None):
-    if not ansi_name:
+MULTI_SPACE_CHARS = {
+    '⭐': '*',
+    '【': '[',
+    '】': ']',
+    '\t': ' ',
+}
+
+
+def _validate_sgr(sgr, sgr_type=None):
+    if not sgr:
         return
-    if ansi_name not in ANSI_SGR_CODES:
-        raise InvalidAnsiSequence(ansi_name)
-    if not ansi_type:
-        return ansi_name
-    elif ansi_type == 'color':
-        if ANSI_SGR_CODES[ansi_name] not in ANSI_CLR_VALUES:
-            raise InvalidColor(ansi_name)
-    elif ansi_type == 'fx':
-        if ANSI_SGR_CODES[ansi_name] in ANSI_CLR_VALUES:
-            raise InvalidFx(ansi_name)
-    return ansi_name
+    if sgr not in SGR_CODES:
+        raise InvalidSgr(sgr)
+    if not sgr_type:
+        return sgr
+    elif sgr_type == 'color':
+        if SGR_CODES[sgr] not in SGR_COLOR_NUMBERS:
+            raise InvalidColor(sgr)
+    elif sgr_type == 'fx':
+        if SGR_CODES[sgr] in SGR_COLOR_NUMBERS:
+            raise InvalidFx(sgr)
+    return sgr
 
 
 def _ansi_sgr_seq(fx: str, offset: int = 0) -> str:
@@ -85,18 +78,18 @@ def _ansi_sgr_seq(fx: str, offset: int = 0) -> str:
         offset param allows to get bg sequences, instead of fg
     """
     try:
-        return ANSI_ESC + '[' + str(ANSI_SGR_CODES[fx] + offset) + CSI_CODES['SGR']
+        return ANSI_ESC + '[' + str(SGR_CODES[fx] + offset) + CSI_CODES['SGR']
     except KeyError:
-        raise InvalidAnsiSequence(fx)
+        raise InvalidSgr(fx)
 
 
 def echo(init_string='', *fx, mode='modern'):
     output = str(init_string)
-    fx = [ _validate_ansi(f, ansi_type=None) for f in fx if f ]
+    fx = [ _validate_sgr(f, sgr_type=None) for f in fx if f ]
     fg = ''
     bg = ''
     # filter colors from fx
-    colors = [ c for c in fx if ANSI_SGR_CODES[c] in ANSI_CLR_VALUES ]
+    colors = [ c for c in fx if SGR_CODES[c] in SGR_COLOR_NUMBERS ]
     if len(colors) > 0:
         fg = colors[0]
         fx.remove(colors[0])
@@ -106,7 +99,7 @@ def echo(init_string='', *fx, mode='modern'):
     if len(colors) > 2:
         raise InvalidColor('Exceeded 2 maximum colors')
 
-    if mode not in ECHO_MODES:
+    if mode not in ('modern', 'retro', 'raw'):
         raise InvalidMode(mode)
 
     try:
@@ -120,7 +113,7 @@ def echo(init_string='', *fx, mode='modern'):
 
         for c in output:
             # only output chars get lagged...
-            lag = DEFAULT_RETRO_LAG if mode == 'retro' else 0
+            lag = 0.00001 if mode == 'retro' else 0
             random_multiplier = random.randint(1, 100 if mode == 'retro' else 1)
             time.sleep( lag * random_multiplier )
             sys.stdout.write(c)
@@ -255,12 +248,12 @@ class FString(object):
 
     @fg.setter
     def fg(self, c):
-        if _validate_ansi(c, ansi_type='color'):
+        if _validate_sgr(c, sgr_type='color'):
             self.__fg = c
 
     @bg.setter
     def bg(self, c):
-        if _validate_ansi(c, ansi_type='color'):
+        if _validate_sgr(c, sgr_type='color'):
             self.__bg = c
 
     @fx.setter
@@ -269,7 +262,7 @@ class FString(object):
             raise TypeError('fx argument must be list')
         self.__fx = []
         for f in fx:
-            if _validate_ansi(f, ansi_type='fx'):
+            if _validate_sgr(f, sgr_type='fx'):
                 self.__fx.append(f)
 
 
