@@ -3,9 +3,6 @@ import os
 import time
 import random
 
-from termios import tcgetattr, tcsetattr, TCSADRAIN
-from tty import setraw
-
 from bestia.iterate import iterable_to_string, unique_random_items
 from bestia.error import *
 
@@ -62,12 +59,6 @@ MULTI_SPACE_CHARS = {
 }
 
 
-def _ansi_esc_seq(csi: str) -> str:
-    try:
-        return ANSI_ESC + '[' + CSI_CODES[csi]
-    except KeyError:
-        raise InvalidAnsi(csi)
-
 def _validate_sgr(sgr, sgr_type=None):
     if not sgr:
         return
@@ -90,9 +81,17 @@ def _ansi_sgr_seq(fx: str, offset: int = 0) -> str:
         offset param allows to get bg sequences, instead of fg
     """
     try:
-        return ANSI_ESC + '[' + str(SGR_CODES[fx] + offset) + CSI_CODES['SGR']
-    except KeyError:
+        param_n = SGR_CODES[fx] + offset
+        return _ansi_esc_seq(csi='SGR', params=param_n)
+    except InvalidAnsi:
         raise InvalidSgr(fx)
+
+def _ansi_esc_seq(csi: str, params: str = '') -> str:
+    """ params are supposed to be ints in string form """
+    try:
+        return ANSI_ESC + '[' + str(params) + CSI_CODES[csi]
+    except KeyError:
+        raise InvalidAnsi(csi)
 
 
 def echo(init_string='', *fx, mode='modern'):
@@ -606,3 +605,4 @@ class ProgressBar(object):
 
         if self.done:
             echo(']', 'faint', self.color)
+
