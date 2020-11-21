@@ -75,18 +75,18 @@ def _validate_sgr(sgr, sgr_type=None):
     return sgr
 
 
-def _ansi_sgr_seq(fx: str, offset: int = 0) -> str:
+def ansi_sgr_seq(fx: str, offset: int = 0) -> str:
     """ returns ansi sequence for given color|fx :
             "blink" =>  \033[5m
         offset param allows to get bg sequences, instead of fg
     """
     try:
         param_n = SGR_CODES[fx] + offset
-        return _ansi_esc_seq(csi='SGR', params=param_n)
+        return ansi_esc_seq(csi='SGR', params=param_n)
     except InvalidAnsi:
         raise InvalidSgr(fx)
 
-def _ansi_esc_seq(csi: str, params: str = '') -> str:
+def ansi_esc_seq(csi: str, params: str = '') -> str:
     """ params are supposed to be ints in string form """
     try:
         return ANSI_ESC + '[' + str(params) + CSI_CODES[csi]
@@ -116,11 +116,11 @@ def echo(init_string='', *fx, mode='modern'):
     try:
         exception = None
         if fg:
-            sys.stdout.write( _ansi_sgr_seq(fg) )
+            sys.stdout.write( ansi_sgr_seq(fg) )
         if bg:
-            sys.stdout.write( _ansi_sgr_seq(bg, offset=10) )
+            sys.stdout.write( ansi_sgr_seq(bg, offset=10) )
         for fx in fx:
-            sys.stdout.write( _ansi_sgr_seq(fx) )
+            sys.stdout.write( ansi_sgr_seq(fx) )
 
         for c in output:
             # only output chars get lagged...
@@ -137,7 +137,7 @@ def echo(init_string='', *fx, mode='modern'):
 
     finally:
         if fg or bg or fx:
-            sys.stdout.write( _ansi_sgr_seq('reset') )
+            sys.stdout.write( ansi_sgr_seq('reset') )
             sys.stdout.flush()
 
         if exception:
@@ -298,16 +298,16 @@ class FString(object):
         ''' pads get bg as well BUT NOT if reverse option is specified '''
 
         if 'reverse' in self.__fx:
-            # s = _ansi_sgr_seq('reverse') + s
+            # s = ansi_sgr_seq('reverse') + s
             return p
 
         if self.__fg:
-            p = _ansi_sgr_seq(self.__fg) + p
+            p = ansi_sgr_seq(self.__fg) + p
 
         if self.__bg:
-            p = _ansi_sgr_seq(self.__bg, 10) + p
+            p = ansi_sgr_seq(self.__bg, 10) + p
 
-        return p + _ansi_sgr_seq('reset')
+        return p + ansi_sgr_seq('reset')
 
 
     @property
@@ -339,16 +339,16 @@ class FString(object):
     def __paint_output(self):
 
         for f in self.__fx:
-            self.__output = _ansi_sgr_seq(f) + self.__output
+            self.__output = ansi_sgr_seq(f) + self.__output
 
         if self.__fg:
-            self.__output = _ansi_sgr_seq(self.__fg) + self.__output
+            self.__output = ansi_sgr_seq(self.__fg) + self.__output
 
         if self.__bg:
             # background color range is +10 respect to foreground color
-            self.__output = _ansi_sgr_seq(self.__bg, offset=10) + self.__output
+            self.__output = ansi_sgr_seq(self.__bg, offset=10) + self.__output
 
-        self.__output = self.__output + _ansi_sgr_seq('reset')
+        self.__output = self.__output + ansi_sgr_seq('reset')
 
 
     def __align_output(self):
@@ -453,12 +453,12 @@ class Row(object):
 
 
 def tty_clear():
-    sys.stdout.write( _ansi_esc_seq('CUP')  ) # \033[H
-    sys.stdout.write( _ansi_esc_seq('ED')  )  # \033[J
+    sys.stdout.write( ansi_esc_seq('CUP')  ) # \033[H
+    sys.stdout.write( ansi_esc_seq('ED')  )  # \033[J
     sys.stdout.flush()
 
 def tty_up():
-    sys.stdout.write( _ansi_esc_seq('CUU')  )  # \033[A
+    sys.stdout.write( ansi_esc_seq('CUU')  )  # \033[A
     sys.stdout.flush()
 
 def tty_rows():
