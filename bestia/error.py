@@ -2,7 +2,10 @@
 ### output module exceptions ###
 ################################
 
-class InvalidSgr(Exception):
+class InvalidAnsi(Exception):
+    pass
+
+class InvalidSgr(InvalidAnsi):
     pass
 
 class InvalidColor(InvalidSgr):
