@@ -3,6 +3,9 @@ import os
 import time
 import random
 
+from termios import tcgetattr, tcsetattr, TCSADRAIN
+from tty import setraw
+
 from bestia.iterate import iterable_to_string, unique_random_items
 from bestia.error import *
 
@@ -11,6 +14,9 @@ ANSI_ESC = '\033' # octal form,  aka 0x1B, 27
 CSI_CODES = {
     # https://en.wikipedia.org/wiki/ANSI_escape_code#CSI_sequences
     'CUU': 'A', # Cursor Up
+    'CUD': 'B', # Cursor Down
+    'CUF': 'C', # Cursor Forward
+    'CUB': 'D', # Cursor Back
     'CUP': 'H', # Cursor Position
     'ED' : 'J', # Erase in Display
     'SGR': 'm', # Select Graphic Rendition
@@ -55,6 +61,12 @@ MULTI_SPACE_CHARS = {
     '\t': ' ',
 }
 
+
+def _ansi_esc_seq(csi: str) -> str:
+    try:
+        return ANSI_ESC + '[' + CSI_CODES[csi]
+    except KeyError:
+        raise InvalidAnsi(csi)
 
 def _validate_sgr(sgr, sgr_type=None):
     if not sgr:
@@ -442,12 +454,12 @@ class Row(object):
 
 
 def tty_clear():
-    sys.stdout.write(ANSI_ESC + '[' + CSI_CODES['CUP']) # \033[H
-    sys.stdout.write(ANSI_ESC + '[' + CSI_CODES['ED'])  # \033[J
+    sys.stdout.write( _ansi_esc_seq('CUP')  ) # \033[H
+    sys.stdout.write( _ansi_esc_seq('ED')  )  # \033[J
     sys.stdout.flush()
 
 def tty_up():
-    sys.stdout.write(ANSI_ESC + '[' + CSI_CODES['CUU']) # \033[A
+    sys.stdout.write( _ansi_esc_seq('CUU')  )  # \033[A
     sys.stdout.flush()
 
 def tty_rows():
