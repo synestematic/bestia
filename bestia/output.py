@@ -6,17 +6,19 @@ import random
 from bestia.iterate import iterable_to_string, unique_random_items
 from bestia.error import *
 
-ANSI_ESC = '\033' # octal form,  aka 0x1B, 27
+ANSI_ESC = '\033' # octal form   aka 0x1B, 27, '\e'
 
 CSI_CODES = {
     # https://en.wikipedia.org/wiki/ANSI_escape_code#CSI_sequences
-    'CUU': 'A', # Cursor Up
-    'CUD': 'B', # Cursor Down
-    'CUF': 'C', # Cursor Forward
-    'CUB': 'D', # Cursor Back
-    'CUP': 'H', # Cursor Position
-    'ED' : 'J', # Erase in Display
-    'SGR': 'm', # Select Graphic Rendition
+    'CUU'  : 'A', # Cursor Up
+    'CUD'  : 'B', # Cursor Down
+    'CUF'  : 'C', # Cursor Forward
+    'CUB'  : 'D', # Cursor Back
+    'CUP'  : 'H', # Cursor Position
+    'ED'   : 'J', # Erase in Display
+    'SGR'  : 'm', # Select Graphic Rendition
+    'DECSM': 'h', # show   DECTCEM (DEC text cursor enable mode)
+    'DECRM': 'l', # remove DECTCEM (DEC text cursor enable mode)
 }
 
 SGR_CODES = {
@@ -87,7 +89,7 @@ def ansi_sgr_seq(fx: str, offset: int = 0) -> str:
         raise InvalidSgr(fx)
 
 def ansi_esc_seq(csi: str, params: str = '') -> str:
-    """ params are supposed to be ints in string form """
+    """ params are usually supposed to be ints in string form """
     try:
         return ANSI_ESC + '[' + str(params) + CSI_CODES[csi]
     except KeyError:
@@ -452,14 +454,33 @@ class Row(object):
         return self.output
 
 
-def tty_clear():
-    sys.stdout.write( ansi_esc_seq('CUP')  ) # \033[H
-    sys.stdout.write( ansi_esc_seq('ED')  )  # \033[J
+def tty_cursor(enable=True):
+    sys.stdout.write(
+        ansi_esc_seq(
+            #   \033[?25h              \033[?25l
+            csi='DECSM' if enable else 'DECRM',
+            params='?25',
+        )
+    )
     sys.stdout.flush()
 
-def tty_up():
-    sys.stdout.write( ansi_esc_seq('CUU')  )  # \033[A
+
+def tty_clear():
+    sys.stdout.write(
+        ansi_esc_seq(csi='CUP') # \033[H
+    )
+    sys.stdout.write(
+        ansi_esc_seq(csi='ED')  # \033[J
+    )
     sys.stdout.flush()
+
+
+def tty_up():
+    sys.stdout.write(
+        ansi_esc_seq(csi='CUU') # \033[A
+    )
+    sys.stdout.flush()
+
 
 def tty_rows():
     ''' returns dynamic rows of current terminal '''
@@ -605,4 +626,3 @@ class ProgressBar(object):
 
         if self.done:
             echo(']', 'faint', self.color)
-

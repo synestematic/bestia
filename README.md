@@ -21,6 +21,7 @@ The library does not require you to install any external dependencies.
 * echo
 * FString
 * Row
+* tty_cursor
 * tty_clear
 * tty_up
 * tty_rows
@@ -30,6 +31,8 @@ The library does not require you to install any external dependencies.
 * remove_path
 * obfuscate_random_chars
 * ProgressBar
+* ansi_esc_seq
+* ansi_sgr_seq
 ```
 
 ### iterate.py
