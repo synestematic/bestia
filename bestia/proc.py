@@ -28,12 +28,10 @@ def change_directory(original_func):
 
 def which(binary):
     try:
-        o = bytes()
         o = subprocess.check_output(['which', binary])
-    except subprocess.CalledProcessError:
-        pass
-    finally:
         return o.decode().strip()
+    except subprocess.CalledProcessError:
+        return ''
 
 
 class Process(object):
@@ -45,27 +43,27 @@ class Process(object):
         self.rc = -1
 
     def parse_command(self):
-        arguments = self.command.split()[1:]
-        executable = self.command.split()[0]
-        if which(executable):
-            executable = which(executable)
+        command_arguments = self.command.split()
 
-        elif os.path.isfile(executable):
-            # check executable flag ???
-            print(f"Running local file")
+        # executable is in PATH, returns absolute path
+        executable_in_path = which(command_arguments[0])
+        if executable_in_path :
+            return executable_in_path, command_arguments[1:]
 
-        else:
-            print(f"Failed to locate {executable} executable")  
-            return (None, None)
+        # executable is in PWD
+        if os.path.isfile(command_arguments[0]):
+            # check executable flag ?
+            return command_arguments[0], command_arguments[1:]
 
-        return executable, arguments
+        raise Exception(f"Failed to find {self.command} executable")
 
 
-    def banner(self, msg='', sep='\\', lead_lines=0, trail_lines=0):
+    def banner(self, msg='', sep='#', lead_lines=0, trail_lines=0):
         msg = f"[{self.command}]{msg} "
         c = 0
-        if len(msg) < tty_cols():
-            c = tty_cols() - len(msg)
+        cols = tty_cols()
+        if len(msg) < cols:
+            c = cols - len(msg)
         for _ in range(lead_lines):
             print()
         print(f"{msg}{sep*c}")
@@ -84,61 +82,69 @@ class Process(object):
         in_dir: discarded ( used/passed by @change_directory )
         '''
         if not self.command or not type(self.command) == str:
-            return -1
+            raise TypeError(f'{self.command} is not a string type')
 
         if verbose > 0:
-            self.banner(lead_lines=1)
+            self.banner(
+                sep='>',
+                lead_lines=1,
+            )
 
+        ###################################
+        self._no_shell_run(verbose=verbose)
+        ###################################
+
+        if verbose > 1 and self.stderr:
+            self.banner(
+                msg=f" stderr",
+                sep='?',
+                lead_lines=1
+            )
+            print(self.stderr.decode(), end='')
+
+        if verbose > 0:
+            self.banner(
+                msg=f" exit={self.rc}",
+                sep='<' if self.rc == SUCCESS else '!',
+                trail_lines=1,
+            )
+
+        return self.rc
+
+
+    def _no_shell_run(self, verbose):
         executable, arguments = self.parse_command()
-        if not executable:
-            return -1
 
         child_pid, stdin_fd, stdout_fd, stderr_fd = fork_subproc(path=executable, args=arguments)
 
         os.set_blocking(stdout_fd, False)
         os.set_blocking(stderr_fd, False)
 
-        byte = { stdout_fd: True        , stderr_fd: True        }
-        line = { stdout_fd: bytearray() , stderr_fd: bytearray() }
+        byte = {
+            stdout_fd: True,
+            stderr_fd: True,
+        }
 
         while byte[stdout_fd] or byte[stderr_fd]:
             for readable_fd in select.select(
                 [stdout_fd, stderr_fd, ], # rlist
                 [],                       # wlist
                 [],                       # xlist
-                0.2,
+                0.2,                      # timeout
             )[0]:
                 byte[readable_fd] = os.read(readable_fd, 1)  # read 1 byte at a time
                 if byte[readable_fd]:
 
-                    line[readable_fd] += byte[readable_fd]
-
-                    if byte[readable_fd] == b'\n':
-                        
-                        if readable_fd == stderr_fd:
-                            self.stderr += line[readable_fd]
-
-                        elif readable_fd == stdout_fd:
-                            self.stdout += line[readable_fd]
-                            if verbose > 1:
-                                print(line[readable_fd].decode(), end='')
-
-                        line[readable_fd] = bytearray()
-
-        if verbose > 1 and self.stderr:
-            self.banner(msg=" stderr", sep='?', lead_lines=1)
-            print(self.stderr.decode(), end='')
+                    if readable_fd == stderr_fd:
+                        self.stderr += byte[readable_fd]
+                    elif readable_fd == stdout_fd:
+                        self.stdout += byte[readable_fd]
+                        if verbose > 1:
+                            print(byte[readable_fd].decode(), end='', flush=True)
 
         self.rc = wait_for(child_pid)
         for fd in (stdin_fd, stdout_fd, stderr_fd):
             os.close(fd)
-
-        if verbose > 0:
-            self.banner(
-                msg=f" exit={self.rc}",
-                sep='/' if self.rc == SUCCESS else '!',
-                trail_lines=1,
-            )
 
         return self.rc
 

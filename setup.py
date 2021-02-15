@@ -5,7 +5,7 @@ with open('README.md', 'r') as f:
 
 setuptools.setup(
     name="bestia",
-    version="3.6",
+    version="3.7",
     author="Federico Rizzo",
     author_email="synestem@ticATgmail.com",
     description="A collection of tools for building dynamic Command-Line applications",
