@@ -5,7 +5,7 @@ import time
 import select
 import traceback
 
-from bestia.output import tty_cols
+from .output import tty_cols
 
 SUCCESS =  0
 FAILURE = -1

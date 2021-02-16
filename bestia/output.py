@@ -3,8 +3,8 @@ import os
 import time
 import random
 
-from bestia.iterate import iterable_to_string, unique_random_items
-from bestia.error import *
+from .iterate import iterable_to_string, unique_random_items
+from .error import *
 
 ANSI_ESC = '\033' # octal form   aka 0x1B, 27, '\e'
 
