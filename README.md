@@ -126,7 +126,7 @@ Welcome to the J
 Dealing with empty spaces can make it hard to understand where our FStrings finish and begin. You can use the `pad` attribute for debugging purposes or to create more interesting TUI's:
 
 ```
->>> FString(' asd ', size=20, align='cl', pad='|').echo(mode='modern')
+>>> FString(' asd ', size=20, align='cl', pad=' ').echo(mode='modern')
         asd         
 >>> FString(' asd ', size=20, align='cl', pad='|').echo(mode='modern')
 ||||||| asd ||||||||
