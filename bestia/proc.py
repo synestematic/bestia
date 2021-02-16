@@ -37,17 +37,20 @@ def which(binary):
 class Process(object):
 
     def __init__(self, command):
+        if not command or not type(command) == str:
+            raise TypeError(f'Invalid command: {command}')
+
         self.command = command.strip()
         self.stdout = bytearray()
         self.stderr = bytearray()
-        self.rc = -1
+        self.rc = FAILURE
 
     def parse_command(self):
         command_arguments = self.command.split()
 
         # executable is in PATH, returns absolute path
         executable_in_path = which(command_arguments[0])
-        if executable_in_path :
+        if executable_in_path:
             return executable_in_path, command_arguments[1:]
 
         # executable is in PWD
@@ -81,9 +84,6 @@ class Process(object):
 
         in_dir: discarded ( used/passed by @change_directory )
         '''
-        if not self.command or not type(self.command) == str:
-            raise TypeError(f'{self.command} is not a string type')
-
         if verbose > 0:
             self.banner(
                 sep='>',
