@@ -19,3 +19,11 @@ class InvalidMode(Exception):
 
 class InvalidAlignment(Exception):
     pass
+
+
+##############################
+### proc module exceptions ###
+##############################
+
+class InvalidCommand(Exception):
+    pass

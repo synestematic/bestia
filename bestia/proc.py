@@ -3,9 +3,9 @@ import os
 import struct
 import time
 import select
-import traceback
 
 from .output import tty_cols
+from .error import *
 
 SUCCESS =  0
 FAILURE = -1
@@ -38,7 +38,7 @@ class Process(object):
 
     def __init__(self, command):
         if not command or not type(command) == str:
-            raise TypeError(f'Invalid command: {command}')
+            raise InvalidCommand(f'Invalid command -> {command}')
 
         self.command = command.strip()
         self.stdout = bytearray()
@@ -58,7 +58,7 @@ class Process(object):
             # check executable flag ?
             return command_arguments[0], command_arguments[1:]
 
-        raise Exception(f"Failed to find {self.command} executable")
+        raise InvalidCommand(f"Failed to find executable -> {self.command}")
 
 
     def banner(self, msg='', sep='#', lead_lines=0, trail_lines=0):
