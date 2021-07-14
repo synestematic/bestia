@@ -78,7 +78,7 @@ class Process(object):
 
     @change_directory
     def run(self, verbose=2, in_dir=''):
-        ''' 
+        '''
         verbose: 2|1|0
             2: displays command & status & stdout & stderr
             1: displays command & status
@@ -227,6 +227,7 @@ class SSHCommand(Process):
         'find',
         'ls',
         'ping',
+        'ps',
         'pwd',
         'ssh',
         'wget',
@@ -241,7 +242,7 @@ class SSHCommand(Process):
         super().__init__(
             'ssh -F /dev/null -o ServerAliveInterval=60 -o ConnectTimeout={} {}@{} {}'.format(
                 timeout, user, host, command
-            )   
+            )
         )
         self.user = user
         self.host = host
@@ -352,15 +353,16 @@ class RemoteHost(object):
 
         return ssh_proc
 
-    def docker_exec(self, container, cmd, verbose=1, log=False, risk=False):
+    def docker_exec(self, container, cmd, sudo=False, strict=False, verbose=1, log=False, risk=False):
         """ ssh user@my.host.com sudo docker exec my_container cat /var/log/gunicorn/error.log
         """
         if not risk and cmd.split()[0] not in SSHCommand.WHITELIST:
             raise RuntimeError(f'ssh command not allowed -> [{cmd}]')
+        user = '' if not sudo else '-u root'
         return self.ssh_run(
             sudo=True,
-            cmd=f'docker exec {container.name} {cmd}',
-            strict=False,
+            cmd=f'docker exec {user} {container.name} {cmd}',
+            strict=strict,
             verbose=verbose,
             log=log
         )
