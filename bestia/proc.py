@@ -151,7 +151,7 @@ class Process(object):
                             except:
                                 pass
                                 # print(
-                                #     '?',
+                                #     '�',
                                 #     end='',
                                 #     flush=True,
                                 # )
@@ -225,7 +225,10 @@ class SSHCommand(Process):
         'cat',
         'docker',
         'find',
+        'fgrep',
+        'grep',
         'ls',
+        'netstat',
         'ping',
         'ps',
         'pwd',
