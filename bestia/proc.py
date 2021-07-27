@@ -227,6 +227,7 @@ class SSHCommand(Process):
         'find',
         'fgrep',
         'grep',
+        'hostname',
         'ls',
         'netstat',
         'ping',
@@ -373,7 +374,7 @@ class RemoteHost(object):
     def get_remote_file(self,
         remote_filename, remote_directory='',
         local_filename='', local_directory='',
-        container=None
+        container=None, fgrep='',
     ):
         """ cats remote_file contents to stdout and writes to local_file
             DOES NOT work with directories     !
@@ -386,18 +387,22 @@ class RemoteHost(object):
             local_directory=local_directory if local_directory else self.create_store_dir(),
         )
 
+        # 1 allows to monitor read file, 2 risks printing non printable bytes
+        verbose = 1
+
+        cmd = f'cat {remote_filepath}' if not fgrep else f'fgrep {fgrep} {remote_filepath}'
+
         if container:
             cmd = self.docker_exec(
                 container=container,
-                cmd=f'cat {remote_filepath}',
-                verbose=1,
+                cmd=cmd,
+                verbose=verbose,
             )
-
         else:
             cmd = self.ssh_run(
                 sudo=True,
-                cmd=f'cat {remote_filepath}',
-                verbose=1,  # 1 allows to monitor file being read, 2 risks printing non printable bytes to screen
+                cmd=cmd,
+                verbose=verbose,
             )
 
         # this WILL overwrite your local files!
