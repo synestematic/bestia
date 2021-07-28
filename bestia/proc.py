@@ -330,7 +330,16 @@ class RemoteHost(object):
         self.user = user
         self.host = host
 
-    def ssh_run(self, cmd, sudo=False, strict=False, timeout=2, verbose=1, log=False, risk=False):
+    def ssh_run(
+            self,
+            cmd,
+            sudo=False,
+            strict=False,
+            timeout=2,
+            verbose=1,
+            log=False,
+            risk=False
+        ):
         """ sudo   = executes ssh command as root
             strict = raises exception if rc is not 0
             log    = store results locally for logging
@@ -346,6 +355,7 @@ class RemoteHost(object):
             command=cmd,
             user=self.user,
             host=self.host,
+            timeout=timeout,
         )
         ssh_proc.run(verbose=verbose)
 
@@ -372,19 +382,22 @@ class RemoteHost(object):
         )
 
     def get_remote_file(self,
-        remote_filename, remote_directory='',
-        local_filename='', local_directory='',
-        container=None, fgrep='',
+        remote_filename,
+        remote_directory='',
+        # local_filename='',
+        # local_directory='',
+        container=None,
+        fgrep='',
     ):
         """ cats remote_file contents to stdout and writes to local_file
             DOES NOT work with directories     !
             DOES NOT keep original permissions !
         """
-        remote_filepath, local_filepath = _resolve_filepath_locations(
+        remote_filepath, _local_filepath = _resolve_filepath_locations(
             remote_filename=remote_filename,
             remote_directory=remote_directory,
-            local_filename=local_filename,
-            local_directory=local_directory if local_directory else self.create_store_dir(),
+            # local_filename=local_filename,
+            # local_directory=local_directory if local_directory else create_datehost_dir(self.host),
         )
 
         # 1 allows to monitor read file, 2 risks printing non printable bytes
@@ -397,27 +410,27 @@ class RemoteHost(object):
                 container=container,
                 cmd=cmd,
                 verbose=verbose,
+                log=True,
             )
         else:
             cmd = self.ssh_run(
                 sudo=True,
                 cmd=cmd,
                 verbose=verbose,
+                log=True,
             )
 
+        ###########################################
         # this WILL overwrite your local files!
-        try:
-            with open(local_filepath, 'wb') as f:
-                f.write(cmd.stdout)
-            return SUCCESS
-        except:
-            return FAILURE
-
-    def create_store_dir(self):
-        created_dir = _create_datehost_dir(self.host)
-        if not created_dir:
-            raise Exception('Failed to create store dir')
-        return created_dir
+        # NOTE: using log=True now instead
+        ###########################################
+        # try:
+        #     with open(_local_filepath, 'wb') as f:
+        #         f.write(cmd.stdout)
+        #     return SUCCESS
+        # except:
+        #     return FAILURE
+        ###########################################
 
 
 def _create_datehost_dir(host):
@@ -431,11 +444,13 @@ def _create_datehost_dir(host):
         )
         os.makedirs(datehost_dir, exist_ok=True)
         return datehost_dir
-    except:
-        return ''
+    except Exception:
+        raise Exception(f'Failed to create store dir for {host}')
 
 
-def _resolve_filepath_locations(remote_filename, remote_directory, local_filename, local_directory):
+def _resolve_filepath_locations(
+    remote_filename, remote_directory='', local_filename='', local_directory='',
+):
     """ if remote_directory is not specified, remote_file must be in ssh_user home dir
         if local_directory  is not specified, local_file  will be put in local CWD
         if local_filename   is not specified, local_file  will have same name as remote_filename
