@@ -66,7 +66,7 @@ def _validate_sgr(sgr, sgr_type=None):
     if not sgr:
         return
     if sgr not in SGR_CODES:
-        raise InvalidSgr(sgr)
+        raise InvalidSgr(f'"{sgr}"')
     if not sgr_type:
         return sgr
     elif sgr_type == 'color':
@@ -87,7 +87,7 @@ def ansi_sgr_seq(fx: str, offset: int = 0) -> str:
         param_n = SGR_CODES[fx] + offset
         return ansi_esc_seq(csi='SGR', params=param_n)
     except InvalidAnsi:
-        raise InvalidSgr(fx)
+        raise InvalidSgr(f'"{fx}"')
 
 def ansi_esc_seq(csi: str, params: str = '') -> str:
     """ params are usually supposed to be ints in string form """
