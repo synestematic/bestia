@@ -347,7 +347,7 @@ class RemoteHost(object):
         """
         # ONLY RUN IF NODE IS NOT DISABLED IN CC...
         if not risk and cmd.split()[0] not in SSHCommand.WHITELIST:
-            raise RuntimeError(f'ssh command not allowed -> [{cmd}]')
+            raise RuntimeError(f'ssh command not allowed -> [{cmd.split()[0]}]')
 
         cmd = cmd if not sudo else f'sudo {cmd}'
 
@@ -371,27 +371,29 @@ class RemoteHost(object):
         """ ssh user@my.host.com sudo docker exec my_container cat /var/log/gunicorn/error.log
         """
         if not risk and cmd.split()[0] not in SSHCommand.WHITELIST:
-            raise RuntimeError(f'ssh command not allowed -> [{cmd}]')
+            raise RuntimeError(f'ssh command not allowed -> [{cmd.split()[0]}]')
         user = '' if not sudo else '-u root'
         return self.ssh_run(
             sudo=True,
             cmd=f'docker exec {user} {container.name} {cmd}',
             strict=strict,
             verbose=verbose,
-            log=log
+            log=log,
+            risk=risk,
         )
 
-    def lxc_attach(self, container, cmd, user='', verbose=2, log=False, risk=False):
+    def lxc_attach(self, container, cmd, user='', strict=False, verbose=1, log=False, risk=False):
         """ ssh user@my.host.com sudo lxc-attach --name="proxy" -- su - client -c "ls -l"
         """
         if not risk and cmd.split()[0] not in SSHCommand.WHITELIST:
-            raise RuntimeError(f'ssh command not allowed -> [{cmd}]')
+            raise RuntimeError(f'ssh command not allowed -> [{cmd.split()[0]}]')
         return self.ssh_run(
             sudo=True,
             cmd=f'lxc-attach --name="{container}" -- su - {user} -c "{cmd}"',
+            strict=strict,
             verbose=verbose,
             log=log,
-            risk=True,
+            risk=risk,
         )
 
     def get_remote_file(self,
