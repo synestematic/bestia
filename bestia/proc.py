@@ -238,6 +238,11 @@ class SSHCommand(Process):
         'whoami',
     )
 
+    @classmethod
+    def validate_cmd(cls, cmd):
+        if cmd not in cls.WHITELIST:
+            raise RuntimeError(f'"{cmd}" command is NOT whitelisted')
+
     def __init__(self, command, user, host, timeout=2):
         # -F /dev/null               discards custom search ssh configs in ~/.ssh/config
         # -o ConnectTimeout=2        avoids waiting for unresponsive hosts
@@ -293,7 +298,6 @@ class SSHCommand(Process):
         super().banner(msg=msg, sep=sep, lead_lines=lead_lines, trail_lines=trail_lines)
 
 
-
 def _log_host_command(host, cmd, o , e):
     """ logs commands stdout and stderr for non-ephemeral usage
     """
@@ -333,21 +337,15 @@ class RemoteHost(object):
     def ssh_run(
             self,
             cmd,
-            sudo=False,
-            strict=False,
-            timeout=2,
+            sudo=False,    # executes cmd as root
+            strict=False,  # raises exception if rc is not 0
+            log=False,     # store results locally for logging
+            risk=False,    # ignores COMMAND_WHITELIST, allows exec of any cmd
             verbose=1,
-            log=False,
-            risk=False
+            timeout=2,
         ):
-        """ sudo   = executes ssh command as root
-            strict = raises exception if rc is not 0
-            log    = store results locally for logging
-            risk   = ignores COMMAND_WHITELIST, allows execution of any command
-        """
-        # ONLY RUN IF NODE IS NOT DISABLED IN CC...
-        if not risk and cmd.split()[0] not in SSHCommand.WHITELIST:
-            raise RuntimeError(f'ssh command not allowed -> [{cmd.split()[0]}]')
+        if not risk:
+            SSHCommand.validate_cmd(cmd.split()[0])
 
         cmd = cmd if not sudo else f'sudo {cmd}'
 
@@ -367,36 +365,57 @@ class RemoteHost(object):
 
         return ssh_proc
 
-    def docker_exec(self, container, cmd, sudo=False, strict=False, verbose=1, log=False, risk=False):
-        """ ssh user@my.host.com sudo docker exec my_container cat /var/log/gunicorn/error.log
+    def docker_exec(
+            self,
+            container,
+            cmd,
+            sudo=False,
+            strict=False,
+            verbose=1,
+            log=False,
+            risk=False,
+            timeout=2,
+        ):
+        """ ssh user@my.host.com sudo docker exec my_container "cat /etc/hosts"
         """
-        if not risk and cmd.split()[0] not in SSHCommand.WHITELIST:
-            raise RuntimeError(f'ssh command not allowed -> [{cmd.split()[0]}]')
+        if not risk:
+            SSHCommand.validate_cmd(cmd.split()[0])
         user = '' if not sudo else '-u root'
         return self.ssh_run(
             sudo=True,
-            cmd=f'docker exec {user} {container.name} {cmd}',
+            cmd=f'docker exec {user} {container.name} "{cmd}"',
             strict=strict,
             verbose=verbose,
             log=log,
-            risk=risk,
+            timeout=timeout,
         )
 
-    def lxc_attach(self, container, cmd, user='', strict=False, verbose=1, log=False, risk=False):
+    def lxc_attach(
+            self,
+            container,
+            cmd,
+            user='',
+            strict=False,
+            verbose=1,
+            log=False,
+            risk=False,
+            timeout=2,
+        ):
         """ ssh user@my.host.com sudo lxc-attach --name="proxy" -- su - client -c "ls -l"
         """
-        if not risk and cmd.split()[0] not in SSHCommand.WHITELIST:
-            raise RuntimeError(f'ssh command not allowed -> [{cmd.split()[0]}]')
+        if not risk:
+            SSHCommand.validate_cmd(cmd.split()[0])
         return self.ssh_run(
             sudo=True,
             cmd=f'lxc-attach --name="{container}" -- su - {user} -c "{cmd}"',
             strict=strict,
             verbose=verbose,
             log=log,
-            risk=risk,
+            timeout=timeout,
         )
 
-    def get_remote_file(self,
+    def get_remote_file(
+        self,
         remote_filename,
         remote_directory='',
         # local_filename='',
@@ -434,18 +453,6 @@ class RemoteHost(object):
                 verbose=verbose,
                 log=True,
             )
-
-        ###########################################
-        # this WILL overwrite your local files!
-        # NOTE: using log=True now instead
-        ###########################################
-        # try:
-        #     with open(_local_filepath, 'wb') as f:
-        #         f.write(cmd.stdout)
-        #     return SUCCESS
-        # except:
-        #     return FAILURE
-        ###########################################
 
 
 def _create_datehost_dir(host):
