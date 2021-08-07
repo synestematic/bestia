@@ -71,10 +71,10 @@ def _validate_sgr(sgr, sgr_type=None):
         return sgr
     elif sgr_type == 'color':
         if SGR_CODES[sgr] not in SGR_COLOR_NUMBERS:
-            raise InvalidColor(sgr)
+            raise InvalidColor(f'"{sgr}"')
     elif sgr_type == 'fx':
         if SGR_CODES[sgr] in SGR_COLOR_NUMBERS:
-            raise InvalidFx(sgr)
+            raise InvalidFx(f'"{sgr}"')
     return sgr
 
 
@@ -94,7 +94,7 @@ def ansi_esc_seq(csi: str, params: str = '') -> str:
     try:
         return ANSI_ESC + '[' + str(params) + CSI_CODES[csi]
     except KeyError:
-        raise InvalidAnsi(csi)
+        raise InvalidAnsi(f'"{csi}"')
 
 
 def echo(init_string='', *fx, mode='modern'):
@@ -114,7 +114,7 @@ def echo(init_string='', *fx, mode='modern'):
         raise InvalidColor('Exceeded 2 maximum colors')
 
     if mode not in ('modern', 'retro', 'raw'):
-        raise InvalidMode(mode)
+        raise InvalidMode(f'"{mode}"')
 
     try:
         exception = None
@@ -247,7 +247,7 @@ class FString(object):
     @align.setter
     def align(self, a):
         if a not in self.ALIGN_VALUES:
-            raise InvalidAlignment(a)
+            raise InvalidAlignment(f'"{a}"')
         self.__align = a
 
     @property
