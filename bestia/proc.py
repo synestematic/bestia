@@ -381,6 +381,19 @@ class RemoteHost(object):
             log=log
         )
 
+    def lxc_attach(self, container, cmd, user='', verbose=2, log=False, risk=False):
+        """ ssh user@my.host.com sudo lxc-attach --name="proxy" -- su - client -c "ls -l"
+        """
+        if not risk and cmd.split()[0] not in SSHCommand.WHITELIST:
+            raise RuntimeError(f'ssh command not allowed -> [{cmd}]')
+        return self.ssh_run(
+            sudo=True,
+            cmd=f'lxc-attach --name="{container}" -- su - {user} -c "{cmd}"',
+            verbose=verbose,
+            log=log,
+            risk=True,
+        )
+
     def get_remote_file(self,
         remote_filename,
         remote_directory='',
