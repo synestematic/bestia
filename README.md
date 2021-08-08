@@ -45,13 +45,6 @@ The library does not require you to install any external dependencies.
 * pop_random_item
 ```
 
-### proc.py
-
-```
-* Process
-```
-
-
 
 ## api reference
 
