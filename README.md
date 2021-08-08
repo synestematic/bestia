@@ -48,7 +48,7 @@ The library does not require you to install any external dependencies.
 
 ## api reference
 
-The bestia library is made of 3 different modules. While the `iterate` and `proc` modules surely have functionality worth looking into, I want to focus my attention on the `echo` function and the `FString` and `Row` classes of the `output` module, which is where most of the interesting stuff is.
+Let's focus on the `echo` function, the `FString` class and the `Row` class which contain the core of this library's functionality.
 
 `>>> from bestia.output import echo, FString, Row `
 
