@@ -1,7 +1,8 @@
-import sys
+import json
 import os
-import time
 import random
+import sys
+import time
 
 from .iterate import iterable_to_string, unique_random_items
 from .error import *
@@ -97,8 +98,19 @@ def ansi_esc_seq(csi: str, params: str = '') -> str:
         raise InvalidAnsi(f'"{csi}"')
 
 
-def echo(init_string='', *fx, mode='modern'):
-    output = str(init_string)
+def echo(txt='', *fx, mode='modern'):
+
+    if isinstance(txt, dict):
+        output = json.dumps(
+            txt,
+            sort_keys=True,
+            indent=4,
+            ensure_ascii=False,
+        )
+
+    else:
+        output = str(txt)
+
     fx = [ _validate_sgr(f, sgr_type=None) for f in fx if f ]
     fg = ''
     bg = ''
