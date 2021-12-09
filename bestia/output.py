@@ -103,8 +103,8 @@ def echo(txt='', *fx, mode='modern'):
     if isinstance(txt, dict):
         output = json.dumps(
             txt,
-            sort_keys=True,
-            indent=4,
+            sort_keys=False,
+            indent=2,
             ensure_ascii=False,
         )
 
