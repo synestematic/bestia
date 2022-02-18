@@ -100,6 +100,11 @@ def ansi_esc_seq(csi: str, params: str = '') -> str:
 
 def echo(txt='', *fx, mode='modern'):
 
+    if mode not in ('modern', 'retro', 'raw', 'error'):
+        raise InvalidMode(f'"{mode}"')
+
+    std_stream = sys.stderr if mode == 'error' else sys.stdout
+
     if type(txt) in (dict, list, tuple):
         output = json.dumps(
             txt,
@@ -124,17 +129,14 @@ def echo(txt='', *fx, mode='modern'):
     if len(colors) > 2:
         raise InvalidColor('Exceeded 2 maximum colors')
 
-    if mode not in ('modern', 'retro', 'raw'):
-        raise InvalidMode(f'"{mode}"')
-
     try:
         exception = None
         if fg:
-            sys.stdout.write( ansi_sgr_seq(fg) )
+            std_stream.write( ansi_sgr_seq(fg) )
         if bg:
-            sys.stdout.write( ansi_sgr_seq(bg, offset=10) )
+            std_stream.write( ansi_sgr_seq(bg, offset=10) )
         for fx in fx:
-            sys.stdout.write( ansi_sgr_seq(fx) )
+            std_stream.write( ansi_sgr_seq(fx) )
 
         for c in output:
             # only output chars get lagged...
@@ -143,23 +145,23 @@ def echo(txt='', *fx, mode='modern'):
                     # random_multipler     * default_lag
                     random.randint(1, 100) * 0.00001
                 )
-            sys.stdout.write(c)
-            sys.stdout.flush()
+            std_stream.write(c)
+            std_stream.flush()
 
     except Exception as x:
         exception = x
 
     finally:
         if fg or bg or fx:
-            sys.stdout.write( ansi_sgr_seq('reset') )
-            sys.stdout.flush()
+            std_stream.write( ansi_sgr_seq('reset') )
+            std_stream.flush()
 
         if exception:
             raise exception
 
         if mode != 'raw':
-            sys.stdout.write('\n')
-            sys.stdout.flush()
+            std_stream.write('\n')
+            std_stream.flush()
 
 
 class FString(object):
@@ -189,7 +191,7 @@ class FString(object):
         self.__bg = ''
         self.bg = bg
 
-        # bold, dark, underline, blink, reverse, concealed
+        # bold, faint, underline, blink, reverse, conceal
         self.__fx = []
         self.fx = fx
 
