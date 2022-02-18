@@ -100,14 +100,13 @@ def ansi_esc_seq(csi: str, params: str = '') -> str:
 
 def echo(txt='', *fx, mode='modern'):
 
-    if isinstance(txt, dict):
+    if type(txt) in (dict, list, tuple):
         output = json.dumps(
             txt,
             sort_keys=False,
-            indent=2,
+            indent=4,
             ensure_ascii=False,
         )
-
     else:
         output = str(txt)
 
