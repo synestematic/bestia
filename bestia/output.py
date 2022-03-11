@@ -105,17 +105,14 @@ def echo(txt='', *fx, mode='modern'):
 
     std_stream = sys.stderr if mode == 'error' else sys.stdout
 
-    if type(txt) in (dict, list, tuple):
-        try:
-            output = json.dumps(
-                txt,
-                sort_keys=False,
-                indent=4,
-                ensure_ascii=False,
-            )
-        except TypeError:  # items are not JSON serializable
-            output = str(txt)
-    else:
+    try:
+        output = json.dumps(
+            txt,
+            sort_keys=False,
+            indent=4,
+            ensure_ascii=False,
+        )
+    except TypeError:  # items are not JSON serializable
         output = str(txt)
 
     fx = [ _validate_sgr(f, sgr_type=None) for f in fx if f ]
