@@ -166,6 +166,8 @@ def echo(txt='', *fx, mode='modern'):
             std_stream.write('\n')
             std_stream.flush()
 
+        return output
+
 
 class FString(object):
 
