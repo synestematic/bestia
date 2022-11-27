@@ -62,6 +62,7 @@ MULTI_SPACE_CHARS = {
     '�': '?',
 }
 
+FG_BG_OFFSET = 10
 
 def _validate_sgr(sgr, sgr_type=None):
     if not sgr:
@@ -137,7 +138,7 @@ def echo(txt='', *fx, mode='modern'):
         if fg:
             std_stream.write( ansi_sgr_seq(fg) )
         if bg:
-            std_stream.write( ansi_sgr_seq(bg, offset=10) )
+            std_stream.write( ansi_sgr_seq(bg, offset=FG_BG_OFFSET) )
         for fx in fx:
             std_stream.write( ansi_sgr_seq(fx) )
 
@@ -326,7 +327,7 @@ class FString(object):
             p = ansi_sgr_seq(self.__fg) + p
 
         if self.__bg:
-            p = ansi_sgr_seq(self.__bg, 10) + p
+            p = ansi_sgr_seq(self.__bg, FG_BG_OFFSET) + p
 
         return p + ansi_sgr_seq('reset')
 
@@ -367,7 +368,7 @@ class FString(object):
 
         if self.__bg:
             # background color range is +10 respect to foreground color
-            self.__output = ansi_sgr_seq(self.__bg, offset=10) + self.__output
+            self.__output = ansi_sgr_seq(self.__bg, offset=FG_BG_OFFSET) + self.__output
 
         self.__output = self.__output + ansi_sgr_seq('reset')
 
