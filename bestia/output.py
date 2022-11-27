@@ -104,20 +104,21 @@ def echo(txt='', *fx, mode='modern'):
     if mode not in ('modern', 'retro', 'raw', 'error'):
         raise InvalidMode(f'"{mode}"')
 
+    output = ''
     std_stream = sys.stderr if mode == 'error' else sys.stdout
 
     if type(txt) in (dict, list, tuple):
         try:
-            output = json.dumps(
+            txt = json.dumps(
                 txt,
                 sort_keys=False,
                 indent=4,
                 ensure_ascii=False,
             )
         except TypeError:  # items are not JSON serializable
-            output = str(txt)
+            txt = str(txt)
     else:
-        output = str(txt)
+        txt = str(txt)
 
     fx = [ _validate_sgr(f, sgr_type=None) for f in fx if f ]
     fg = ''
@@ -136,38 +137,44 @@ def echo(txt='', *fx, mode='modern'):
     try:
         exception = None
         if fg:
-            std_stream.write( ansi_sgr_seq(fg) )
-        if bg:
-            std_stream.write( ansi_sgr_seq(bg, offset=FG_BG_OFFSET) )
-        for fx in fx:
-            std_stream.write( ansi_sgr_seq(fx) )
+            output += ansi_sgr_seq(fg)
 
-        for c in output:
-            # only output chars get lagged...
-            if mode == 'retro':
+        if bg:
+            output += ansi_sgr_seq(bg, offset=FG_BG_OFFSET)
+
+        for fx in fx:
+            output += ansi_sgr_seq(fx)
+
+        if mode == 'retro':
+            std_stream.write(output)
+            for c in txt:
                 time.sleep(
                     # random_multipler     * default_lag
                     random.randint(1, 100) * 0.00001
                 )
-            std_stream.write(c)
-            std_stream.flush()
+                std_stream.write(c)
+                std_stream.flush()
+            output = ''
+        else:
+            output += output
 
     except Exception as x:
         exception = x
 
     finally:
         if fg or bg or fx:
-            std_stream.write( ansi_sgr_seq('reset') )
-            std_stream.flush()
+            output += ansi_sgr_seq('reset')
+
+        if mode != 'raw':
+            output += '\n'
+
+        std_stream.write(output)
+        std_stream.flush()
 
         if exception:
             raise exception
 
-        if mode != 'raw':
-            std_stream.write('\n')
-            std_stream.flush()
-
-        return output
+        return txt
 
 
 class FString(object):
