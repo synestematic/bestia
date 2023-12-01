@@ -52,6 +52,7 @@ SGR_COLOR_NUMBERS = tuple( [ n for n in range(30, 50) ] )
 NO_SPACE_CHARS = (
     b'\xe2\x80\x8e', # left-to-right-mark
     b'\xe2\x80\x8b', # zero-width-space
+    b'\xef\xb8\x8f', #
 )
 
 MULTI_SPACE_CHARS = {
