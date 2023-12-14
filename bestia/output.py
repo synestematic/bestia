@@ -105,7 +105,6 @@ def echo(txt='', *fx, mode='modern'):
     if mode not in ('modern', 'retro', 'raw', 'error'):
         raise InvalidMode(f'"{mode}"')
 
-    output = ''
     std_stream = sys.stderr if mode == 'error' else sys.stdout
 
     if type(txt) in (dict, list, tuple):
@@ -137,27 +136,26 @@ def echo(txt='', *fx, mode='modern'):
 
     try:
         exception = None
+        output = ''
         if fg:
             output += ansi_sgr_seq(fg)
-
         if bg:
             output += ansi_sgr_seq(bg, offset=FG_BG_OFFSET)
+        for f in fx:
+            output += ansi_sgr_seq(f)
 
-        for fx in fx:
-            output += ansi_sgr_seq(fx)
+        std_stream.write(output)
+        output = ''
 
-        if mode == 'retro':
-            std_stream.write(output)
-            for c in txt:
-                time.sleep(
-                    # random_multipler     * default_lag
-                    random.randint(1, 100) * 0.00001
-                )
-                std_stream.write(c)
-                std_stream.flush()
-            output = ''
-        else:
-            output += output
+        for c in txt:
+            std_stream.write(c)
+            std_stream.flush()
+            if mode != 'retro':
+                continue
+            time.sleep(
+                # random_multipler     * default_lag
+                random.randint(1, 100) * 0.00001
+            )
 
     except Exception as x:
         exception = x
