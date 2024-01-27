@@ -52,7 +52,7 @@ SGR_COLOR_NUMBERS = tuple( [ n for n in range(30, 50) ] )
 NO_SPACE_CHARS = (
     b'\xe2\x80\x8e', # left-to-right-mark
     b'\xe2\x80\x8b', # zero-width-space
-    b'\xef\xb8\x8f', #
+    b'\xef\xb8\x8f', # ???
 )
 
 MULTI_SPACE_CHARS = {
@@ -62,6 +62,16 @@ MULTI_SPACE_CHARS = {
     '】': ']',
     '�': '?',
 }
+
+
+def flatten_anomalous_space_chars(txt: str) -> str:
+    tmp = txt
+    for b in NO_SPACE_CHARS:
+        tmp = tmp.replace(b.decode('utf-8'), '')
+    for k, v in MULTI_SPACE_CHARS.items():
+        tmp = tmp.replace(k, v)
+    return tmp
+
 
 FG_BG_OFFSET = 10
 
@@ -341,11 +351,7 @@ class FString(object):
     @property
     def output(self):
 
-        tmp = self.__input_string
-        for k, v in MULTI_SPACE_CHARS.items():
-            # flatten these into single space chars
-            tmp = tmp.replace(k, v)
-        self.__output = tmp
+        self.__output = flatten_anomalous_space_chars(self.__input_string)
 
         if self.__input_size > self.__output_size:
             self.__crop_output()
