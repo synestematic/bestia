@@ -2,6 +2,7 @@ import json
 import os
 import random
 import sys
+import shutil
 import time
 
 from .iterate import iterable_to_string, unique_random_items
@@ -516,11 +517,11 @@ def tty_up():
 
 def tty_rows():
     ''' returns dynamic rows of current terminal '''
-    return os.get_terminal_size().lines
+    return shutil.get_terminal_size().lines
 
 def tty_cols():
     ''' returns dynamic cols of current terminal '''
-    return os.get_terminal_size().columns
+    return shutil.get_terminal_size().columns
 
 
 def expand_seconds(input_seconds, output=dict):
